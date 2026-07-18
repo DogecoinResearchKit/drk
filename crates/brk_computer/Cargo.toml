@@ -17,6 +17,14 @@ litecoin = [
     "brk_rpc/litecoin",
     "brk_types/litecoin",
 ]
+dogecoin = [
+    "brk_chain/dogecoin",
+    "brk_error/dogecoin",
+    "brk_fetcher/dogecoin",
+    "brk_indexer/dogecoin",
+    "brk_rpc/dogecoin",
+    "brk_types/dogecoin",
+]
 
 [dependencies]
 brk_chain = { workspace = true }

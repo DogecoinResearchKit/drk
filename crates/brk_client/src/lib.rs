@@ -68,7 +68,12 @@ fn validate_address_payload_for_type(addr_type: OutputType, payload: &[u8]) -> R
         OutputType::P2PK65 => &[65],
         OutputType::P2PKH | OutputType::P2SH | OutputType::P2WPKH => &[20],
         OutputType::P2WSH | OutputType::P2TR => &[32],
-        OutputType::P2MS | OutputType::OpReturn | OutputType::Empty | OutputType::Unknown => {
+        OutputType::P2MS
+        | OutputType::OpReturn
+        | OutputType::Empty
+        | OutputType::MWEBPegPool
+        | OutputType::MWEBPegIn
+        | OutputType::Unknown => {
             return Err(BrkError { message: format!("Unsupported address type for address payload hash-prefix: {addr_type:?}") });
         },
     };
@@ -95,7 +100,12 @@ fn address_payload_type_path(addr_type: OutputType) -> Result<&'static str> {
         OutputType::P2WPKH => Ok("v0_p2wpkh"),
         OutputType::P2WSH => Ok("v0_p2wsh"),
         OutputType::P2TR => Ok("v1_p2tr"),
-        OutputType::P2MS | OutputType::OpReturn | OutputType::Empty | OutputType::Unknown => {
+        OutputType::P2MS
+        | OutputType::OpReturn
+        | OutputType::Empty
+        | OutputType::MWEBPegPool
+        | OutputType::MWEBPegIn
+        | OutputType::Unknown => {
             Err(BrkError { message: format!("Unsupported address type for address payload hash-prefix: {addr_type:?}") })
         },
     }

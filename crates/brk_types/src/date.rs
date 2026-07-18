@@ -42,11 +42,18 @@ impl Date {
     pub const INDEX_ZERO_LTC: Self = Self(20110101);
     pub const INDEX_ZERO_LTC_: Date_ = Date_::constant(2011, 1, 1);
 
+    /// Dogecoin index epoch start: 2013-01-01 (January 1 of the genesis year;
+    /// genesis block is 2013-12-06, but the epoch anchors to January per the
+    /// Bitcoin/Litecoin convention so date↔index conversions round-trip).
+    pub const INDEX_ZERO_DOGE: Self = Self(20130101);
+    pub const INDEX_ZERO_DOGE_: Date_ = Date_::constant(2013, 1, 1);
+
     /// Returns the index epoch start date for the given chain.
     pub fn index_zero_for_chain(chain: Chain) -> Self {
         match chain {
             Chain::Bitcoin => Self::INDEX_ZERO,
             Chain::Litecoin => Self::INDEX_ZERO_LTC,
+            Chain::Dogecoin => Self::INDEX_ZERO_DOGE,
         }
     }
 
@@ -55,6 +62,7 @@ impl Date {
         match chain {
             Chain::Bitcoin => Self::INDEX_ZERO_,
             Chain::Litecoin => Self::INDEX_ZERO_LTC_,
+            Chain::Dogecoin => Self::INDEX_ZERO_DOGE_,
         }
     }
 

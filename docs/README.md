@@ -1,73 +1,61 @@
-# Litecoin Research Kit
+# Dogecoin Research Kit
 
-[![MIT Licensed](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/IndigoNakamoto/lrk/blob/main/docs/LICENSE.md)
+[![MIT Licensed](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/IndigoNakamoto/drk/blob/main/docs/LICENSE.md)
 
-> A Litecoin fork of [Bitcoin Research Kit](https://github.com/bitcoinresearchkit/brk) (BRK).
+> A Dogecoin fork of [Bitcoin Research Kit](https://github.com/bitcoinresearchkit/brk) (BRK), derived from the [Litecoin Research Kit](https://github.com/IndigoNakamoto/lrk) (LRK).
 
-Open-source Litecoin data toolkit that can parse blocks, index the chain, compute metrics, serve data, and render it — all from a Litecoin Core node. It combines what on-chain analytics providers and block explorers do separately into a single self-hostable package, with historical USD pricing from exchange data (Bitfinex and Coinbase) and live price from your mempool.
+Open-source Dogecoin data toolkit that can parse blocks, index the chain, compute metrics, serve data, and render it — all from a Dogecoin Core node. It combines what on-chain analytics providers and block explorers do separately into a single self-hostable package.
 
-[litview](https://litview.space) is the official free hosted instance of LRK.
+## Status
+
+DRK is an early-stage scaffold. It reuses LRK's `brk_chain` chain-abstraction layer to add a compile-time `dogecoin` target (network magic, RPC port, block time, data directories, and the `bitcoin-dogecoin` primitives crate). The consensus- and economics-specific porting work is still in progress:
+
+- **AuxPoW parsing** — Dogecoin merge-mines against Litecoin, so from block 371,337 each block header is followed by a variable-length `CAuxPow` payload before the transaction count. The block reader must detect the AuxPoW version flag and consume this payload.
+- **Subsidy schedule** — Dogecoin has no perpetual halving; the block reward follows a step-down schedule that settles at a fixed 10,000 DOGE from block 600,000 onward.
+- **Time constants** — Dogecoin targets 1-minute blocks (1,440/day).
+- **Overflow review** — Dogecoin's supply approaches `u64::MAX` in koinu; cumulative aggregates may need to move to `u128`.
+
+See `docs/ARCHITECTURE.md` and the in-code `TODO(dogecoin)` markers for details.
 
 ## Data
 
-**Zero external dependencies.** LRK needs only a Litecoin Core node. 8,000+ metrics across 15 time resolutions, all computed locally from your own copy of the blockchain. Historical LTC/USD prices are built in (Bitfinex back to 2013, Coinbase from 2016), with live price from your mempool. Your node, your data.
+**Zero external dependencies.** DRK needs only a Dogecoin Core node. Metrics are computed locally from your own copy of the blockchain.
 
-**Blockchain:** Blocks, transactions, addresses, UTXOs — including MWEB (MimbleWimble Extension Blocks).
+**Blockchain:** Blocks, transactions, addresses, UTXOs.
 
 **Metrics:** Supply distributions, holder cohorts, network activity, fee markets, mining, and market indicators.
 
-**Indexes:** Date, height, halving epoch, address type, UTXO age.
+**Indexes:** Date, height, address type, UTXO age.
 
 **Mempool:** Fee estimation, projected blocks, unconfirmed transactions.
 
-**Mining pools:** Pool attribution from the [litecoinspace](https://litecoinspace.org) mining-pool list.
-
 ## Usage
-
-### Website
-
-Browse metrics and charts at [litview.space](https://litview.space), no signup required.
-
-### API
-
-```bash
-curl https://litview.space/api/mempool/price
-```
-
-Query metrics and blockchain data in JSON or CSV. No rate limit.
-
-[Documentation](https://litview.space/api) · [JavaScript](https://www.npmjs.com/package/brk-client) · [Python](https://pypi.org/project/brk-client) · [Rust](https://crates.io/crates/brk_client) · [llms.txt](https://litview.space/llms.txt) · [LLM-friendly schema](https://litview.space/api.json)
 
 ### Self-host
 
-LRK must be built with the `litecoin` Cargo feature so the MWEB-aware block/transaction decoder is selected at compile time. A default (Bitcoin) build will fail to index once it reaches the first MWEB block.
+DRK must be built with the `dogecoin` Cargo feature so the AuxPoW-aware block/transaction decoder is selected at compile time. A default (Bitcoin) build fails to parse merge-mined blocks.
 
 ```bash
-git clone https://github.com/IndigoNakamoto/lrk.git && cd lrk
-cargo install --locked --path crates/brk_cli --features litecoin
-brk --chain litecoin
+git clone https://github.com/IndigoNakamoto/drk.git && cd drk
+cargo install --locked --path crates/brk_cli --features dogecoin
+brk --chain dogecoin
 ```
 
-Run your own website and API. All you need is Litecoin Core with `server=1`.
-
-> **Disk space:** Plan for ~375 GB total — ~250 GB for a full Litecoin Core node plus ~125 GB for LRK's index and computed metrics. LRK uses [sparse files](https://en.wikipedia.org/wiki/Sparse_file); tools like `ls -l` or Finder report the logical file size, not actual disk usage. Use `du -sh` to see real usage.
-
-[Guide](https://github.com/IndigoNakamoto/lrk/blob/main/crates/brk_cli/README.md) · [Professional hosting](./PROFESSIONAL_HOSTING.md)
+All you need is Dogecoin Core with `server=1`. Dogecoin mainnet RPC runs on port 22555.
 
 ### Library
 
 ```bash
-cargo add brk --features litecoin
+cargo add brk --features dogecoin
 ```
 
 Build custom applications in Rust. Use the full stack or individual components (parser, indexer, computer, server).
 
-[Reference](https://docs.rs/brk) · [Architecture](./ARCHITECTURE.md)
-
 ## Links
 
 - [Changelog](./CHANGELOG.md)
-- [Contributing](https://github.com/IndigoNakamoto/lrk/issues)
+- [Contributing](https://github.com/IndigoNakamoto/drk/issues)
+- [Upstream LRK](https://github.com/IndigoNakamoto/lrk)
 - [Upstream BRK](https://github.com/bitcoinresearchkit/brk)
 
 ## License

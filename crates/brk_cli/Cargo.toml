@@ -19,6 +19,17 @@ litecoin = [
     "brk_server/litecoin",
     "brk_types/litecoin",
 ]
+dogecoin = [
+    "brk_computer/dogecoin",
+    "brk_error/dogecoin",
+    "brk_indexer/dogecoin",
+    "brk_mempool/dogecoin",
+    "brk_query/dogecoin",
+    "brk_reader/dogecoin",
+    "brk_rpc/dogecoin",
+    "brk_server/dogecoin",
+    "brk_types/dogecoin",
+]
 
 [dependencies]
 anyhow = "1.0"

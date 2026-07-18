@@ -8,6 +8,7 @@ pub enum Chain {
     #[default]
     Bitcoin,
     Litecoin,
+    Dogecoin,
 }
 
 impl Chain {
@@ -15,6 +16,7 @@ impl Chain {
         match self {
             Chain::Bitcoin => ChainConstants::BITCOIN,
             Chain::Litecoin => ChainConstants::LITECOIN,
+            Chain::Dogecoin => ChainConstants::DOGECOIN,
         }
     }
 
@@ -30,6 +32,7 @@ impl std::fmt::Display for Chain {
         match self {
             Chain::Bitcoin => f.write_str("bitcoin"),
             Chain::Litecoin => f.write_str("litecoin"),
+            Chain::Dogecoin => f.write_str("dogecoin"),
         }
     }
 }
@@ -41,7 +44,10 @@ impl std::str::FromStr for Chain {
         match s.to_lowercase().as_str() {
             "bitcoin" | "btc" => Ok(Chain::Bitcoin),
             "litecoin" | "ltc" => Ok(Chain::Litecoin),
-            other => Err(format!("unknown chain '{other}'; expected 'bitcoin' or 'litecoin'")),
+            "dogecoin" | "doge" => Ok(Chain::Dogecoin),
+            other => Err(format!(
+                "unknown chain '{other}'; expected 'bitcoin', 'litecoin' or 'dogecoin'"
+            )),
         }
     }
 }
@@ -152,6 +158,44 @@ impl ChainConstants {
         coinbase_product: "LTC-USD",
         bitfinex_symbol: "tLTCUSD",
         index_epoch_month: 1, // 2011-01-01
+        index_epoch_day: 1,
+    };
+
+    pub const DOGECOIN: Self = Self {
+        // TODO(dogecoin): Dogecoin has no perpetual halving. Its subsidy follows
+        // a step-down schedule that settles at a fixed 10,000 DOGE from block
+        // 600,000 onward. `blocks_per_halving` is a non-zero placeholder (used as
+        // a divisor by the halving index) until the step-down subsidy model and
+        // halving-cohort handling are ported in `brk_computer`.
+        blocks_per_halving: 600_000,
+        // TODO(dogecoin): pre-Digishield retargeted every 240 blocks; from block
+        // 145,000 (Digishield) difficulty retargets every block. `1` reflects the
+        // current per-block retarget; revisit alongside difficulty metrics.
+        blocks_per_diff_epoch: 1,
+        seconds_per_block: 60,
+        // TODO(dogecoin): early rewards were randomized (0–1,000,000 DOGE) then
+        // stepped down. This placeholder is the perpetual reward in koinu; the
+        // real per-height schedule is handled in the deferred subsidy port.
+        initial_subsidy: 10_000 * 100_000_000,
+        blocks_per_year: 525_600, // 1440 blocks/day * 365
+        genesis_timestamp: 1_386_325_540, // 2013-12-06 Dogecoin mainnet genesis
+        index_epoch: 1_356_998_400, // 2013-01-01 00:00:00 UTC (Jan 1 of genesis year)
+        genesis_year: 2013,
+        default_rpc_port: 22555,
+        default_datadir_linux: ".dogecoin",
+        default_datadir_mac: "Dogecoin",
+        ticker: "DOGE",
+        coin_name: "Dogecoin",
+        bip30_duplicate_heights: &[],
+        // TODO(dogecoin): exchange symbols below are best-effort and unused while
+        // the price fetcher/oracle stays Bitcoin-only; verify before enabling
+        // DOGE/USD pricing (Kraken uses the `XDG` asset code for Dogecoin).
+        binance_symbol: "DOGEUSDT",
+        kraken_pair: "XDGUSD",
+        kraken_result_key: "XXDGZUSD",
+        coinbase_product: "DOGE-USD",
+        bitfinex_symbol: "tDOGE:USD",
+        index_epoch_month: 1, // 2013-01-01
         index_epoch_day: 1,
     };
 }

@@ -42,6 +42,19 @@ litecoin = [
     "brk_server?/litecoin",
     "brk_types?/litecoin",
 ]
+dogecoin = [
+    "brk_bindgen?/dogecoin",
+    "brk_computer?/dogecoin",
+    "brk_error?/dogecoin",
+    "brk_fetcher?/dogecoin",
+    "brk_indexer?/dogecoin",
+    "brk_mempool?/dogecoin",
+    "brk_query?/dogecoin",
+    "brk_reader?/dogecoin",
+    "brk_rpc?/dogecoin",
+    "brk_server?/dogecoin",
+    "brk_types?/dogecoin",
+]
 bencher = ["brk_bencher"]
 bindgen = ["brk_bindgen"]
 client = ["brk_client"]

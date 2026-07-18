@@ -10,6 +10,7 @@ repository.workspace = true
 [features]
 bitcoin = ["dep:brk_chain", "brk_chain/bitcoin"]
 litecoin = ["dep:brk_chain", "brk_chain/litecoin"]
+dogecoin = ["dep:brk_chain", "brk_chain/dogecoin"]
 corepc = ["dep:corepc-jsonrpc"]
 fjall = ["dep:fjall"]
 jiff = ["dep:jiff"]

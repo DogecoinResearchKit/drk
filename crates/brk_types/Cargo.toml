@@ -9,6 +9,7 @@ repository.workspace = true
 
 [features]
 litecoin = ["brk_chain/litecoin", "brk_error/litecoin"]
+dogecoin = ["brk_chain/dogecoin", "brk_error/dogecoin"]
 
 [dependencies]
 brk_chain = { workspace = true }

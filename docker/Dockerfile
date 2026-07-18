@@ -14,10 +14,10 @@ COPY crates crates
 COPY website website
 COPY modules modules
 
-# Litecoin requires the MWEB-aware decoder, selected via the `litecoin` feature
-# on brk_cli (the `brk` binary). A default build fails to index at the first
-# MWEB block.
-RUN cargo build --release --locked -p brk_cli --features litecoin
+# Dogecoin requires the AuxPoW-aware decoder, selected via the `dogecoin` feature
+# on brk_cli (the `brk` binary). A default (Bitcoin) build fails to parse
+# merge-mined blocks from height 371,337 onward.
+RUN cargo build --release --locked -p brk_cli --features dogecoin
 
 FROM debian:bookworm-slim
 

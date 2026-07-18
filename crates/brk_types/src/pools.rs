@@ -151,5 +151,14 @@ pub fn pools_for_chain(chain: Chain) -> &'static Pools {
                 parse_pools(JSON_LTC, POOL_COUNT_LTC, &[])
             })
         }
+        // TODO(dogecoin): use a Dogecoin-specific mining-pool list. Dogecoin
+        // merge-mines with Litecoin, so the Litecoin pool set is a reasonable
+        // placeholder until a dedicated `pools-doge-*.json` is added.
+        Chain::Dogecoin => {
+            static POOLS_DOGE: OnceLock<Pools> = OnceLock::new();
+            POOLS_DOGE.get_or_init(|| {
+                parse_pools(JSON_LTC, POOL_COUNT_LTC, &[])
+            })
+        }
     }
 }

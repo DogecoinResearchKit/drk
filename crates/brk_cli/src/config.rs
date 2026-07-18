@@ -315,6 +315,7 @@ impl Config {
             let daemon = match self.chain() {
                 Chain::Bitcoin => "bitcoind",
                 Chain::Litecoin => "litecoind",
+                Chain::Dogecoin => "dogecoind",
             };
             println!(
                 "Unsuccessful authentication with the RPC client.
