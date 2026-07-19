@@ -14,10 +14,13 @@ impl Vecs {
         exit: &Exit,
     ) -> Result<()> {
         let starting_height = indexer.safe_lengths().height;
+        // Difficulty retargets every `blocks_per_diff_epoch` blocks: 2016 for
+        // Bitcoin/Litecoin, 1 for Dogecoin (per-block Digishield retarget).
+        let diff_epoch = indexer.chain.constants().blocks_per_diff_epoch as usize;
         self.adjustment.bps.height.compute_ratio_change(
             starting_height,
             &indexer.vecs.blocks.difficulty,
-            2016,
+            diff_epoch,
             exit,
         )?;
 

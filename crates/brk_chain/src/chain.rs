@@ -25,6 +25,43 @@ impl Chain {
     pub fn supports_oracle(self) -> bool {
         matches!(self, Chain::Bitcoin)
     }
+
+    /// Consensus block subsidy in the smallest unit (sats/koinu) expected at
+    /// `height` under each chain's issuance schedule.
+    ///
+    /// Returns `None` when the expected subsidy is not deterministic — Dogecoin
+    /// used randomized rewards before the simplified-reward fork at height
+    /// 145,000, so there is no fixed "expected" value to compare actual issuance
+    /// against. Callers computing an "unclaimed" delta should treat `None` as
+    /// zero unclaimed.
+    pub fn expected_block_subsidy(self, height: u32) -> Option<u64> {
+        let c = self.constants();
+        match self {
+            // Geometric halving: initial_subsidy >> (height / blocks_per_halving).
+            Chain::Bitcoin | Chain::Litecoin => {
+                let halvings = height / c.blocks_per_halving;
+                Some(if halvings >= 64 {
+                    0
+                } else {
+                    c.initial_subsidy >> halvings
+                })
+            }
+            // Dogecoin (matches Dogecoin Core `GetDogecoinBlockSubsidy`):
+            //   height <   145,000: randomized reward -> None (no fixed expected)
+            //   height <   600,000: (500,000 >> (height / 100,000)) DOGE
+            //   height >=  600,000: fixed 10,000 DOGE
+            Chain::Dogecoin => {
+                const COIN: u64 = 100_000_000;
+                if height < 145_000 {
+                    None
+                } else if height < 600_000 {
+                    Some((500_000u64 >> (height / 100_000)) * COIN)
+                } else {
+                    Some(10_000 * COIN)
+                }
+            }
+        }
+    }
 }
 
 impl std::fmt::Display for Chain {

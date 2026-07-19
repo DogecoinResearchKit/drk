@@ -123,7 +123,14 @@ pub struct DifficultyToHashF64;
 impl UnaryTransform<StoredF64, StoredF64> for DifficultyToHashF64 {
     #[inline(always)]
     fn apply(difficulty: StoredF64) -> StoredF64 {
+        // 2^32 / target seconds-per-block. Per-chain via cargo features so the
+        // "difficulty as hashrate" estimate matches the chain's block time
+        // (Bitcoin/Litecoin 600s, Dogecoin 60s). Keep in lockstep with
+        // `TARGET_BLOCKS_PER_DAY` (see note in `blocks/mod.rs`).
+        #[cfg(not(feature = "dogecoin"))]
         const MULTIPLIER: f64 = 4_294_967_296.0 / 600.0; // 2^32 / 600
+        #[cfg(feature = "dogecoin")]
+        const MULTIPLIER: f64 = 4_294_967_296.0 / 60.0; // 2^32 / 60
         StoredF64::from(*difficulty * MULTIPLIER)
     }
 }

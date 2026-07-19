@@ -50,7 +50,9 @@ pub struct Computer<M: StorageMode = Rw> {
 // Litecoin index epoch), which changes every date-indexed vec; forces recompute.
 // v10: split MWEB v8/v9 output types, HogEx tx flags, peg pool/pegin/pegout
 // series, hogex_tx_count, raw_input_volume for distortion charts.
-const VERSION: Version = Version::new(10);
+// v11: micro-dollar price scale (sub-cent precision) + CryptoCompare deep price
+// history; forces all USD-denominated metrics to recompute at the new scale.
+const VERSION: Version = Version::new(11);
 
 impl Computer {
     pub fn forced_import(outputs_path: &Path, indexer: &Indexer) -> Result<Self> {

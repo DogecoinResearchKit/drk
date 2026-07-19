@@ -3,10 +3,13 @@ use std::ops::Sub;
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
-use super::{Cents, Dollars};
+use super::{CENTS_PER_DOLLAR, CENTS_PER_DOLLAR_F64, Cents, Dollars};
 
-/// Compact unsigned cents (u32) - memory-efficient for map keys.
-/// Supports values from $0.00 to $42,949,672.95 (u32::MAX / 100).
+/// Compact unsigned cents (u32) - memory-efficient for cost-basis/URPD price
+/// map keys (a per-coin price level, never an aggregate cap).
+/// Max representable price is `u32::MAX / CENTS_PER_DOLLAR` (~$42.9M at true-cent
+/// scale, ~$4,294 at the dogecoin micro-dollar scale) — ample for a sub-dollar
+/// asset.
 #[derive(
     Debug,
     Default,
@@ -44,7 +47,7 @@ impl CentsCompact {
 
     #[inline]
     pub fn to_dollars(self) -> Dollars {
-        Dollars::from(self.0 as f64 / 100.0)
+        Dollars::from(self.0 as f64 / CENTS_PER_DOLLAR_F64)
     }
 
     #[inline]
@@ -79,8 +82,9 @@ impl CentsCompact {
     /// E.g., 1234567 (= $12345.67) → 1234600 (= $12346.00) with 5 digits
     #[inline]
     pub fn round_to_dollar(self, digits: i32) -> Self {
-        // Round to nearest dollar (nearest 100 cents)
-        let dollars = (self.0 + 50) / 100;
+        // Round to nearest dollar (nearest CENTS_PER_DOLLAR units)
+        let scale = CENTS_PER_DOLLAR as u32;
+        let dollars = (self.0 + scale / 2) / scale;
         // Apply significant digit rounding to dollars, then convert back to cents
         let ilog10 = dollars.checked_ilog10().unwrap_or(0) as i32;
         let rounded_dollars = if ilog10 >= digits {
@@ -90,7 +94,7 @@ impl CentsCompact {
         } else {
             dollars
         };
-        Self(rounded_dollars * 100)
+        Self(rounded_dollars * scale)
     }
 }
 
@@ -101,10 +105,10 @@ impl From<Dollars> for CentsCompact {
         if f.is_nan() || f < 0.0 {
             Self::ZERO
         } else {
-            let cents = (f * 100.0).round();
+            let cents = (f * CENTS_PER_DOLLAR_F64).round();
             debug_assert!(
                 cents <= u32::MAX as f64,
-                "Price ${} exceeds CentsUnsignedCompact max (~$42.9M)",
+                "Price ${} exceeds CentsCompact max (u32::MAX / CENTS_PER_DOLLAR)",
                 f
             );
             Self(cents as u32)

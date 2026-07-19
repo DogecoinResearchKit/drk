@@ -22,9 +22,26 @@ pub use weight::Vecs as WeightVecs;
 
 pub const DB_NAME: &str = "blocks";
 
+// Target blocks per day is derived from each chain's block time. It is a
+// compile-time constant because the `brk` binary is built per-chain via cargo
+// features. Bitcoin/Litecoin: 86,400s / 600s = 144. Dogecoin: 86,400s / 60s =
+// 1,440. NOTE: this MUST stay consistent with `DifficultyToHashF64`'s per-block
+// seconds divisor — the network-hashrate estimate multiplies
+// `(blocks_24h / TARGET_BLOCKS_PER_DAY)` by `(difficulty * 2^32 / seconds_per_block)`,
+// and the two block-time factors cancel to 86,400. Changing one without the
+// other silently rescales hashrate.
+#[cfg(not(feature = "dogecoin"))]
 pub(crate) const TARGET_BLOCKS_PER_DAY_F64: f64 = 144.0;
+#[cfg(not(feature = "dogecoin"))]
 pub(crate) const TARGET_BLOCKS_PER_DAY_F32: f32 = 144.0;
+#[cfg(not(feature = "dogecoin"))]
 pub(crate) const TARGET_BLOCKS_PER_DAY: u64 = 144;
+#[cfg(feature = "dogecoin")]
+pub(crate) const TARGET_BLOCKS_PER_DAY_F64: f64 = 1440.0;
+#[cfg(feature = "dogecoin")]
+pub(crate) const TARGET_BLOCKS_PER_DAY_F32: f32 = 1440.0;
+#[cfg(feature = "dogecoin")]
+pub(crate) const TARGET_BLOCKS_PER_DAY: u64 = 1440;
 pub(crate) const TARGET_BLOCKS_PER_WEEK: u64 = 7 * TARGET_BLOCKS_PER_DAY;
 pub(crate) const TARGET_BLOCKS_PER_MONTH: u64 = 30 * TARGET_BLOCKS_PER_DAY;
 pub(crate) const TARGET_BLOCKS_PER_QUARTER: u64 = 3 * TARGET_BLOCKS_PER_MONTH;

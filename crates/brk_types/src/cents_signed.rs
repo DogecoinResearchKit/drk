@@ -4,7 +4,7 @@ use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use vecdb::{CheckedSub, Formattable, Pco};
 
-use super::Dollars;
+use super::{CENTS_PER_DOLLAR_F64, Dollars};
 
 /// Signed cents (i64) - for values that can be negative.
 /// Used for profit/loss calculations, deltas, etc.
@@ -53,7 +53,7 @@ impl CentsSigned {
     }
 
     pub fn to_dollars(self) -> Dollars {
-        Dollars::from(self.0 as f64 / 100.0)
+        Dollars::from(self.0 as f64 / CENTS_PER_DOLLAR_F64)
     }
 
     pub fn round_to(self, digits: i32) -> Self {
@@ -72,7 +72,7 @@ impl CentsSigned {
 impl From<Dollars> for CentsSigned {
     #[inline]
     fn from(value: Dollars) -> Self {
-        Self((*value * 100.0).round() as i64)
+        Self((*value * CENTS_PER_DOLLAR_F64).round() as i64)
     }
 }
 

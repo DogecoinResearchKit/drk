@@ -37,8 +37,19 @@ impl Block {
     /// instead of 3N from calling `total_size()` + `weight()` separately,
     /// since `weight()` internally calls both `base_size()` and `total_size()`).
     pub fn total_size_and_weight(&self) -> (usize, usize) {
-        let overhead =
-            bitcoin::block::Header::SIZE + bitcoin::VarInt::from(self.txdata.len()).size();
+        // Pre-tx overhead = serialized header + tx-count varint. For Bitcoin and
+        // Litecoin this is a fixed 80-byte header plus the varint, but Dogecoin
+        // merge-mined blocks carry a variable-length AuxPoW payload in the header.
+        // When raw bytes are present the first tx offset already accounts for the
+        // full header (incl. AuxPoW) and varint, so prefer it; fall back to the
+        // fixed computation for RPC-sourced blocks that lack raw data.
+        let overhead = self
+            .raw
+            .as_ref()
+            .and_then(|raw| raw.tx_offsets.first().map(|&off| off as usize))
+            .unwrap_or_else(|| {
+                bitcoin::block::Header::SIZE + bitcoin::VarInt::from(self.txdata.len()).size()
+            });
         let mut total_size = overhead;
         let mut weight_wu = overhead * 4;
         for (i, tx) in self.txdata.iter().enumerate() {

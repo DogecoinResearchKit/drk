@@ -1,6 +1,6 @@
 use brk_error::Result;
 use brk_indexer::Indexer;
-use brk_types::{CheckedSub, Dollars, Halving, Sats};
+use brk_types::{CheckedSub, Dollars, Sats};
 use vecdb::{Exit, ReadableVec, VecIndex};
 
 use super::Vecs;
@@ -73,17 +73,17 @@ impl Vecs {
         r_coinbase?;
         r_fees?;
 
+        // Minted subsidy = coinbase output - fees collected. A miner may claim
+        // less than subsidy + fees (Dogecoin has blocks whose coinbase output is
+        // even below the block's fees, e.g. height 1,023,973); the unclaimed
+        // remainder is simply never minted. Clamp at zero rather than
+        // underflow-panicking so such under-claiming blocks are handled.
         self.subsidy.block.sats.compute_transform2(
             starting_height,
             &self.coinbase.block.sats,
             &self.fees.block.sats,
             |(height, coinbase, fees, ..)| {
-                (
-                    height,
-                    coinbase.checked_sub(fees).unwrap_or_else(|| {
-                        panic!("coinbase {coinbase:?} < fees {fees:?} at {height:?}")
-                    }),
-                )
+                (height, coinbase.checked_sub(fees).unwrap_or(Sats::ZERO))
             },
             exit,
         )?;
@@ -109,13 +109,24 @@ impl Vecs {
             exit,
         )?;
 
+        // "Unclaimed" = expected consensus subsidy minus the subsidy the miner
+        // actually claimed. The expected schedule is chain-specific (Bitcoin/
+        // Litecoin halving vs Dogecoin step-down). Dogecoin's pre-145,000
+        // randomized-reward era has no fixed expected value, so treat it as zero
+        // unclaimed. Clamp at zero: a miner cannot claim more than the expected
+        // subsidy, but rounding/edge cases must never underflow-panic.
+        let chain = indexer.chain;
         self.unclaimed.block.sats.compute_transform(
             starting_height,
             &self.subsidy.block.sats,
             |(height, subsidy, ..)| {
-                let halving = Halving::from(height);
-                let expected = Sats::FIFTY_BTC / 2_usize.pow(halving.to_usize() as u32);
-                (height, expected.checked_sub(subsidy).unwrap())
+                let unclaimed = match chain.expected_block_subsidy(u32::from(height)) {
+                    Some(expected) => {
+                        Sats::new(expected).checked_sub(subsidy).unwrap_or(Sats::ZERO)
+                    }
+                    None => Sats::ZERO,
+                };
+                (height, unclaimed)
             },
             exit,
         )?;

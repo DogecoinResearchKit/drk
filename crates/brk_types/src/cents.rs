@@ -10,6 +10,25 @@ use vecdb::{CheckedSub, Formattable, Pco};
 
 use super::{CentsSats, Dollars, Sats, StoredF64};
 
+/// Number of `Cents` integer units per US dollar — the fixed-point price scale
+/// shared by every USD integer type (`Cents`, `CentsSigned`, `CentsCompact`,
+/// `CentsSats`, ...).
+///
+/// Standard builds use 100 (true cents). Dogecoin trades far below one US cent
+/// for most of its history, so the `dogecoin` build stores prices in
+/// micro-dollars (1e-6 USD) to preserve sub-cent resolution. Every USD↔integer
+/// conversion multiplies/divides by this constant and `to_dollars` inverts it,
+/// so `Dollars`-typed values stay correct regardless of the scale. The scale is
+/// compile-time (per-chain feature), so no cross-chain `u128` overflow applies
+/// to a single-chain binary.
+#[cfg(not(feature = "dogecoin"))]
+pub const CENTS_PER_DOLLAR: u64 = 100;
+#[cfg(feature = "dogecoin")]
+pub const CENTS_PER_DOLLAR: u64 = 1_000_000;
+
+/// `CENTS_PER_DOLLAR` as `f64`, for float conversions.
+pub const CENTS_PER_DOLLAR_F64: f64 = CENTS_PER_DOLLAR as f64;
+
 /// Unsigned cents (u64) - for values that should never be negative.
 /// Used for invested capital, realized cap, etc.
 #[derive(
@@ -65,7 +84,7 @@ impl Cents {
     }
 
     pub fn to_dollars(self) -> Dollars {
-        Dollars::from(self.0 as f64 / 100.0)
+        Dollars::from(self.0 as f64 / CENTS_PER_DOLLAR_F64)
     }
 
     /// Round to N significant digits.
@@ -89,8 +108,8 @@ impl Cents {
     /// E.g., 1234567 (= $12345.67) → 1234600 (= $12346.00) with 5 digits
     #[inline]
     pub fn round_to_dollar(self, digits: i32) -> Self {
-        // Round to nearest dollar (nearest 100 cents)
-        let dollars = (self.0 + 50) / 100;
+        // Round to nearest dollar (nearest CENTS_PER_DOLLAR units)
+        let dollars = (self.0 + CENTS_PER_DOLLAR / 2) / CENTS_PER_DOLLAR;
         // Apply significant digit rounding to dollars, then convert back to cents
         let ilog10 = dollars.checked_ilog10().unwrap_or(0) as i32;
         let rounded_dollars = if ilog10 >= digits {
@@ -100,7 +119,7 @@ impl Cents {
         } else {
             dollars
         };
-        Self(rounded_dollars * 100)
+        Self(rounded_dollars * CENTS_PER_DOLLAR)
     }
 }
 
@@ -111,7 +130,7 @@ impl From<Dollars> for Cents {
         if f.is_nan() || f < 0.0 {
             Self::ZERO
         } else {
-            Self((f * 100.0).round() as u64)
+            Self((f * CENTS_PER_DOLLAR_F64).round() as u64)
         }
     }
 }

@@ -10,9 +10,8 @@ use brk_types::{
 use corepc_jsonrpc::error::Error as JsonRpcError;
 use corepc_types::{
     v17::{
-        BlockTemplateTransaction, GetBlockCount, GetBlockHash, GetBlockHeader,
-        GetBlockHeaderVerbose, GetBlockTemplate, GetBlockVerboseOne, GetBlockVerboseZero,
-        GetRawMempool, GetTxOut,
+        GetBlockCount, GetBlockHash, GetBlockHeader, GetBlockHeaderVerbose, GetBlockVerboseOne,
+        GetBlockVerboseZero, GetRawMempool, GetTxOut,
     },
     v24::MempoolEntry,
 };
@@ -79,29 +78,64 @@ fn build_entry(txid: Txid, e: MempoolEntry) -> Result<MempoolEntryInfo> {
     })
 }
 
-fn build_gbt(raw: GetBlockTemplate) -> Result<Vec<BlockTemplateTx>> {
+/// Tolerant `getblocktemplate` response. Pre-SegWit nodes (e.g. Dogecoin
+/// Core 1.14) omit the top-level `weightlimit` field that corepc's
+/// `GetBlockTemplate` requires, so we decode only the fields we consume.
+#[derive(serde::Deserialize)]
+struct GbtResponse {
+    #[serde(rename = "previousblockhash")]
+    previous_block_hash: String,
+    height: i64,
+    #[serde(default)]
+    transactions: Vec<GbtTx>,
+}
+
+/// One `getblocktemplate` transaction entry. Pre-SegWit nodes omit the
+/// per-tx `weight` field, so it defaults to 0 and is recomputed from the
+/// decoded body in [`build_gbt`].
+#[derive(serde::Deserialize)]
+struct GbtTx {
+    data: String,
+    txid: String,
+    #[serde(default)]
+    depends: Vec<i64>,
+    #[serde(default)]
+    fee: i64,
+    #[serde(default)]
+    weight: i64,
+}
+
+fn build_gbt(transactions: Vec<GbtTx>) -> Result<Vec<BlockTemplateTx>> {
     // Pass 1: decode bodies and stash the 1-based GBT-array indices aside
-    // so each `data` hex string and `BlockTemplateTransaction` drops as
-    // soon as the tx is pushed.
-    let n = raw.transactions.len();
+    // so each `data` hex string and `GbtTx` drops as soon as the tx is
+    // pushed.
+    let n = transactions.len();
     let mut depends_idx: Vec<Vec<i64>> = Vec::with_capacity(n);
     let mut result: Vec<BlockTemplateTx> = Vec::with_capacity(n);
-    for t in raw.transactions {
-        let BlockTemplateTransaction {
+    for t in transactions {
+        let GbtTx {
             data,
             txid,
             depends,
             fee,
             weight,
-            ..
         } = t;
         depends_idx.push(depends);
+        let tx: bitcoin::Transaction = encode::deserialize_hex(&data)?;
+        // Pre-SegWit nodes omit `weight`; fall back to the decoded tx's
+        // weight (size * 4 for non-witness bodies) so downstream fee-rate
+        // math never divides by zero.
+        let wu: u64 = if weight > 0 {
+            weight as u64
+        } else {
+            tx.weight().to_wu()
+        };
         result.push(BlockTemplateTx {
             txid: Client::parse_txid(&txid, "gbt txid")?,
             fee: Sats::from(fee as u64),
-            weight: Weight::from(weight),
+            weight: Weight::from(wu),
             depends: Vec::new(),
-            tx: encode::deserialize_hex(&data)?,
+            tx,
         });
     }
     // Pass 2: resolve indices to txids now that the array is complete.
@@ -183,6 +217,26 @@ impl Client {
         let hash: &bitcoin::BlockHash = hash.into();
         self.0
             .call_with_retry("getblockheader", &[serde_json::to_value(hash)?])
+    }
+
+    /// Height of the block identified by `hash`, reading only the `height`
+    /// field from verbose `getblockheader`. Unlike `get_block_header_info`
+    /// (which deserializes the full `GetBlockHeaderVerbose`, requiring the
+    /// `nTx` field added in Bitcoin Core 0.16), this tolerates pre-0.16 nodes
+    /// such as Dogecoin Core 1.14.x whose response omits `nTx`.
+    pub fn get_block_height<'a, H>(&self, hash: &'a H) -> Result<u64>
+    where
+        &'a H: Into<&'a bitcoin::BlockHash>,
+    {
+        #[derive(serde::Deserialize)]
+        struct HeaderHeight {
+            height: u64,
+        }
+        let hash: &bitcoin::BlockHash = hash.into();
+        let r: HeaderHeight = self
+            .0
+            .call_with_retry("getblockheader", &[serde_json::to_value(hash)?])?;
+        Ok(r.height)
     }
 
     pub fn get_block_hash<H>(&self, height: H) -> Result<BlockHash>
@@ -397,12 +451,12 @@ impl Client {
             .iter()
             .map(|s| Self::parse_txid(s, "mempool txid"))
             .collect::<Result<Vec<_>>>()?;
-        let template: GetBlockTemplate = serde_json::from_str(template_raw.get())?;
+        let template: GbtResponse = serde_json::from_str(template_raw.get())?;
         let tip_hash = Self::parse_block_hash(&template.previous_block_hash, "previousblockhash")?;
         let tip_height = Height::from(u64::try_from(template.height - 1).map_err(|_| {
             Error::Parse(format!("gbt height out of range: {}", template.height))
         })?);
-        let block_template = build_gbt(template)?;
+        let block_template = build_gbt(template.transactions)?;
         // Only `mempoolminfee` is needed. Deserializing corepc's full
         // `GetMempoolInfo` fails on Litecoin 0.21, whose `getmempoolinfo`
         // response omits the newer `total_fee` field.
@@ -487,11 +541,27 @@ impl Client {
     pub fn get_closest_valid_height(&self, hash: BlockHash) -> Result<(Height, BlockHash)> {
         debug!("Get closest valid height...");
 
+        // Only the three fields below are needed for reorg walk-back. Reading
+        // them via a local struct (instead of the full `GetBlockHeaderVerbose`)
+        // tolerates pre-0.16 nodes such as Dogecoin Core 1.14.x, whose verbose
+        // `getblockheader` omits the `nTx` field.
+        #[derive(serde::Deserialize)]
+        struct ReorgHeader {
+            confirmations: i64,
+            height: u64,
+            #[serde(rename = "previousblockhash")]
+            previous_block_hash: Option<String>,
+        }
+
         let mut current = hash;
         loop {
-            let info = self.get_block_header_info(&current)?;
+            let hash_arg: &bitcoin::BlockHash = (&current).into();
+            let info: ReorgHeader = self.0.call_with_retry(
+                "getblockheader",
+                &[serde_json::to_value(hash_arg)?],
+            )?;
             if info.confirmations > 0 {
-                return Ok((Height::from(info.height as u64), current));
+                return Ok((Height::from(info.height), current));
             }
             let prev = info.previous_block_hash.ok_or(Error::NotFound(
                 "Reached genesis without finding main chain".into(),

@@ -1,7 +1,7 @@
 use std::ops::Range;
 
 use brk_error::Result;
-use brk_fetcher::{Bitfinex, Coinbase, new_agent};
+use brk_fetcher::{Bitfinex, Coinbase, CryptoCompare, new_agent};
 use brk_indexer::{Indexer, Lengths};
 use brk_oracle::{
     bin_to_cents, cents_to_bin, Config, Oracle, PaymentFilter, START_HEIGHT_FAST, START_HEIGHT_SLOW,
@@ -197,9 +197,12 @@ impl Vecs {
         // the exchange sources or merge logic change so committed prices reset
         // and every height is re-priced. Downstream metrics recompute via the
         // global computer `VERSION`.
+        // v3: micro-dollar price scale + CryptoCompare deep-history base layer
+        // (pre-2021 DOGE/USD). Bumping this resets committed spot prices so every
+        // height is re-priced at the new scale/sources.
         let source_version = indexer.vecs.outputs.value.version()
             + indexer.vecs.outputs.output_type.version()
-            + Version::new(2);
+            + Version::new(3);
         self.spot
             .cents
             .height
@@ -226,6 +229,19 @@ impl Vecs {
         // Coinbase where it exists (more liquid/canonical for the USD pair on
         // recent dates). At least one source must succeed.
         let constants = indexer.chain.constants();
+        // CryptoCompare's aggregated index reaches back furthest (DOGE/USD to
+        // ~2014), so it is the base layer; Bitfinex (~2013 for BTC/LTC) and
+        // Coinbase then overlay it on the dates where they exist, as those
+        // per-exchange USD pairs are more canonical when available. CryptoCompare
+        // requires an API key (env CRYPTOCOMPARE_API_KEY); without it the source
+        // is skipped and only the 2021+ exchange history is used.
+        let mut cryptocompare = CryptoCompare::new_with_agent(
+            new_agent(30),
+            constants.ticker,
+            "USD",
+            constants.genesis_timestamp as i64,
+            CryptoCompare::api_key_from_env(),
+        );
         let mut bitfinex = Bitfinex::new_with_agent(
             new_agent(30),
             constants.bitfinex_symbol,
@@ -238,9 +254,13 @@ impl Vecs {
         );
 
         let mut daily: std::collections::BTreeMap<Date, Cents> = std::collections::BTreeMap::new();
+        match cryptocompare.daily_closes() {
+            Ok(m) => daily.extend(m),
+            Err(e) => info!("CryptoCompare history unavailable ({e}); relying on exchanges"),
+        }
         match bitfinex.daily_closes() {
             Ok(m) => daily.extend(m),
-            Err(e) => info!("Bitfinex history unavailable ({e}); relying on Coinbase"),
+            Err(e) => info!("Bitfinex history unavailable ({e}); relying on other sources"),
         }
         match coinbase.daily_closes() {
             Ok(m) => daily.extend(m),
@@ -248,7 +268,7 @@ impl Vecs {
                 if daily.is_empty() {
                     return Err(e);
                 }
-                info!("Coinbase history unavailable ({e}); relying on Bitfinex");
+                info!("Coinbase history unavailable ({e}); relying on other sources");
             }
         }
 
