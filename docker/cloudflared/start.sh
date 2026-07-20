@@ -17,7 +17,7 @@ if ! command -v cloudflared >/dev/null 2>&1; then
 fi
 
 if ! curl -sf --max-time 2 http://localhost:7070/health >/dev/null 2>&1; then
-  echo "Warning: LRK is not responding at http://localhost:7070/health"
+  echo "Warning: DRK is not responding at http://localhost:7070/health"
   echo "Start it with: docker compose -f $COMPOSE up -d"
   echo
 fi

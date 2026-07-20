@@ -348,8 +348,8 @@ export function createPartialOptions() {
 
     {
       name: "Source",
-      url: () => "https://github.com/IndigoNakamoto/lrk",
-      title: "Litecoin Research Kit",
+      url: () => "https://github.com/IndigoNakamoto/drk",
+      title: "Dogecoin Research Kit",
     },
   ];
 }

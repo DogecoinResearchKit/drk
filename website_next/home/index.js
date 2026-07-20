@@ -13,7 +13,7 @@ export function createHomePage() {
   const nav = document.createElement("nav");
 
   nav.setAttribute("aria-label", "Sections");
-  title.append("litview");
+  title.append("dogeview");
 
   for (const { href, label } of links) {
     const link = document.createElement("a");

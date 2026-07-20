@@ -1,16 +1,16 @@
-# Cloudflare Tunnel — local LRK demos
+# Cloudflare Tunnel — local DRK demos
 
-Expose your local LRK Docker instance at **litview.space** while this Mac is running. No router port forwarding required.
+Expose your local DRK Docker instance at **dogeview.space** while this Mac is running. No router port forwarding required.
 
 ```
-Visitors → Cloudflare → cloudflared (this Mac) → localhost:7070 → LRK Docker
+Visitors → Cloudflare → cloudflared (this Mac) → localhost:7070 → DRK Docker
 ```
 
 ## Prerequisites
 
-- [ ] Domain **litview.space** added to your Cloudflare account (nameservers pointed at Cloudflare)
-- [ ] Litecoin Core running with `server=1`
-- [ ] LRK indexed and serving (see [docker/README.md](../README.md))
+- [ ] Domain **dogeview.space** added to your Cloudflare account (nameservers pointed at Cloudflare)
+- [ ] Dogecoin Core running with `server=1`
+- [ ] DRK indexed and serving (see [docker/README.md](../README.md))
 - [ ] [cloudflared](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/downloads/) installed:
 
   ```bash
@@ -32,12 +32,12 @@ cd docker/cloudflared
 cloudflared tunnel login
 ```
 
-Opens a browser — pick the **litview.space** zone.
+Opens a browser — pick the **dogeview.space** zone.
 
 ### 2. Create a tunnel
 
 ```bash
-cloudflared tunnel create litview-demo
+cloudflared tunnel create dogeview-demo
 ```
 
 Note the **UUID** printed (also the `.json` filename under `~/.cloudflared/`).
@@ -63,7 +63,7 @@ Copy the credentials file into this folder (do not commit it):
 cp ~/.cloudflared/<UUID>.json ./credentials.json
 ```
 
-Hostnames in `ingress` default to `litview.space` / `www.litview.space`. Change them if you prefer a subdomain (e.g. `demo.litview.space`).
+Hostnames in `ingress` default to `dogeview.space` / `www.dogeview.space`. Change them if you prefer a subdomain (e.g. `demo.dogeview.space`).
 
 ### 4. Route DNS (once)
 
@@ -71,16 +71,16 @@ Hostnames in `ingress` default to `litview.space` / `www.litview.space`. Change 
 ./route-dns.sh
 ```
 
-Uses `TUNNEL_NAME` and `HOSTNAME` from `.env` (defaults: `litview-demo`, `litview.space`).
+Uses `TUNNEL_NAME` and `HOSTNAME` from `.env` (defaults: `dogeview-demo`, `dogeview.space`).
 
 Or manually:
 
 ```bash
-cloudflared tunnel route dns litview-demo litview.space
-cloudflared tunnel route dns litview-demo www.litview.space
+cloudflared tunnel route dns dogeview-demo dogeview.space
+cloudflared tunnel route dns dogeview-demo www.dogeview.space
 ```
 
-### 5. Start LRK
+### 5. Start DRK
 
 ```bash
 docker compose -f ../docker-compose.yml up -d
@@ -89,14 +89,14 @@ curl http://localhost:7070/health   # expect 200
 
 ## Demo day
 
-With Litecoin Core, LRK, and indexing complete:
+With Dogecoin Core, DRK, and indexing complete:
 
 ```bash
 cd docker/cloudflared
 ./start.sh
 ```
 
-Share **https://litview.space**. Stop the tunnel with `Ctrl+C` when done.
+Share **https://dogeview.space**. Stop the tunnel with `Ctrl+C` when done.
 
 ## Files
 
@@ -113,7 +113,7 @@ Share **https://litview.space**. Stop the tunnel with `Ctrl+C` when done.
 ## Troubleshooting
 
 **502 / tunnel up but site broken**
-- Confirm LRK: `curl http://localhost:7070/health`
+- Confirm DRK: `curl http://localhost:7070/health`
 - Confirm Docker port mapping is `7070:3110` in `docker-compose.yml`
 
 **DNS not resolving**
@@ -125,7 +125,7 @@ Share **https://litview.space**. Stop the tunnel with `Ctrl+C` when done.
 - Ensure `tunnel:` UUID in `config.yml` matches the credentials file
 
 **Site empty / still indexing**
-- LRK serves the web UI only after initial sync finishes. Watch progress: `docker compose -f ../docker-compose.yml logs -f`
+- DRK serves the web UI only after initial sync finishes. Watch progress: `docker compose -f ../docker-compose.yml logs -f`
 
 ## Optional: run tunnel on login
 
@@ -137,6 +137,6 @@ Point the service at `docker/cloudflared/config.yml` (see [Cloudflare docs](http
 
 ## Security notes
 
-- The tunnel exposes your full public LRK API while running.
+- The tunnel exposes your full public DRK API while running.
 - For invite-only demos, add [Cloudflare Access](https://developers.cloudflare.com/cloudflare-one/policies/access/) on the hostname.
 - Keep `credentials.json` and `config.yml` out of git (already in `.gitignore`).

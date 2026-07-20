@@ -1,6 +1,6 @@
 /** @param {string} name */
 export function createChartStorage(name) {
-  const prefix = `litview:chart-${name}`;
+  const prefix = `dogeview:chart-${name}`;
 
   return {
     /** @param {string} chartKey */

@@ -15,11 +15,13 @@ pub fn main() -> color_eyre::Result<()> {
 
     #[cfg(feature = "litecoin")]
     let chain = Chain::Litecoin;
-    #[cfg(not(feature = "litecoin"))]
+    #[cfg(all(feature = "dogecoin", not(feature = "litecoin")))]
+    let chain = Chain::Dogecoin;
+    #[cfg(all(not(feature = "litecoin"), not(feature = "dogecoin")))]
     let chain = {
         eprintln!(
-            "warning: bindgen without `litecoin` feature emits Bitcoin labels; \
-             use `cargo run --example bindgen -p brk_server --features bindgen,litecoin`"
+            "warning: bindgen without a chain feature emits Bitcoin labels; \
+             use `cargo run --example bindgen -p brk_server --features bindgen,dogecoin`"
         );
         Chain::Bitcoin
     };

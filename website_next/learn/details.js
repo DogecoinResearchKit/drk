@@ -1,4 +1,4 @@
-const storagePrefix = "litview:learn-section";
+const storagePrefix = "dogeview:learn-section";
 
 /** @param {string} id */
 function getStorageKey(id) {

@@ -3,21 +3,19 @@
 <plist version="1.0">
 <dict>
   <key>Label</key>
-  <string>com.litview.litecoin</string>
+  <string>com.dogeview.watchdog</string>
   <key>ProgramArguments</key>
   <array>
-    <string>/Users/indigo/Projects/lrk/docker/services/litecoin.sh</string>
+    <string>/Users/indigo/Projects/drk/docker/services/watchdog.sh</string>
   </array>
   <key>RunAtLoad</key>
   <true/>
-  <key>KeepAlive</key>
-  <true/>
-  <key>ThrottleInterval</key>
-  <integer>30</integer>
+  <key>StartInterval</key>
+  <integer>60</integer>
   <key>StandardOutPath</key>
-  <string>/Users/indigo/Library/Logs/litview/litecoin.out.log</string>
+  <string>/Users/indigo/Library/Logs/dogeview/watchdog.out.log</string>
   <key>StandardErrorPath</key>
-  <string>/Users/indigo/Library/Logs/litview/litecoin.err.log</string>
+  <string>/Users/indigo/Library/Logs/dogeview/watchdog.err.log</string>
   <key>EnvironmentVariables</key>
   <dict>
     <key>PATH</key>

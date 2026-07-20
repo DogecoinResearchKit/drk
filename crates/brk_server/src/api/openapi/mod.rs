@@ -196,7 +196,7 @@ All errors return structured JSON with a consistent format:
                 "UTXO Realized Price Distribution. For each (cohort, date) pair, supply is \
                 grouped by the close price at which each UTXO was last moved. One snapshot is \
                 emitted per UTC day.\n\n\
-                Each bucket carries `supply` (LTC), `realized_cap` (USD, = `price_floor * supply`), \
+                Each bucket carries `supply` (DOGE), `realized_cap` (USD, = `price_floor * supply`), \
                 and `unrealized_pnl` (USD, = `(close - price_floor) * supply`, can be negative).\n\n\
                 Aggregate with the `agg` query parameter (alias `bucket`):\n\
                 - `raw`: one bucket per rounded price (default).\n\

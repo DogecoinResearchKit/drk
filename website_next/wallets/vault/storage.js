@@ -1,7 +1,7 @@
 import { readArray, readObject } from "../read.js";
 import { encryption } from "./encryption.js";
 
-const STORAGE_KEY = "litview.wallets.v3";
+const STORAGE_KEY = "dogeview.wallets.v3";
 
 /**
  * @typedef {import("./encryption.js").EncryptedSecret} EncryptedSecret

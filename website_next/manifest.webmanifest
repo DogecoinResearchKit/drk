@@ -1,14 +1,14 @@
 {
-  "name": "litview",
-  "short_name": "litview",
-  "description": "Litecoin transparency, amplified",
-  "categories": ["litecoin", "on-chain", "data"],
+  "name": "dogeview",
+  "short_name": "dogeview",
+  "description": "Dogecoin transparency, amplified",
+  "categories": ["dogecoin", "on-chain", "data"],
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "handle_links": "preferred",
-  "theme_color": "#345D9D",
-  "background_color": "#345D9D",
+  "theme_color": "#C2A633",
+  "background_color": "#C2A633",
   "lang": "en",
   "icons": [
     {

@@ -68,12 +68,7 @@ fn validate_address_payload_for_type(addr_type: OutputType, payload: &[u8]) -> R
         OutputType::P2PK65 => &[65],
         OutputType::P2PKH | OutputType::P2SH | OutputType::P2WPKH => &[20],
         OutputType::P2WSH | OutputType::P2TR => &[32],
-        OutputType::P2MS
-        | OutputType::OpReturn
-        | OutputType::Empty
-        | OutputType::MWEBPegPool
-        | OutputType::MWEBPegIn
-        | OutputType::Unknown => {
+        OutputType::P2MS | OutputType::OpReturn | OutputType::Empty | OutputType::Unknown => {
             return Err(BrkError { message: format!("Unsupported address type for address payload hash-prefix: {addr_type:?}") });
         },
     };
@@ -100,12 +95,7 @@ fn address_payload_type_path(addr_type: OutputType) -> Result<&'static str> {
         OutputType::P2WPKH => Ok("v0_p2wpkh"),
         OutputType::P2WSH => Ok("v0_p2wsh"),
         OutputType::P2TR => Ok("v1_p2tr"),
-        OutputType::P2MS
-        | OutputType::OpReturn
-        | OutputType::Empty
-        | OutputType::MWEBPegPool
-        | OutputType::MWEBPegIn
-        | OutputType::Unknown => {
+        OutputType::P2MS | OutputType::OpReturn | OutputType::Empty | OutputType::Unknown => {
             Err(BrkError { message: format!("Unsupported address type for address payload hash-prefix: {addr_type:?}") })
         },
     }
@@ -9577,7 +9567,7 @@ impl BrkClient {
 
     /// Disk usage
     ///
-    /// Returns the disk space used by LRK and Litecoin data.
+    /// Returns the disk space used by DRK and Dogecoin data.
     ///
     /// Endpoint: `GET /api/server/disk`
     pub fn get_disk_usage(&self) -> Result<DiskUsage> {
@@ -9796,9 +9786,9 @@ impl BrkClient {
         self.base.get_json(&format!("/api/v1/difficulty-adjustment"))
     }
 
-    /// Current LTC price
+    /// Current DOGE price
     ///
-    /// Returns litecoin latest price (exchange-derived, USD only).
+    /// Returns dogecoin latest price (exchange-derived, USD only).
     ///
     /// *[Mempool.space docs](https://mempool.space/docs/api/rest#get-price)*
     ///
@@ -9809,7 +9799,7 @@ impl BrkClient {
 
     /// Historical price
     ///
-    /// Get historical LTC/USD price. Optionally specify a UNIX timestamp to get the price at that time.
+    /// Get historical DOGE/USD price. Optionally specify a UNIX timestamp to get the price at that time.
     ///
     /// *[Mempool.space docs](https://mempool.space/docs/api/rest#get-historical-price)*
     ///
@@ -9834,7 +9824,7 @@ impl BrkClient {
 
     /// Address information
     ///
-    /// Retrieve address information including balance and transaction counts. Supports all standard Litecoin address types (P2PKH, P2SH, P2WPKH, P2WSH, P2TR).
+    /// Retrieve address information including balance and transaction counts. Supports all standard Dogecoin address types (P2PKH, P2SH, P2WPKH, P2WSH, P2TR).
     ///
     /// *[Mempool.space docs](https://mempool.space/docs/api/rest#get-address)*
     ///
@@ -9900,7 +9890,7 @@ impl BrkClient {
 
     /// Validate address
     ///
-    /// Validate a Litecoin address and get information about its type and scriptPubKey. Returns `isvalid: false` with an error message for invalid addresses.
+    /// Validate a Dogecoin address and get information about its type and scriptPubKey. Returns `isvalid: false` with an error message for invalid addresses.
     ///
     /// *[Mempool.space docs](https://mempool.space/docs/api/rest#get-address-validate)*
     ///
@@ -10285,7 +10275,7 @@ impl BrkClient {
 
     /// Projected mempool blocks
     ///
-    /// Projected blocks for fee estimation. Block 0 reflects Litecoin Core's actual next-block selection; blocks 1+ are a fee-tier approximation.
+    /// Projected blocks for fee estimation. Block 0 reflects Dogecoin Core's actual next-block selection; blocks 1+ are a fee-tier approximation.
     ///
     /// *[Mempool.space docs](https://mempool.space/docs/api/rest#get-mempool-blocks-fees)*
     ///
@@ -10382,7 +10372,7 @@ impl BrkClient {
 
     /// Projected next block template
     ///
-    /// Litecoin Core's `getblocktemplate` selection: full transaction bodies in GBT order with aggregate stats. The returned `hash` is an opaque content token; pass it as `<hash>` on `/api/v1/mempool/block-template/diff/{hash}` to fetch deltas instead of refetching the whole template.
+    /// Dogecoin Core's `getblocktemplate` selection: full transaction bodies in GBT order with aggregate stats. The returned `hash` is an opaque content token; pass it as `<hash>` on `/api/v1/mempool/block-template/diff/{hash}` to fetch deltas instead of refetching the whole template.
     ///
     /// Endpoint: `GET /api/v1/mempool/block-template`
     pub fn get_block_template(&self) -> Result<BlockTemplate> {
@@ -10398,18 +10388,18 @@ impl BrkClient {
         self.base.get_json(&format!("/api/v1/mempool/block-template/diff/{hash}"))
     }
 
-    /// Live LTC/USD price
+    /// Live DOGE/USD price
     ///
-    /// Returns the current LTC/USD price in dollars, derived from on-chain round-dollar output patterns in the last 12 blocks plus mempool.
+    /// Returns the current DOGE/USD price in dollars, derived from on-chain round-dollar output patterns in the last 12 blocks plus mempool.
     ///
     /// Endpoint: `GET /api/mempool/price`
     pub fn get_live_price(&self) -> Result<Dollars> {
         self.base.get_json(&format!("/api/mempool/price"))
     }
 
-    /// Live LTC/USD price
+    /// Live DOGE/USD price
     ///
-    /// Current LTC/USD price in dollars. Same value as `/api/mempool/price`. Confirmed per-height history is available at `/api/vecs/height-to-price`.
+    /// Current DOGE/USD price in dollars. Same value as `/api/mempool/price`. Confirmed per-height history is available at `/api/vecs/height-to-price`.
     ///
     /// Endpoint: `GET /api/oracle/price`
     pub fn get_oracle_price(&self) -> Result<Dollars> {

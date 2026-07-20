@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Apply Litecoin display labels to generated client cohort constants.
+ * Apply Dogecoin display labels to generated client cohort constants.
  * Mirrors crates/brk_bindgen/src/coin_labels.rs.
  */
 
@@ -11,40 +11,40 @@ import { fileURLToPath } from "node:url";
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
 const REPLACEMENTS = [
-  ["Bitcoin Research Kit", "Litecoin Research Kit"],
-  ["Bitcoin Core", "Litecoin Core"],
-  ["Bitcoin address", "Litecoin address"],
-  ["Bitcoin block", "Litecoin block"],
-  ["Bitcoin amount", "Litecoin amount"],
-  ["Bitcoin protocol", "Litecoin protocol"],
-  ["Bitcoin network", "Litecoin network"],
-  ["Bitcoin node", "Litecoin node"],
-  ["Bitcoin consensus", "Litecoin consensus"],
-  ["Bitcoin data", "Litecoin data"],
-  ["Bitcoin primitives", "Litecoin primitives"],
-  ["bitcoin latest", "litecoin latest"],
-  ["Bitview", "Litview"],
-  ["BTC/USD", "LTC/USD"],
+  ["Bitcoin Research Kit", "Dogecoin Research Kit"],
+  ["Bitcoin Core", "Dogecoin Core"],
+  ["Bitcoin address", "Dogecoin address"],
+  ["Bitcoin block", "Dogecoin block"],
+  ["Bitcoin amount", "Dogecoin amount"],
+  ["Bitcoin protocol", "Dogecoin protocol"],
+  ["Bitcoin network", "Dogecoin network"],
+  ["Bitcoin node", "Dogecoin node"],
+  ["Bitcoin consensus", "Dogecoin consensus"],
+  ["Bitcoin data", "Dogecoin data"],
+  ["Bitcoin primitives", "Dogecoin primitives"],
+  ["bitcoin latest", "dogecoin latest"],
+  ["Bitview", "Dogeview"],
+  ["BTC/USD", "DOGE/USD"],
   [
     "satoshis (1 BTC = 100,000,000 sats)",
-    "litoshis (1 LTC = 100,000,000 lits)",
+    "koinu (1 DOGE = 100,000,000 koinu)",
   ],
   [
     "Fractional satoshis (f64) - for representing USD prices in sats",
-    "Fractional litoshis (f64) - for representing USD prices in lits",
+    "Fractional koinu (f64) - for representing USD prices in koinu",
   ],
-  ["When BTC is $100,000:", "When LTC is $100,000:"],
-  ["supply in BTC", "supply in LTC"],
-  ["in BTC.", "in LTC."],
-  ["satoshis", "litoshis"],
-  [" in sats", " in lits"],
-  [" (sats)", " (lits)"],
-  [" × sats", " × lits"],
-  [" Sats", " Lits"],
-  [" sats", " lits"],
-  [" Sat", " Lit"],
-  [" BTC", " LTC"],
-  ["BTC-weighted", "LTC-weighted"],
+  ["When BTC is $100,000:", "When DOGE is $100,000:"],
+  ["supply in BTC", "supply in DOGE"],
+  ["in BTC.", "in DOGE."],
+  ["satoshis", "koinu"],
+  [" in sats", " in koinu"],
+  [" (sats)", " (koinu)"],
+  [" × sats", " × koinu"],
+  [" Sats", " Koinu"],
+  [" sats", " koinu"],
+  [" Sat", " Koinu"],
+  [" BTC", " DOGE"],
+  ["BTC-weighted", "DOGE-weighted"],
 ];
 
 const COHORT_CONSTANTS = [
@@ -66,8 +66,8 @@ const COHORT_CONSTANTS = [
 
 /** @param {string} text */
 function relabelDisplayText(text) {
-  if (text === "0 sats") return "0 litoshis";
-  if (text === "0 Sats") return "0 Litoshis";
+  if (text === "0 sats") return "0 koinu";
+  if (text === "0 Sats") return "0 Koinu";
 
   let out = text;
   for (const [from, to] of REPLACEMENTS) {
@@ -194,4 +194,4 @@ for (const name of COHORT_CONSTANTS) {
 }
 fs.writeFileSync(pyPath, py);
 
-console.log("Relabeled cohort constants in JS and Python clients");
+console.log("Relabeled cohort constants in JS and Python clients (Dogecoin)");

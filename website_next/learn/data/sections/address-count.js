@@ -20,7 +20,7 @@ const line = /** @type {const} */ ("line");
 export const addressCountSection = {
   title: "Address Count",
   description:
-    "Address count measures Litecoin addresses, not people or entities. A funded address currently has a non-zero balance, while empty addresses have received or spent coins before but no longer hold LTC. These charts show how the address set grows, turns over, and distributes across balances and script types.",
+    "Address count measures Dogecoin addresses, not people or entities. A funded address currently has a non-zero balance, while empty addresses have received or spent coins before but no longer hold DOGE. These charts show how the address set grows, turns over, and distributes across balances and script types.",
   chart: {
     title: "Funded addresses",
     unit: units.addresses,
@@ -133,7 +133,7 @@ export const addressCountSection = {
         {
           title: "State",
           description:
-            "Splits addresses into funded, empty, and total counts. Funded addresses currently hold LTC; empty addresses have no current balance; total includes both.",
+            "Splits addresses into funded, empty, and total counts. Funded addresses currently hold DOGE; empty addresses have no current balance; total includes both.",
           chart: {
             title: "Address count by state",
             unit: units.addresses,
@@ -144,7 +144,7 @@ export const addressCountSection = {
         {
           title: "Balance",
           description:
-            "Groups funded addresses by the LTC amount held at each address. Addresses are not people or entities, but this still shows how address balances are distributed on-chain.",
+            "Groups funded addresses by the DOGE amount held at each address. Addresses are not people or entities, but this still shows how address balances are distributed on-chain.",
           chart: {
             title: "Address count by balance",
             unit: units.addresses,

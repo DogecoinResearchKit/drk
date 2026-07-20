@@ -9,8 +9,8 @@ if [[ -f .env ]]; then
   source .env
 fi
 
-TUNNEL_NAME="${TUNNEL_NAME:-litview-demo}"
-HOSTNAME="${HOSTNAME:-litview.space}"
+TUNNEL_NAME="${TUNNEL_NAME:-dogeview-demo}"
+HOSTNAME="${HOSTNAME:-dogeview.space}"
 
 if ! command -v cloudflared >/dev/null 2>&1; then
   echo "cloudflared is not installed. Run: brew install cloudflared"

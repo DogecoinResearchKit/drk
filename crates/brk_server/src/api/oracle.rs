@@ -30,9 +30,9 @@ impl OracleRoutes for ApiRouter<AppState> {
                 |op| {
                     op.id("get_oracle_price")
                         .oracle_tag()
-                        .summary("Live LTC/USD price")
+                        .summary("Live DOGE/USD price")
                         .description(
-                            "Current LTC/USD price in dollars. Same value as \
+                            "Current DOGE/USD price in dollars. Same value as \
                             `/api/mempool/price`. Confirmed per-height history is available at \
                             `/api/vecs/height-to-price`.",
                         )

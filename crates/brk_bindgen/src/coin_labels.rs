@@ -1,25 +1,24 @@
 //! Chain-specific display labels for generated client docs and cohort names.
 //!
 //! Internal type and field names stay Bitcoin-compatible (`Sats`, `price_sats`, …).
-//! Only user-facing `short`/`long` cohort labels and schema descriptions are relabeled.
+//! Only user-facing `short`/`long` cohort labels and schema descriptions are
+//! relabeled: Litecoin uses `lits`/`litoshis`/`LTC`, Dogecoin uses `koinu`/`DOGE`.
 
 use brk_chain::Chain;
 use serde_json::Value;
 
-/// Replace Bitcoin-centric display copy with Litecoin terms.
+/// Replace Bitcoin-centric display copy with the active chain's terms.
 pub fn relabel_display_text(text: &str, chain: Chain) -> String {
-    if chain == Chain::Bitcoin {
+    let Some(replacements) = display_replacements(chain) else {
         return text.to_string();
-    }
+    };
 
-    match text {
-        "0 sats" => return "0 litoshis".to_string(),
-        "0 Sats" => return "0 Litoshis".to_string(),
-        _ => {}
+    if let Some(zero) = zero_amount_override(text, chain) {
+        return zero;
     }
 
     let mut out = text.to_string();
-    for (from, to) in LITECOIN_DISPLAY_REPLACEMENTS {
+    for (from, to) in replacements {
         if out.contains(from) {
             out = out.replace(from, to);
         }
@@ -27,9 +26,33 @@ pub fn relabel_display_text(text: &str, chain: Chain) -> String {
     out
 }
 
+/// The Bitcoin→chain display replacement table, or `None` for Bitcoin itself.
+fn display_replacements(chain: Chain) -> Option<&'static [(&'static str, &'static str)]> {
+    match chain {
+        Chain::Bitcoin => None,
+        Chain::Litecoin => Some(LITECOIN_DISPLAY_REPLACEMENTS),
+        Chain::Dogecoin => Some(DOGECOIN_DISPLAY_REPLACEMENTS),
+    }
+}
+
+/// The plain "0 sats" / "0 Sats" strings skip the substring table so the number
+/// stays glued to the unit; map them to the chain's smallest-unit spelling.
+fn zero_amount_override(text: &str, chain: Chain) -> Option<String> {
+    let (lower, upper) = match chain {
+        Chain::Bitcoin => return None,
+        Chain::Litecoin => ("0 litoshis", "0 Litoshis"),
+        Chain::Dogecoin => ("0 koinu", "0 Koinu"),
+    };
+    match text {
+        "0 sats" => Some(lower.to_string()),
+        "0 Sats" => Some(upper.to_string()),
+        _ => None,
+    }
+}
+
 /// Relabel cohort constant JSON (`short` / `long` fields only; `id` stays stable).
 pub fn relabel_cohort_constants(value: Value, chain: Chain) -> Value {
-    if chain == Chain::Bitcoin {
+    if display_replacements(chain).is_none() {
         return value;
     }
 
@@ -58,7 +81,7 @@ pub fn relabel_cohort_constants(value: Value, chain: Chain) -> Value {
 
 /// Relabel every OpenAPI `description` field for chain-specific client docs.
 pub fn relabel_openapi_descriptions(value: &mut Value, chain: Chain) {
-    if chain == Chain::Bitcoin {
+    if display_replacements(chain).is_none() {
         return;
     }
 
@@ -114,6 +137,44 @@ const LITECOIN_DISPLAY_REPLACEMENTS: &[(&str, &str)] = &[
     (" sats", " lits"),
     (" Sat", " Lit"),
     (" BTC", " LTC"),
+    ("BTC-weighted", "LTC-weighted"),
+];
+
+const DOGECOIN_DISPLAY_REPLACEMENTS: &[(&str, &str)] = &[
+    ("Bitcoin Research Kit", "Dogecoin Research Kit"),
+    ("Bitcoin Core", "Dogecoin Core"),
+    ("Bitcoin address", "Dogecoin address"),
+    ("Bitcoin block", "Dogecoin block"),
+    ("Bitcoin amount", "Dogecoin amount"),
+    ("Bitcoin protocol", "Dogecoin protocol"),
+    ("Bitcoin network", "Dogecoin network"),
+    ("Bitcoin node", "Dogecoin node"),
+    ("Bitcoin consensus", "Dogecoin consensus"),
+    ("Bitcoin data", "Dogecoin data"),
+    ("Bitcoin primitives", "Dogecoin primitives"),
+    ("bitcoin latest", "dogecoin latest"),
+    ("Bitview", "Dogeview"),
+    ("BTC/USD", "DOGE/USD"),
+    (
+        "satoshis (1 BTC = 100,000,000 sats)",
+        "koinu (1 DOGE = 100,000,000 koinu)",
+    ),
+    (
+        "Fractional satoshis (f64) - for representing USD prices in sats",
+        "Fractional koinu (f64) - for representing USD prices in koinu",
+    ),
+    ("When BTC is $100,000:", "When DOGE is $100,000:"),
+    ("supply in BTC", "supply in DOGE"),
+    ("in BTC.", "in DOGE."),
+    ("satoshis", "koinu"),
+    (" in sats", " in koinu"),
+    (" (sats)", " (koinu)"),
+    (" × sats", " × koinu"),
+    (" Sats", " Koinu"),
+    (" sats", " koinu"),
+    (" Sat", " Koinu"),
+    (" BTC", " DOGE"),
+    ("BTC-weighted", "DOGE-weighted"),
 ];
 
 #[cfg(test)]
@@ -151,6 +212,29 @@ mod tests {
         assert_eq!(
             relabel_display_text("1-10 sats", Chain::Bitcoin),
             "1-10 sats"
+        );
+    }
+
+    #[test]
+    fn relabels_dogecoin_amount_labels() {
+        assert_eq!(
+            relabel_display_text("1-10 sats", Chain::Dogecoin),
+            "1-10 koinu"
+        );
+        assert_eq!(
+            relabel_display_text("100k+ BTC", Chain::Dogecoin),
+            "100k+ DOGE"
+        );
+        assert_eq!(
+            relabel_display_text("0 sats", Chain::Dogecoin),
+            "0 koinu"
+        );
+        assert_eq!(
+            relabel_display_text(
+                "Amount in satoshis (1 BTC = 100,000,000 sats)",
+                Chain::Dogecoin
+            ),
+            "Amount in koinu (1 DOGE = 100,000,000 koinu)"
         );
     }
 

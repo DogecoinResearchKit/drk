@@ -78,11 +78,11 @@ export async function update(address, signal) {
 
     const values = [
       address,
-      `${formatBtc(balance)} LTC${fmtUsd(balance)}`,
-      `${pending >= 0 ? "+" : ""}${formatBtc(pending)} LTC${fmtUsd(pending)}`,
+      `${formatBtc(balance)} DOGE${fmtUsd(balance)}`,
+      `${pending >= 0 ? "+" : ""}${formatBtc(pending)} DOGE${fmtUsd(pending)}`,
       confirmedUtxos.toLocaleString(),
       pendingUtxos.toLocaleString(),
-      `${formatBtc(chain.fundedTxoSum)} LTC`,
+      `${formatBtc(chain.fundedTxoSum)} DOGE`,
       chain.txCount.toLocaleString(),
       stats.addrType.replace(/^v\d+_/, "").toUpperCase(),
       chain.realizedPrice

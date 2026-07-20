@@ -196,9 +196,9 @@ impl MempoolRoutes for ApiRouter<AppState> {
                 |op| {
                     op.id("get_live_price")
                         .mempool_tag()
-                        .summary("Live LTC/USD price")
+                        .summary("Live DOGE/USD price")
                         .description(
-                            "Returns the current LTC/USD price in dollars, derived from \
+                            "Returns the current DOGE/USD price in dollars, derived from \
                             on-chain round-dollar output patterns in the last 12 blocks \
                             plus mempool.",
                         )

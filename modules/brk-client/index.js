@@ -4,12 +4,12 @@
 // Type definitions
 
 /**
- * Litecoin address string
+ * Dogecoin address string
  *
  * @typedef {string} Addr
  */
 /**
- * Litecoin address + last-seen txid path parameters (Esplora-style pagination)
+ * Dogecoin address + last-seen txid path parameters (Esplora-style pagination)
  *
  * @typedef {Object} AddrAfterTxidParam
  * @property {Addr} address
@@ -22,9 +22,9 @@
  *
  * @typedef {Object} AddrChainStats
  * @property {number} fundedTxoCount - Total number of transaction outputs that funded this address
- * @property {Sats} fundedTxoSum - Total amount in litoshis received by this address across all funded outputs
+ * @property {Sats} fundedTxoSum - Total amount in koinu received by this address across all funded outputs
  * @property {number} spentTxoCount - Total number of transaction outputs spent from this address
- * @property {Sats} spentTxoSum - Total amount in litoshis spent from this address
+ * @property {Sats} spentTxoSum - Total amount in koinu spent from this address
  * @property {number} txCount - Total number of confirmed transactions involving this address
  * @property {TypeIndex} typeIndex - Index of this address within its type on the blockchain
  * @property {Dollars} realizedPrice - Realized price (average cost basis) in USD
@@ -48,13 +48,13 @@
  *
  * @typedef {Object} AddrMempoolStats
  * @property {number} fundedTxoCount - Number of unconfirmed transaction outputs funding this address
- * @property {Sats} fundedTxoSum - Total amount in litoshis being received in unconfirmed transactions
+ * @property {Sats} fundedTxoSum - Total amount in koinu being received in unconfirmed transactions
  * @property {number} spentTxoCount - Number of unconfirmed transaction inputs spending from this address
- * @property {Sats} spentTxoSum - Total amount in litoshis being spent in unconfirmed transactions
+ * @property {Sats} spentTxoSum - Total amount in koinu being spent in unconfirmed transactions
  * @property {number} txCount - Number of unconfirmed transactions involving this address
  */
 /**
- * Litecoin address path parameter
+ * Dogecoin address path parameter
  *
  * @typedef {Object} AddrParam
  * @property {Addr} address
@@ -63,7 +63,7 @@
  * Address information compatible with mempool.space API format
  *
  * @typedef {Object} AddrStats
- * @property {Addr} address - Litecoin address string
+ * @property {Addr} address - Dogecoin address string
  * @property {OutputType} addrType - Address type (p2pkh, p2sh, v0_p2wpkh, v0_p2wsh, v1_p2tr, etc.)
  * @property {AddrChainStats} chainStats - Statistics for confirmed transactions on the blockchain
  * @property {AddrMempoolStats} mempoolStats - Statistics for unconfirmed transactions in the mempool
@@ -120,7 +120,7 @@
  * @typedef {number} BasisPointsSigned32
  */
 /**
- * Litecoin amount as floating point (1 LTC = 100,000,000 litoshis)
+ * Dogecoin amount as floating point (1 DOGE = 100,000,000 koinu)
  *
  * @typedef {number} Bitcoin
  */
@@ -134,12 +134,12 @@
  * Extended block data matching mempool.space /api/v1/blocks extras
  *
  * @typedef {Object} BlockExtras
- * @property {Sats} totalFees - Total fees in litoshis
+ * @property {Sats} totalFees - Total fees in koinu
  * @property {FeeRate} medianFee - Median fee rate in sat/vB
  * @property {FeeRate[]} feeRange - Fee rate range: [min, 10%, 25%, 50%, 75%, 90%, max]
- * @property {Sats} reward - Total block reward (subsidy + fees) in litoshis
+ * @property {Sats} reward - Total block reward (subsidy + fees) in koinu
  * @property {BlockPool} pool - Mining pool that mined this block
- * @property {Sats} avgFee - Average fee per transaction in litoshis
+ * @property {Sats} avgFee - Average fee per transaction in koinu
  * @property {FeeRate} avgFeeRate - Average fee rate in sat/vB
  * @property {string} coinbaseRaw - Raw coinbase transaction scriptsig as hex
  * @property {?string=} coinbaseAddress - Primary coinbase output address
@@ -149,9 +149,9 @@
  * @property {number} avgTxSize - Average transaction size in bytes
  * @property {number} totalInputs - Total number of inputs (excluding coinbase)
  * @property {number} totalOutputs - Total number of outputs
- * @property {Sats} totalOutputAmt - Total output amount in litoshis
- * @property {Sats} medianFeeAmt - Median fee amount in litoshis
- * @property {Sats[]} feePercentiles - Fee amount percentiles in litoshis: [min, 10%, 25%, 50%, 75%, 90%, max]
+ * @property {Sats} totalOutputAmt - Total output amount in koinu
+ * @property {Sats} medianFeeAmt - Median fee amount in koinu
+ * @property {Sats[]} feePercentiles - Fee amount percentiles in koinu: [min, 10%, 25%, 50%, 75%, 90%, max]
  * @property {number} segwitTotalTxs - Number of segwit transactions
  * @property {number} segwitTotalSize - Total size of segwit transactions in bytes
  * @property {Weight} segwitTotalWeight - Total weight of segwit transactions
@@ -160,7 +160,7 @@
 Note: intentionally differs from utxo_set_size diff which excludes unspendable outputs.
 Matches mempool.space/bitcoin-cli behavior.
  * @property {number} utxoSetSize - Total spendable UTXO set size at this height (excludes OP_RETURN and other unspendable outputs)
- * @property {Sats} totalInputAmt - Total input amount in litoshis
+ * @property {Sats} totalInputAmt - Total input amount in koinu
  * @property {number} virtualSize - Virtual size in vbytes
  * @property {?number=} firstSeen - Timestamp when the block was first seen (always null, not yet supported)
  * @property {string[]} orphans - Orphaned blocks (always empty)
@@ -186,8 +186,8 @@ Matches mempool.space/bitcoin-cli behavior.
  * @typedef {Object} BlockFeesEntry
  * @property {Height} avgHeight - Average block height in this window
  * @property {Timestamp} timestamp - Unix timestamp at the window midpoint
- * @property {Sats} avgFees - Average fees per block in this window (lits)
- * @property {Dollars} uSD - LTC/USD price at this height
+ * @property {Sats} avgFees - Average fees per block in this window (koinu)
+ * @property {Dollars} uSD - DOGE/USD price at this height
  */
 /**
  * Block hash
@@ -204,14 +204,14 @@ Matches mempool.space/bitcoin-cli behavior.
  * Block hash + starting transaction index path parameters
  *
  * @typedef {Object} BlockHashStartIndex
- * @property {BlockHash} hash - Litecoin block hash
+ * @property {BlockHash} hash - Dogecoin block hash
  * @property {BlockTxIndex} startIndex - Starting transaction index within the block (0-based)
  */
 /**
  * Block hash + transaction index path parameters
  *
  * @typedef {Object} BlockHashTxIndex
- * @property {BlockHash} hash - Litecoin block hash
+ * @property {BlockHash} hash - Dogecoin block hash
  * @property {BlockTxIndex} index - Transaction index within the block (0-based)
  */
 /**
@@ -268,8 +268,8 @@ Matches mempool.space/bitcoin-cli behavior.
  * @typedef {Object} BlockRewardsEntry
  * @property {Height} avgHeight - Average block height in this window
  * @property {Timestamp} timestamp - Unix timestamp at the window midpoint
- * @property {Sats} avgRewards - Average coinbase reward per block (subsidy + fees, lits)
- * @property {Dollars} uSD - LTC/USD price at this height
+ * @property {Sats} avgRewards - Average coinbase reward per block (subsidy + fees, koinu)
+ * @property {Dollars} uSD - DOGE/USD price at this height
  */
 /**
  * A single block size data point.
@@ -295,7 +295,7 @@ Matches mempool.space/bitcoin-cli behavior.
  * @property {(BlockHash|null)=} nextBest - Hash of the next block in the best chain (null if tip)
  */
 /**
- * Projected next-block contents from Litecoin Core's `getblocktemplate`
+ * Projected next-block contents from Dogecoin Core's `getblocktemplate`
  * (block 0 of the snapshot). Returned by
  * `GET /api/v1/mempool/block-template`.
  *
@@ -486,7 +486,7 @@ This is the seed's chunk feerate after lift-merging, i.e. the
 rate Core/mempool.space would surface for this tx.
  * @property {SigOps} sigops - BIP-141 sigop cost for the seed tx (witness sigops count as 1,
 legacy and P2SH-redeem sigops count as 4).
- * @property {Sats} fee - Transaction fee (lits).
+ * @property {Sats} fee - Transaction fee (koinu).
  * @property {VSize} vsize - Virtual size of the seed tx (vbytes).
  * @property {VSize} adjustedVsize - Policy-adjusted virtual size: `max(vsize, sigops * 5)`.
  * @property {(CpfpCluster|null)=} cluster - Cluster the seed belongs to: full tx list, SFL-linearized chunks,
@@ -644,15 +644,15 @@ ancestors and no descendants (matches mempool.space).
  * @property {string} status - Health status ("healthy")
  * @property {string} service - Service name
  * @property {string} version - Server version
- * @property {string} chain - Active chain ("bitcoin" or "litecoin")
- * @property {string} ticker - Active chain ticker symbol ("BTC" or "LTC")
- * @property {string} coinName - Active chain display name ("Bitcoin" or "Litecoin")
+ * @property {string} chain - Active chain ("bitcoin" or "dogecoin")
+ * @property {string} ticker - Active chain ticker symbol ("BTC" or "DOGE")
+ * @property {string} coinName - Active chain display name ("Bitcoin" or "Dogecoin")
  * @property {string} timestamp - Current server time (ISO 8601)
  * @property {string} startedAt - Server start time (ISO 8601)
  * @property {number} uptimeSeconds - Uptime in seconds
  * @property {Height} indexedHeight - Height of the last indexed block
  * @property {Height} computedHeight - Height of the last computed block (series)
- * @property {Height} tipHeight - Height of the chain tip (from Litecoin node)
+ * @property {Height} tipHeight - Height of the chain tip (from Dogecoin node)
  * @property {Height} blocksBehind - Number of blocks behind the tip
  * @property {string} lastIndexedAt - Human-readable timestamp of the last indexed block (ISO 8601)
  * @property {Timestamp} lastIndexedAtUnix - Unix timestamp of the last indexed block
@@ -700,7 +700,7 @@ ancestors and no descendants (matches mempool.space).
  *
  * @typedef {Object} HistoricalPriceEntry
  * @property {Timestamp} time - Unix timestamp
- * @property {Dollars} uSD - LTC/USD price
+ * @property {Dollars} uSD - DOGE/USD price
  */
 /** @typedef {number} Hour1 */
 /** @typedef {number} Hour12 */
@@ -748,7 +748,7 @@ ancestors and no descendants (matches mempool.space).
  * @property {number} blockSize - Total serialized block size in bytes (witness + non-witness).
  * @property {number} blockVSize - Total block virtual size in vbytes
  * @property {number} nTx - Number of transactions in the projected block
- * @property {Sats} totalFees - Total fees in litoshis
+ * @property {Sats} totalFees - Total fees in koinu
  * @property {FeeRate} medianFee - Median fee rate in sat/vB
  * @property {FeeRate[]} feeRange - Fee rate range: [min, 10%, 25%, 50%, 75%, 90%, max]
  */
@@ -758,7 +758,7 @@ ancestors and no descendants (matches mempool.space).
  * @typedef {Object} MempoolInfo
  * @property {number} count - Number of transactions in the mempool
  * @property {VSize} vsize - Total virtual size of all transactions in the mempool (vbytes)
- * @property {Sats} totalFee - Total fees of all transactions in the mempool (litoshis)
+ * @property {Sats} totalFee - Total fees of all transactions in the mempool (koinu)
  * @property {{ [key: string]: VSize }} feeHistogram - Fee histogram: `[[fee_rate, vsize], ...]` sorted by descending fee rate
  */
 /**
@@ -766,9 +766,9 @@ ancestors and no descendants (matches mempool.space).
  *
  * @typedef {Object} MempoolRecentTx
  * @property {Txid} txid - Transaction ID
- * @property {Sats} fee - Transaction fee (lits)
+ * @property {Sats} fee - Transaction fee (koinu)
  * @property {VSize} vsize - Virtual size (vbytes)
- * @property {Sats} value - Total output value (lits)
+ * @property {Sats} value - Total output value (koinu)
  */
 /**
  * Merkle inclusion proof for a transaction
@@ -980,7 +980,7 @@ ancestors and no descendants (matches mempool.space).
  *
  * @typedef {Object} Prices
  * @property {Timestamp} time - Unix timestamp
- * @property {Dollars} uSD - LTC/USD price
+ * @property {Dollars} uSD - DOGE/USD price
  */
 /**
  * A range boundary: integer index, date, or timestamp.
@@ -1048,12 +1048,12 @@ on serialization otherwise.
  * @typedef {Object} RewardStats
  * @property {Height} startBlock - First block in the range
  * @property {Height} endBlock - Last block in the range
- * @property {Sats} totalReward - Total coinbase rewards (subsidy + fees) in lits
- * @property {Sats} totalFee - Total transaction fees in lits
+ * @property {Sats} totalReward - Total coinbase rewards (subsidy + fees) in koinu
+ * @property {Sats} totalFee - Total transaction fees in koinu
  * @property {number} totalTx - Total number of transactions
  */
 /**
- * Amount in litoshis (1 LTC = 100,000,000 lits)
+ * Amount in koinu (1 DOGE = 100,000,000 koinu)
  *
  * @typedef {number} Sats
  */
@@ -1197,7 +1197,7 @@ on serialization otherwise.
  * @typedef {Object} SyncStatus
  * @property {Height} indexedHeight - Height of the last indexed block
  * @property {Height} computedHeight - Height of the last computed block (series)
- * @property {Height} tipHeight - Height of the chain tip (from Litecoin node)
+ * @property {Height} tipHeight - Height of the chain tip (from Dogecoin node)
  * @property {Height} blocksBehind - Number of blocks behind the tip
  * @property {string} lastIndexedAt - Human-readable timestamp of the last indexed block (ISO 8601)
  * @property {Timestamp} lastIndexedAtUnix - Unix timestamp of the last indexed block
@@ -1233,14 +1233,14 @@ on serialization otherwise.
  * @typedef {Object} Transaction
  * @property {(TxIndex|null)=} index - Internal transaction index (brk-specific, not in mempool.space)
  * @property {Txid} txid - Transaction ID
- * @property {TxVersionRaw} version - Transaction version (raw i32 from Litecoin protocol, may contain non-standard values in coinbase txs)
+ * @property {TxVersionRaw} version - Transaction version (raw i32 from Dogecoin protocol, may contain non-standard values in coinbase txs)
  * @property {RawLockTime} locktime - Transaction lock time
  * @property {TxIn[]} vin - Transaction inputs
  * @property {TxOut[]} vout - Transaction outputs
  * @property {number} size - Transaction size in bytes
  * @property {Weight} weight - Transaction weight
  * @property {SigOps} sigops - Number of signature operations
- * @property {Sats} fee - Transaction fee in litoshis
+ * @property {Sats} fee - Transaction fee in koinu
  * @property {TxStatus} status - Confirmation status (confirmed, block height/hash/time)
  */
 /**
@@ -1281,7 +1281,7 @@ on serialization otherwise.
  *
  * @typedef {Object} TxOut
  * @property {string} scriptpubkey - Script pubkey (locking script)
- * @property {Sats} value - Value of the output in litoshis
+ * @property {Sats} value - Value of the output in koinu
  */
 /** @typedef {number} TxOutIndex */
 /**
@@ -1308,7 +1308,7 @@ on serialization otherwise.
  * @typedef {number} TxVersion
  */
 /**
- * Raw transaction version (i32) from Litecoin protocol.
+ * Raw transaction version (i32) from Dogecoin protocol.
  * Unlike TxVersion (u8, indexed), this preserves non-standard values
  * used in coinbase txs for miner signaling/branding.
  *
@@ -1358,7 +1358,7 @@ on serialization otherwise.
  * UTXO Realized Price Distribution for a cohort on a specific date.
  *
  * Supply is grouped by the close price at which each UTXO was last moved.
- * Each bucket exposes three values: supply in LTC, realized cap contribution
+ * Each bucket exposes three values: supply in DOGE, realized cap contribution
  * in USD (sum of `realized_price * supply` over the coins in the bucket), and
  * unrealized P&L in USD (`close * supply - realized_cap`, can be negative).
  *
@@ -1367,7 +1367,7 @@ on serialization otherwise.
  * @property {Date} date
  * @property {UrpdAggregation} aggregation - Aggregation strategy applied to the buckets.
  * @property {Dollars} close - Close price on `date`, in USD. Anchor for `unrealized_pnl`.
- * @property {Bitcoin} totalSupply - Sum of `supply` across all buckets, in LTC.
+ * @property {Bitcoin} totalSupply - Sum of `supply` across all buckets, in DOGE.
  * @property {UrpdBucket[]} buckets
  */
 /**
@@ -1382,7 +1382,7 @@ on serialization otherwise.
  *
  * @typedef {Object} UrpdBucket
  * @property {Dollars} priceFloor - Lower bound of the bucket, in USD. Equals the exact realized price for `Raw`.
- * @property {Bitcoin} supply - Supply held with a last-move price inside this bucket, in LTC.
+ * @property {Bitcoin} supply - Supply held with a last-move price inside this bucket, in DOGE.
  * @property {Dollars} realizedCap - Realized cap contribution in USD: sum of `realized_price * supply` over the coins in this bucket.
  * @property {Dollars} unrealizedPnl - Unrealized P&L in USD against the close on the snapshot date: `close * supply - realized_cap`. Can be negative.
  */
@@ -1412,7 +1412,7 @@ on serialization otherwise.
  * @property {Txid} txid - Transaction ID of the UTXO
  * @property {Vout} vout - Output index
  * @property {TxStatus} status - Confirmation status
- * @property {Sats} value - Output value in litoshis
+ * @property {Sats} value - Output value in koinu
  */
 /**
  * Virtual size in vbytes (weight / 4, rounded up). Max block vsize is ~1,000,000 vB.
@@ -1421,7 +1421,7 @@ on serialization otherwise.
  */
 /**
  * @typedef {Object} ValidateAddrParam
- * @property {string} address - Litecoin address to validate (can be any string)
+ * @property {string} address - Dogecoin address to validate (can be any string)
  */
 /**
  * Version tracking for data schema and computed values.
@@ -1453,7 +1453,7 @@ on serialization otherwise.
  *
  * Wraps `bitcoin::Witness` (single-buffer layout with offsets, much
  * more compact than `Vec<Vec<u8>>`). Serializes as a JSON array of
- * hex strings - the format used by Litecoin Core REST and mempool.space
+ * hex strings - the format used by Dogecoin Core REST and mempool.space
  * and matching brk's `script_sig: ScriptBuf` (bytes internally, hex
  * on the wire).
  *
@@ -1523,11 +1523,11 @@ class BrkError extends Error {
 }
 
 // Date conversion constants and helpers
-const _GENESIS = new Date(2011, 0, 1);  // day1 0, week1 0
-const _DAY_ONE = new Date(2011, 0, 2);  // day1 1
+const _GENESIS = new Date(2013, 0, 1);  // day1 0, week1 0
+const _DAY_ONE = new Date(2013, 0, 2);  // day1 1
 const _MS_PER_DAY = 86400000;
 const _MS_PER_WEEK = 7 * _MS_PER_DAY;
-const _EPOCH_MS = 1293840000000;
+const _EPOCH_MS = 1356998400000;
 const _DATE_INDEXES = new Set([
   'minute10', 'minute30',
   'hour1', 'hour4', 'hour12',
@@ -1537,7 +1537,7 @@ const _DATE_INDEXES = new Set([
 ]);
 
 /** @param {number} months @returns {globalThis.Date} */
-const _addMonths = (months) => new Date(2011, 0 + months, 1);
+const _addMonths = (months) => new Date(2013, 0 + months, 1);
 
 /**
  * Convert an index value to a Date for date-based indexes.
@@ -1558,8 +1558,8 @@ function indexToDate(index, i) {
     case 'month1': return _addMonths(i);
     case 'month3': return _addMonths(i * 3);
     case 'month6': return _addMonths(i * 6);
-    case 'year1': return new Date(2011 + i, 0, 1);
-    case 'year10': return new Date(2011 + i * 10, 0, 1);
+    case 'year1': return new Date(2013 + i, 0, 1);
+    case 'year10': return new Date(2013 + i * 10, 0, 1);
     default: throw new Error(`${index} is not a date-based index`);
   }
 }
@@ -1585,11 +1585,11 @@ function dateToIndex(index, d) {
     }
     case 'day3': return Math.floor((ms - _EPOCH_MS + 86400000) / 259200000);
     case 'week1': return Math.floor((ms - _GENESIS.getTime()) / _MS_PER_WEEK);
-    case 'month1': return (d.getFullYear() - 2011) * 12 + (d.getMonth() - 0);
-    case 'month3': return (d.getFullYear() - 2011) * 4 + Math.floor((d.getMonth() - 0) / 3);
-    case 'month6': return (d.getFullYear() - 2011) * 2 + Math.floor((d.getMonth() - 0) / 6);
-    case 'year1': return d.getFullYear() - 2011;
-    case 'year10': return Math.floor((d.getFullYear() - 2011) / 10);
+    case 'month1': return (d.getFullYear() - 2013) * 12 + (d.getMonth() - 0);
+    case 'month3': return (d.getFullYear() - 2013) * 4 + Math.floor((d.getMonth() - 0) / 3);
+    case 'month6': return (d.getFullYear() - 2013) * 2 + Math.floor((d.getMonth() - 0) / 6);
+    case 'year1': return d.getFullYear() - 2013;
+    case 'year10': return Math.floor((d.getFullYear() - 2013) / 10);
     default: throw new Error(`${index} is not a date-based index`);
   }
 }
@@ -8571,214 +8571,214 @@ class BrkClient extends BrkClientBase {
   AMOUNT_RANGE_NAMES = /** @type {const} */ ({
     "_0sats": {
       "id": "0sats",
-      "short": "0 litoshis",
-      "long": "0 Litoshis"
+      "short": "0 koinu",
+      "long": "0 Koinu"
     },
     "_1satTo10sats": {
       "id": "1sat_to_10sats",
-      "short": "1-10 lits",
-      "long": "1-10 Lits"
+      "short": "1-10 koinu",
+      "long": "1-10 Koinu"
     },
     "_10satsTo100sats": {
       "id": "10sats_to_100sats",
-      "short": "10-100 lits",
-      "long": "10-100 Lits"
+      "short": "10-100 koinu",
+      "long": "10-100 Koinu"
     },
     "_100satsTo1kSats": {
       "id": "100sats_to_1k_sats",
-      "short": "100-1k lits",
-      "long": "100-1K Lits"
+      "short": "100-1k koinu",
+      "long": "100-1K Koinu"
     },
     "_1kSatsTo10kSats": {
       "id": "1k_sats_to_10k_sats",
-      "short": "1k-10k lits",
-      "long": "1K-10K Lits"
+      "short": "1k-10k koinu",
+      "long": "1K-10K Koinu"
     },
     "_10kSatsTo100kSats": {
       "id": "10k_sats_to_100k_sats",
-      "short": "10k-100k lits",
-      "long": "10K-100K Lits"
+      "short": "10k-100k koinu",
+      "long": "10K-100K Koinu"
     },
     "_100kSatsTo1mSats": {
       "id": "100k_sats_to_1m_sats",
-      "short": "100k-1M lits",
-      "long": "100K-1M Lits"
+      "short": "100k-1M koinu",
+      "long": "100K-1M Koinu"
     },
     "_1mSatsTo10mSats": {
       "id": "1m_sats_to_10m_sats",
-      "short": "1M-10M lits",
-      "long": "1M-10M Lits"
+      "short": "1M-10M koinu",
+      "long": "1M-10M Koinu"
     },
     "_10mSatsTo1btc": {
       "id": "10m_sats_to_1btc",
-      "short": "0.1-1 LTC",
-      "long": "0.1-1 LTC"
+      "short": "0.1-1 DOGE",
+      "long": "0.1-1 DOGE"
     },
     "_1btcTo10btc": {
       "id": "1btc_to_10btc",
-      "short": "1-10 LTC",
-      "long": "1-10 LTC"
+      "short": "1-10 DOGE",
+      "long": "1-10 DOGE"
     },
     "_10btcTo100btc": {
       "id": "10btc_to_100btc",
-      "short": "10-100 LTC",
-      "long": "10-100 LTC"
+      "short": "10-100 DOGE",
+      "long": "10-100 DOGE"
     },
     "_100btcTo1kBtc": {
       "id": "100btc_to_1k_btc",
-      "short": "100-1k LTC",
-      "long": "100-1K LTC"
+      "short": "100-1k DOGE",
+      "long": "100-1K DOGE"
     },
     "_1kBtcTo10kBtc": {
       "id": "1k_btc_to_10k_btc",
-      "short": "1k-10k LTC",
-      "long": "1K-10K LTC"
+      "short": "1k-10k DOGE",
+      "long": "1K-10K DOGE"
     },
     "_10kBtcTo100kBtc": {
       "id": "10k_btc_to_100k_btc",
-      "short": "10k-100k LTC",
-      "long": "10K-100K LTC"
+      "short": "10k-100k DOGE",
+      "long": "10K-100K DOGE"
     },
     "over100kBtc": {
       "id": "over_100k_btc",
-      "short": "100k+ LTC",
-      "long": "100K+ LTC"
+      "short": "100k+ DOGE",
+      "long": "100K+ DOGE"
     }
   });
 
   OVER_AMOUNT_NAMES = /** @type {const} */ ({
     "_1sat": {
       "id": "over_1sat",
-      "short": "1+ lits",
-      "long": "Over 1 Lit"
+      "short": "1+ koinu",
+      "long": "Over 1 Koinu"
     },
     "_10sats": {
       "id": "over_10sats",
-      "short": "10+ lits",
-      "long": "Over 10 Lits"
+      "short": "10+ koinu",
+      "long": "Over 10 Koinu"
     },
     "_100sats": {
       "id": "over_100sats",
-      "short": "100+ lits",
-      "long": "Over 100 Lits"
+      "short": "100+ koinu",
+      "long": "Over 100 Koinu"
     },
     "_1kSats": {
       "id": "over_1k_sats",
-      "short": "1k+ lits",
-      "long": "Over 1K Lits"
+      "short": "1k+ koinu",
+      "long": "Over 1K Koinu"
     },
     "_10kSats": {
       "id": "over_10k_sats",
-      "short": "10k+ lits",
-      "long": "Over 10K Lits"
+      "short": "10k+ koinu",
+      "long": "Over 10K Koinu"
     },
     "_100kSats": {
       "id": "over_100k_sats",
-      "short": "100k+ lits",
-      "long": "Over 100K Lits"
+      "short": "100k+ koinu",
+      "long": "Over 100K Koinu"
     },
     "_1mSats": {
       "id": "over_1m_sats",
-      "short": "1M+ lits",
-      "long": "Over 1M Lits"
+      "short": "1M+ koinu",
+      "long": "Over 1M Koinu"
     },
     "_10mSats": {
       "id": "over_10m_sats",
-      "short": "0.1+ LTC",
-      "long": "Over 0.1 LTC"
+      "short": "0.1+ DOGE",
+      "long": "Over 0.1 DOGE"
     },
     "_1btc": {
       "id": "over_1btc",
-      "short": "1+ LTC",
-      "long": "Over 1 LTC"
+      "short": "1+ DOGE",
+      "long": "Over 1 DOGE"
     },
     "_10btc": {
       "id": "over_10btc",
-      "short": "10+ LTC",
-      "long": "Over 10 LTC"
+      "short": "10+ DOGE",
+      "long": "Over 10 DOGE"
     },
     "_100btc": {
       "id": "over_100btc",
-      "short": "100+ LTC",
-      "long": "Over 100 LTC"
+      "short": "100+ DOGE",
+      "long": "Over 100 DOGE"
     },
     "_1kBtc": {
       "id": "over_1k_btc",
-      "short": "1k+ LTC",
-      "long": "Over 1K LTC"
+      "short": "1k+ DOGE",
+      "long": "Over 1K DOGE"
     },
     "_10kBtc": {
       "id": "over_10k_btc",
-      "short": "10k+ LTC",
-      "long": "Over 10K LTC"
+      "short": "10k+ DOGE",
+      "long": "Over 10K DOGE"
     }
   });
 
   UNDER_AMOUNT_NAMES = /** @type {const} */ ({
     "_10sats": {
       "id": "under_10sats",
-      "short": "<10 lits",
-      "long": "Under 10 Lits"
+      "short": "<10 koinu",
+      "long": "Under 10 Koinu"
     },
     "_100sats": {
       "id": "under_100sats",
-      "short": "<100 lits",
-      "long": "Under 100 Lits"
+      "short": "<100 koinu",
+      "long": "Under 100 Koinu"
     },
     "_1kSats": {
       "id": "under_1k_sats",
-      "short": "<1k lits",
-      "long": "Under 1K Lits"
+      "short": "<1k koinu",
+      "long": "Under 1K Koinu"
     },
     "_10kSats": {
       "id": "under_10k_sats",
-      "short": "<10k lits",
-      "long": "Under 10K Lits"
+      "short": "<10k koinu",
+      "long": "Under 10K Koinu"
     },
     "_100kSats": {
       "id": "under_100k_sats",
-      "short": "<100k lits",
-      "long": "Under 100K Lits"
+      "short": "<100k koinu",
+      "long": "Under 100K Koinu"
     },
     "_1mSats": {
       "id": "under_1m_sats",
-      "short": "<1M lits",
-      "long": "Under 1M Lits"
+      "short": "<1M koinu",
+      "long": "Under 1M Koinu"
     },
     "_10mSats": {
       "id": "under_10m_sats",
-      "short": "<0.1 LTC",
-      "long": "Under 0.1 LTC"
+      "short": "<0.1 DOGE",
+      "long": "Under 0.1 DOGE"
     },
     "_1btc": {
       "id": "under_1btc",
-      "short": "<1 LTC",
-      "long": "Under 1 LTC"
+      "short": "<1 DOGE",
+      "long": "Under 1 DOGE"
     },
     "_10btc": {
       "id": "under_10btc",
-      "short": "<10 LTC",
-      "long": "Under 10 LTC"
+      "short": "<10 DOGE",
+      "long": "Under 10 DOGE"
     },
     "_100btc": {
       "id": "under_100btc",
-      "short": "<100 LTC",
-      "long": "Under 100 LTC"
+      "short": "<100 DOGE",
+      "long": "Under 100 DOGE"
     },
     "_1kBtc": {
       "id": "under_1k_btc",
-      "short": "<1k LTC",
-      "long": "Under 1K LTC"
+      "short": "<1k DOGE",
+      "long": "Under 1K DOGE"
     },
     "_10kBtc": {
       "id": "under_10k_btc",
-      "short": "<10k LTC",
-      "long": "Under 10K LTC"
+      "short": "<10k DOGE",
+      "long": "Under 10K DOGE"
     },
     "_100kBtc": {
       "id": "under_100k_btc",
-      "short": "<100k LTC",
-      "long": "Under 100K LTC"
+      "short": "<100k DOGE",
+      "long": "Under 100K DOGE"
     }
   });
 
@@ -11006,7 +11006,7 @@ class BrkClient extends BrkClientBase {
   /**
    * Disk usage
    *
-   * Returns the disk space used by LRK and Litecoin data.
+   * Returns the disk space used by DRK and Dogecoin data.
    *
    * Endpoint: `GET /api/server/disk`
    * @param {{ signal?: AbortSignal, onValue?: (value: DiskUsage) => void, cache?: boolean, memCache?: boolean }} [options]
@@ -11346,9 +11346,9 @@ class BrkClient extends BrkClientBase {
   }
 
   /**
-   * Current LTC price
+   * Current DOGE price
    *
-   * Returns litecoin latest price (exchange-derived, USD only).
+   * Returns dogecoin latest price (exchange-derived, USD only).
    *
    * *[Mempool.space docs](https://mempool.space/docs/api/rest#get-price)*
    *
@@ -11364,7 +11364,7 @@ class BrkClient extends BrkClientBase {
   /**
    * Historical price
    *
-   * Get historical LTC/USD price. Optionally specify a UNIX timestamp to get the price at that time.
+   * Get historical DOGE/USD price. Optionally specify a UNIX timestamp to get the price at that time.
    *
    * *[Mempool.space docs](https://mempool.space/docs/api/rest#get-historical-price)*
    *
@@ -11402,7 +11402,7 @@ class BrkClient extends BrkClientBase {
   /**
    * Address information
    *
-   * Retrieve address information including balance and transaction counts. Supports all standard Litecoin address types (P2PKH, P2SH, P2WPKH, P2WSH, P2TR).
+   * Retrieve address information including balance and transaction counts. Supports all standard Dogecoin address types (P2PKH, P2SH, P2WPKH, P2WSH, P2TR).
    *
    * *[Mempool.space docs](https://mempool.space/docs/api/rest#get-address)*
    *
@@ -11511,13 +11511,13 @@ class BrkClient extends BrkClientBase {
   /**
    * Validate address
    *
-   * Validate a Litecoin address and get information about its type and scriptPubKey. Returns `isvalid: false` with an error message for invalid addresses.
+   * Validate a Dogecoin address and get information about its type and scriptPubKey. Returns `isvalid: false` with an error message for invalid addresses.
    *
    * *[Mempool.space docs](https://mempool.space/docs/api/rest#get-address-validate)*
    *
    * Endpoint: `GET /api/v1/validate-address/{address}`
    *
-   * @param {string} address - Litecoin address to validate (can be any string)
+   * @param {string} address - Dogecoin address to validate (can be any string)
    * @param {{ signal?: AbortSignal, onValue?: (value: AddrValidation) => void, cache?: boolean, memCache?: boolean }} [options]
    * @returns {Promise<AddrValidation>}
    */
@@ -11693,7 +11693,7 @@ class BrkClient extends BrkClientBase {
    *
    * Endpoint: `GET /api/block/{hash}/txid/{index}`
    *
-   * @param {BlockHash} hash - Litecoin block hash
+   * @param {BlockHash} hash - Dogecoin block hash
    * @param {BlockTxIndex} index - Transaction index within the block (0-based)
    * @param {{ signal?: AbortSignal, onValue?: (value: Txid) => void, cache?: boolean, memCache?: boolean }} [options]
    * @returns {Promise<Txid>}
@@ -11748,7 +11748,7 @@ class BrkClient extends BrkClientBase {
    *
    * Endpoint: `GET /api/block/{hash}/txs/{start_index}`
    *
-   * @param {BlockHash} hash - Litecoin block hash
+   * @param {BlockHash} hash - Dogecoin block hash
    * @param {BlockTxIndex} start_index - Starting transaction index within the block (0-based)
    * @param {{ signal?: AbortSignal, onValue?: (value: Transaction[]) => void, cache?: boolean, memCache?: boolean }} [options]
    * @returns {Promise<Transaction[]>}
@@ -12128,7 +12128,7 @@ class BrkClient extends BrkClientBase {
   /**
    * Projected mempool blocks
    *
-   * Projected blocks for fee estimation. Block 0 reflects Litecoin Core's actual next-block selection; blocks 1+ are a fee-tier approximation.
+   * Projected blocks for fee estimation. Block 0 reflects Dogecoin Core's actual next-block selection; blocks 1+ are a fee-tier approximation.
    *
    * *[Mempool.space docs](https://mempool.space/docs/api/rest#get-mempool-blocks-fees)*
    *
@@ -12270,7 +12270,7 @@ class BrkClient extends BrkClientBase {
   /**
    * Projected next block template
    *
-   * Litecoin Core's `getblocktemplate` selection: full transaction bodies in GBT order with aggregate stats. The returned `hash` is an opaque content token; pass it as `<hash>` on `/api/v1/mempool/block-template/diff/{hash}` to fetch deltas instead of refetching the whole template.
+   * Dogecoin Core's `getblocktemplate` selection: full transaction bodies in GBT order with aggregate stats. The returned `hash` is an opaque content token; pass it as `<hash>` on `/api/v1/mempool/block-template/diff/{hash}` to fetch deltas instead of refetching the whole template.
    *
    * Endpoint: `GET /api/v1/mempool/block-template`
    * @param {{ signal?: AbortSignal, onValue?: (value: BlockTemplate) => void, cache?: boolean, memCache?: boolean }} [options]
@@ -12298,9 +12298,9 @@ class BrkClient extends BrkClientBase {
   }
 
   /**
-   * Live LTC/USD price
+   * Live DOGE/USD price
    *
-   * Returns the current LTC/USD price in dollars, derived from on-chain round-dollar output patterns in the last 12 blocks plus mempool.
+   * Returns the current DOGE/USD price in dollars, derived from on-chain round-dollar output patterns in the last 12 blocks plus mempool.
    *
    * Endpoint: `GET /api/mempool/price`
    * @param {{ signal?: AbortSignal, onValue?: (value: Dollars) => void, cache?: boolean, memCache?: boolean }} [options]
@@ -12312,9 +12312,9 @@ class BrkClient extends BrkClientBase {
   }
 
   /**
-   * Live LTC/USD price
+   * Live DOGE/USD price
    *
-   * Current LTC/USD price in dollars. Same value as `/api/mempool/price`. Confirmed per-height history is available at `/api/vecs/height-to-price`.
+   * Current DOGE/USD price in dollars. Same value as `/api/mempool/price`. Confirmed per-height history is available at `/api/vecs/height-to-price`.
    *
    * Endpoint: `GET /api/oracle/price`
    * @param {{ signal?: AbortSignal, onValue?: (value: Dollars) => void, cache?: boolean, memCache?: boolean }} [options]

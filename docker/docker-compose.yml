@@ -2,16 +2,16 @@ name: brk
 
 # Environment variables (set in a .env file or shell):
 #
-# Litecoin (default for this fork):
-#   CHAIN_DATA_DIR  — path to litecoin data directory  (default: /path/to/litecoin)
-#   RPC_HOST        — litecoind RPC host               (default: localhost)
-#   RPC_USER        — litecoind RPC user               (default: litecoin)
-#   RPC_PASSWORD    — litecoind RPC password           (default: litecoin)
-#   CHAIN           — "litecoin" or "bitcoin"          (default: litecoin)
+# Dogecoin (default for this fork):
+#   CHAIN_DATA_DIR  — path to dogecoin data directory  (default: /path/to/dogecoin)
+#   RPC_HOST        — dogecoind RPC host               (default: localhost)
+#   RPC_USER        — dogecoind RPC user               (default: dogecoin)
+#   RPC_PASSWORD    — dogecoind RPC password           (default: dogecoin)
+#   CHAIN           — "dogecoin" or "bitcoin"          (default: dogecoin)
 #
 # Bitcoin: set CHAIN=bitcoin plus the matching CHAIN_DATA_DIR/RPC_* values.
-# (Note: the image is built with the `litecoin` feature; a Bitcoin node works,
-#  but MWEB-specific decoding is only exercised on Litecoin.)
+# (Note: the image is built with the `dogecoin` feature, which selects the
+#  AuxPoW-aware block decoder; a Bitcoin node still works with CHAIN=bitcoin.)
 
 services:
   brk:
@@ -24,7 +24,7 @@ services:
     ports:
       - 7070:3110
     volumes:
-      - ${CHAIN_DATA_DIR:-/path/to/litecoin}:/chaindata:ro
+      - ${CHAIN_DATA_DIR:-/path/to/dogecoin}:/chaindata:ro
       - ${BRK_DATA_DIR:-./brk-data}:/home/brk/.brk
     command:
       - --chaindir
@@ -34,13 +34,13 @@ services:
       - --brkdir
       - /home/brk/.brk
       - --chain
-      - "${CHAIN:-litecoin}"
+      - "${CHAIN:-dogecoin}"
       - --rpcconnect
       - "${RPC_HOST:-localhost}"
       - --rpcuser
-      - "${RPC_USER:-litecoin}"
+      - "${RPC_USER:-dogecoin}"
       - --rpcpassword
-      - "${RPC_PASSWORD:-litecoin}"
+      - "${RPC_PASSWORD:-dogecoin}"
       # Cookie file alternative (uncomment and remove rpcuser/rpcpassword above):
       # - --rpccookiefile
       # - /chaindata/.cookie

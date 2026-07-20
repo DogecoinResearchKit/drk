@@ -22,8 +22,8 @@ window.addEventListener("pagehide", () => {
 /** @param {string} title */
 function captureMetadata(title) {
   return {
-    title: `${title} | litview`,
-    fileName: `litview-${stringToId(title)}.png`,
+    title: `${title} | dogeview`,
+    fileName: `dogeview-${stringToId(title)}.png`,
   };
 }
 

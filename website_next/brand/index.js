@@ -31,7 +31,7 @@ export function createBrand({
   animated = Boolean(href),
   fill = tone === "receipt" ? 1 : 0.5,
 } = {}) {
-  const label = "litview";
+  const label = "dogeview";
   const brand = createBrandElement(href, label);
   const mark = document.createElement("span");
   const text = document.createElement("span");

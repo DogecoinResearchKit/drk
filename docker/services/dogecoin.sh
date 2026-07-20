@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
-# Keep Litecoin Core alive for launchd. Qt -daemon forks; we wait on the pid
+# Keep Dogecoin Core alive for launchd. Qt -daemon forks; we wait on the pid
 # so KeepAlive restarts after a crash (e.g. disk write failure).
 set -euo pipefail
 
-QT="${LITECOIN_QT:-/Applications/Litecoin-Qt.app/Contents/MacOS/Litecoin-Qt}"
-DATADIR="${LITECOIN_DATADIR:-$HOME/Library/Application Support/Litecoin}"
-PIDFILE="${LITECOIN_PIDFILE:-$DATADIR/litecoind.pid}"
+QT="${DOGECOIN_QT:-/Applications/Dogecoin-Qt.app/Contents/MacOS/Dogecoin-Qt}"
+DATADIR="${DOGECOIN_DATADIR:-$HOME/Library/Application Support/Dogecoin}"
+PIDFILE="${DOGECOIN_PIDFILE:-$DATADIR/dogecoind.pid}"
 
 if [[ ! -x "$QT" ]]; then
-  echo "litecoin: missing binary at $QT" >&2
+  echo "dogecoin: missing binary at $QT" >&2
   exit 1
 fi
 
@@ -25,29 +25,29 @@ wait_pid() {
 if [[ -f "$PIDFILE" ]]; then
   existing="$(cat "$PIDFILE" 2>/dev/null || true)"
   if [[ -n "${existing:-}" ]] && kill -0 "$existing" 2>/dev/null; then
-    echo "litecoin: adopting pid $existing"
+    echo "dogecoin: adopting pid $existing"
     wait_pid "$existing"
-    echo "litecoin: process $existing exited"
+    echo "dogecoin: process $existing exited"
     exit 1
   fi
   rm -f "$PIDFILE"
 fi
 
-echo "litecoin: starting daemon"
+echo "dogecoin: starting daemon"
 "$QT" -daemon -datadir="$DATADIR" -pid="$PIDFILE"
 
 for _ in $(seq 1 60); do
   if [[ -f "$PIDFILE" ]]; then
     pid="$(cat "$PIDFILE")"
     if [[ -n "$pid" ]] && kill -0 "$pid" 2>/dev/null; then
-      echo "litecoin: running pid $pid"
+      echo "dogecoin: running pid $pid"
       wait_pid "$pid"
-      echo "litecoin: process $pid exited"
+      echo "dogecoin: process $pid exited"
       exit 1
     fi
   fi
   sleep 1
 done
 
-echo "litecoin: failed to start (no pid file)" >&2
+echo "dogecoin: failed to start (no pid file)" >&2
 exit 1

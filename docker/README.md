@@ -26,13 +26,13 @@
 
 ## Public demo (Cloudflare Tunnel)
 
-To serve **litview.space** from this machine while you demo:
+To serve **dogeview.space** from this machine while you demo:
 
 ```bash
 cd docker/cloudflared
 ./setup.sh          # creates config.yml — fill in tunnel UUID + credentials
 ./route-dns.sh      # once, after Cloudflare login + tunnel create
-./start.sh          # when demoing (LRK must be up on :7070)
+./start.sh          # when demoing (DRK must be up on :7070)
 ```
 
 Full walkthrough: [cloudflared/README.md](./cloudflared/README.md)

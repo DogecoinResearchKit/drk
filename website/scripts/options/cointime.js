@@ -405,8 +405,8 @@ export function createCointimeSection() {
             ],
           },
           {
-            name: "LTC Velocity",
-            title: "Cointime-Adjusted LTC Velocity",
+            name: "DOGE Velocity",
+            title: "Cointime-Adjusted DOGE Velocity",
             bottom: [
               line({
                 series: supply.velocity.native,

@@ -1,25 +1,25 @@
-# Litecoin Research Kit (LRK)
+# Dogecoin Research Kit (DRK)
 
-> Free, open-source Litecoin on-chain analytics API at https://litview.space. 8,000+ time-series (price, hashrate, supply, MVRV, HODL waves, and more), block explorer, address index, mempool stats, mining data. No auth required. JSON and CSV output.
+> Free, open-source Dogecoin on-chain analytics API at https://dogeview.space. 8,000+ time-series (price, hashrate, supply, MVRV, HODL waves, and more), block explorer, address index, mempool stats, mining data. No auth required. JSON and CSV output.
 
 ## API Documentation
 
-- [Full API reference (plain text)](https://litview.space/llms-full.txt): Every endpoint, parameter, and response shape
-- [OpenAPI spec (compact, LLM-optimized)](https://litview.space/api.json): Machine-readable, minimal spec for tool use
-- [OpenAPI spec (full)](https://litview.space/openapi.json): Complete OpenAPI 3.1 specification
-- [Interactive docs](https://litview.space/api): Scalar API explorer
+- [Full API reference (plain text)](https://dogeview.space/llms-full.txt): Every endpoint, parameter, and response shape
+- [OpenAPI spec (compact, LLM-optimized)](https://dogeview.space/api.json): Machine-readable, minimal spec for tool use
+- [OpenAPI spec (full)](https://dogeview.space/openapi.json): Complete OpenAPI 3.1 specification
+- [Interactive docs](https://dogeview.space/api): Scalar API explorer
 
 ## Quick Start
 
-- [Search series](https://litview.space/api/series/search?q=price): `GET /api/series/search?q={query}`
-- [Get series data](https://litview.space/api/series/price/day?start=-30): `GET /api/series/{name}/{index}?start=-30`
-- [Latest value](https://litview.space/api/series/price/day/latest): `GET /api/series/{name}/{index}/latest`
-- [Bulk query](https://litview.space/api/series/bulk?index=day&series=price,market_cap&start=-7): `GET /api/series/bulk?index={index}&series={s1},{s2}`
-- [Block by height](https://litview.space/api/block-height/0): `GET /api/block-height/{height}`
-- [Transaction](https://litview.space/api/tx/4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b): `GET /api/tx/{txid}`
-- [Address](https://litview.space/api/address/1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa): `GET /api/address/{address}`
-- [Fee estimates](https://litview.space/api/v1/fees/recommended): `GET /api/v1/fees/recommended`
-- [Live price](https://litview.space/api/mempool/price): `GET /api/mempool/price`
+- [Search series](https://dogeview.space/api/series/search?q=price): `GET /api/series/search?q={query}`
+- [Get series data](https://dogeview.space/api/series/price/day?start=-30): `GET /api/series/{name}/{index}?start=-30`
+- [Latest value](https://dogeview.space/api/series/price/day/latest): `GET /api/series/{name}/{index}/latest`
+- [Bulk query](https://dogeview.space/api/series/bulk?index=day&series=price,market_cap&start=-7): `GET /api/series/bulk?index={index}&series={s1},{s2}`
+- [Block by height](https://dogeview.space/api/block-height/0): `GET /api/block-height/{height}`
+- [Transaction](https://dogeview.space/api/tx/4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b): `GET /api/tx/{txid}`
+- [Address](https://dogeview.space/api/address/1A1zP1eP5QGefi2DMPTfTL5SLmv7DivfNa): `GET /api/address/{address}`
+- [Fee estimates](https://dogeview.space/api/v1/fees/recommended): `GET /api/v1/fees/recommended`
+- [Live price](https://dogeview.space/api/mempool/price): `GET /api/mempool/price`
 
 ## Client Libraries
 
@@ -29,4 +29,4 @@
 
 ## Source
 
-- [GitHub](https://github.com/IndigoNakamoto/lrk): MIT licensed
+- [GitHub](https://github.com/IndigoNakamoto/drk): MIT licensed

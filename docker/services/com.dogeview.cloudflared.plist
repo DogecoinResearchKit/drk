@@ -3,15 +3,15 @@
 <plist version="1.0">
 <dict>
   <key>Label</key>
-  <string>com.litview.cloudflared</string>
+  <string>com.dogeview.cloudflared</string>
   <key>WorkingDirectory</key>
-  <string>/Users/indigo/Projects/lrk/docker/cloudflared</string>
+  <string>/Users/indigo/Projects/drk/docker/cloudflared</string>
   <key>ProgramArguments</key>
   <array>
     <string>/opt/homebrew/bin/cloudflared</string>
     <string>tunnel</string>
     <string>--config</string>
-    <string>/Users/indigo/Projects/lrk/docker/cloudflared/config.yml</string>
+    <string>/Users/indigo/Projects/drk/docker/cloudflared/config.yml</string>
     <string>run</string>
   </array>
   <key>RunAtLoad</key>
@@ -21,9 +21,9 @@
   <key>ThrottleInterval</key>
   <integer>15</integer>
   <key>StandardOutPath</key>
-  <string>/Users/indigo/Library/Logs/litview/cloudflared.out.log</string>
+  <string>/Users/indigo/Library/Logs/dogeview/cloudflared.out.log</string>
   <key>StandardErrorPath</key>
-  <string>/Users/indigo/Library/Logs/litview/cloudflared.err.log</string>
+  <string>/Users/indigo/Library/Logs/dogeview/cloudflared.err.log</string>
   <key>EnvironmentVariables</key>
   <dict>
     <key>PATH</key>

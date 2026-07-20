@@ -14,11 +14,11 @@ pub struct Health {
     pub service: Cow<'static, str>,
     /// Server version
     pub version: Cow<'static, str>,
-    /// Active chain ("bitcoin" or "litecoin")
+    /// Active chain ("bitcoin" or "dogecoin")
     pub chain: Cow<'static, str>,
-    /// Active chain ticker symbol ("BTC" or "LTC")
+    /// Active chain ticker symbol ("BTC" or "DOGE")
     pub ticker: Cow<'static, str>,
-    /// Active chain display name ("Bitcoin" or "Litecoin")
+    /// Active chain display name ("Bitcoin" or "Dogecoin")
     pub coin_name: Cow<'static, str>,
     /// Current server time (ISO 8601)
     pub timestamp: String,

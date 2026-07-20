@@ -5,10 +5,10 @@
  */
 export const Unit = /** @type {const} */ ({
   // Value units
-  sats: { id: "sats", name: "Litoshis" },
-  // Coin unit — name matches the active chain (Bitcoin or Litecoin).
+  sats: { id: "sats", name: "Koinu" },
+  // Coin unit — name matches the active chain (Bitcoin or Dogecoin).
   // Set via setCoinUnitName() once chain info is available from the server.
-  btc: { id: "btc", name: "Litecoin" },
+  btc: { id: "btc", name: "Dogecoin" },
   usd: { id: "usd", name: "US Dollars" },
 
   // Ratios & percentages
@@ -42,7 +42,7 @@ export const Unit = /** @type {const} */ ({
   epoch: { id: "epoch", name: "Epoch" },
 
   // Fees
-  feeRate: { id: "feerate", name: "Lit/vByte" },
+  feeRate: { id: "feerate", name: "koinu/vByte" },
 
   // Rates
   perSec: { id: "per-sec", name: "Per Second" },
@@ -50,14 +50,14 @@ export const Unit = /** @type {const} */ ({
   // Cointime
   coinblocks: { id: "coinblocks", name: "Coinblocks" },
   coindays: { id: "coindays", name: "Coindays" },
-  satblocks: { id: "satblocks", name: "Litblocks" },
-  satdays: { id: "satdays", name: "Litdays" },
+  satblocks: { id: "satblocks", name: "Koinublocks" },
+  satdays: { id: "satdays", name: "Koinudays" },
 
   // Hash price/value
   usdPerThsPerDay: { id: "usd-ths-day", name: "USD/TH/s/Day" },
   usdPerPhsPerDay: { id: "usd-phs-day", name: "USD/PH/s/Day" },
-  satsPerThsPerDay: { id: "sats-ths-day", name: "Lits/TH/s/Day" },
-  satsPerPhsPerDay: { id: "sats-phs-day", name: "Lits/PH/s/Day" },
+  satsPerThsPerDay: { id: "sats-ths-day", name: "Koinu/TH/s/Day" },
+  satsPerPhsPerDay: { id: "sats-phs-day", name: "Koinu/PH/s/Day" },
 });
 
 /** @typedef {keyof typeof Unit} UnitKey */
@@ -66,7 +66,7 @@ export const Unit = /** @type {const} */ ({
 /**
  * Update the coin unit display name once chain info is known.
  * Call this after fetching chain metadata from the server (e.g., the health endpoint).
- * @param {string} coinName - e.g. "Bitcoin" or "Litecoin"
+ * @param {string} coinName - e.g. "Bitcoin" or "Dogecoin"
  */
 export function setCoinUnitName(coinName) {
     Unit.btc.name = coinName;

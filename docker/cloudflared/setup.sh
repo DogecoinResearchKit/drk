@@ -4,7 +4,7 @@ set -euo pipefail
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$DIR"
 
-echo "=== LRK Cloudflare Tunnel setup ==="
+echo "=== DRK Cloudflare Tunnel setup ==="
 echo
 
 if ! command -v cloudflared >/dev/null 2>&1; then
@@ -28,7 +28,7 @@ echo
 echo "Fill in config.yml, then run the steps in README.md:"
 echo
 echo "  1. cloudflared tunnel login"
-echo "  2. cloudflared tunnel create \${TUNNEL_NAME:-litview-demo}"
+echo "  2. cloudflared tunnel create \${TUNNEL_NAME:-dogeview-demo}"
 echo "  3. Edit config.yml:"
 echo "       - tunnel: <UUID from step 2>"
 echo "       - credentials-file: ./credentials.json"

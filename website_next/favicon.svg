@@ -1,10 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 173.2 200" role="img" aria-label="litview" width="173.2" height="200"><metadata><rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/"><rdf:Description><dc:creator>RealFaviconGenerator</dc:creator><dc:source>https://realfavicongenerator.net</dc:source></rdf:Description></rdf:RDF></metadata><title>litview</title><style>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 173.2 200" role="img" aria-label="dogeview" width="173.2" height="200"><metadata><rdf:RDF xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:dc="http://purl.org/dc/elements/1.1/"><rdf:Description><dc:creator>RealFaviconGenerator</dc:creator><dc:source>https://realfavicongenerator.net</dc:source></rdf:Description></rdf:RDF></metadata><title>dogeview</title><style>
     svg {
       --fill: 0.5;
-      --face-top:    oklch(67.64% 0.191 44.41);
-      --face-left:   oklch(64.34% 0.191 44.41);
-      --face-right:  oklch(61.04% 0.191 44.41);
-      --face-bottom: oklch(57.74% 0.191 44.41);
+      --face-top:    oklch(72.9% 0.132 94.8);
+      --face-left:   oklch(69.6% 0.132 94.8);
+      --face-right:  oklch(66.3% 0.132 94.8);
+      --face-bottom: oklch(63% 0.132 94.8);
     }
     svg[data-theme="light"] {
       --face-top:    oklch(90% 0 0);

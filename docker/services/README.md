@@ -1,6 +1,6 @@
-# litview host services (LaunchAgents)
+# dogeview host services (LaunchAgents)
 
-Keeps Litecoin, native BRK, and cloudflared running with KeepAlive + a 60s watchdog.
+Keeps Dogecoin, native BRK, and cloudflared running with KeepAlive + a 60s watchdog.
 
 **Why / what changed:** see [RELIABILITY.md](./RELIABILITY.md).
 
@@ -20,11 +20,11 @@ This stops Docker `brk` (`--restart=no`) so native BRK owns `:7070` and `~/.brk`
 
 ## Logs
 
-`~/Library/Logs/litview/` — `brk.out.log`, `litecoin.out.log`, `cloudflared.*.log`, `watchdog.log`
+`~/Library/Logs/dogeview/` — `brk.out.log`, `dogecoin.out.log`, `cloudflared.*.log`, `watchdog.log`
 
 ## Notes
 
 - Index progress lives in `~/.brk`; stopping/restarting BRK resumes (no full reindex unless BRK detects inconsistency).
 - Tunnel ingress must point at `http://127.0.0.1:7070`.
-- Rebuild BRK after code changes: `cargo build --release -p brk_cli --features litecoin` then restart the agent when idle.
+- Rebuild BRK after code changes: `cargo build --release -p brk_cli --features dogecoin` then restart the agent when idle.
 - Snapshot `~/.brk` to external disk when available (see RELIABILITY.md remaining work).

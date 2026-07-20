@@ -1,6 +1,6 @@
-# Making litview.space more robust (this Mac)
+# Making dogeview.space more robust (this Mac)
 
-This documents the reliability changes made for the litview demo host after a multi-hour outage in July 2026. Goal: **self-heal process crashes and tunnel drops** on a single machine. This is not multi-host HA / five-nines.
+This documents the reliability changes made for the dogeview demo host after a multi-hour outage in July 2026. Goal: **self-heal process crashes and tunnel drops** on a single machine. This is not multi-host HA / five-nines.
 
 Related ops: [README.md](./README.md) (install/uninstall), [../cloudflared/README.md](../cloudflared/README.md) (tunnel).
 
@@ -8,9 +8,9 @@ Related ops: [README.md](./README.md) (install/uninstall), [../cloudflared/READM
 
 ## What broke (incident summary)
 
-Public site (`litview.space`) returned Cloudflare **502** while the tunnel process was often still up. The failure chain was:
+Public site (`dogeview.space`) returned Cloudflare **502** while the tunnel process was often still up. The failure chain was:
 
-1. **Litecoin Core write failure** (disk I/O), then shutdown:
+1. **Dogecoin Core write failure** (disk I/O), then shutdown:
    ```text
    ERROR: ProcessNewBlock: AcceptBlock FAILED
    (System error: CAutoFile::write: write failed: unspecified iostream_category error)
@@ -23,7 +23,7 @@ Public site (`litview.space`) returned Cloudflare **502** while the tunnel proce
 
 4. After recovery, **BRK** saw a tip reorg / index inconsistency and ran a **full indexer reset** (hours offline while HTTP stayed closed when far behind tip).
 
-Separately, the heatmap URL units were renamed (`sats`/`btc` → `lits`/`ltc`) and the tunnel ingress was corrected from `:3110` to `:7070` (Docker maps host `7070` → container `3110`; native BRK now listens on `7070` directly).
+Separately, the heatmap URL units were renamed (`sats`/`btc` → `koinu`/`doge`) and the tunnel ingress was corrected from `:3110` to `:7070` (Docker maps host `7070` → container `3110`; native BRK now listens on `7070` directly).
 
 ---
 
@@ -34,14 +34,14 @@ Separately, the heatmap URL units were renamed (`sats`/`btc` → `lits`/`ltc`) a
 ```text
 Visitors → Cloudflare → cloudflared (manual ./start.sh in a terminal)
                               → localhost:7070 → Docker Desktop → brk container
-Litecoin-Qt (GUI, no auto-restart)
+Dogecoin-Qt (GUI, no auto-restart)
 ```
 
 Single points of failure:
 
 | Piece | Risk |
 |-------|------|
-| Litecoin-Qt | Crash stayed down until someone relaunched |
+| Dogecoin-Qt | Crash stayed down until someone relaunched |
 | Docker Desktop | Engine freeze = site dead even if “port open” |
 | `./start.sh` | Closing the terminal killed the tunnel |
 | Healthcheck | Container `pgrep brk` ≠ HTTP healthy |
@@ -52,7 +52,7 @@ Single points of failure:
 ```text
 Visitors → Cloudflare → cloudflared (LaunchAgent KeepAlive)
                               → localhost:7070 → native brk (LaunchAgent KeepAlive)
-Litecoin-Qt -daemon (LaunchAgent KeepAlive wrapper)
+Dogecoin-Qt -daemon (LaunchAgent KeepAlive wrapper)
 Watchdog every 60s → kickstarts dead jobs; warns on low disk
 ```
 
@@ -62,40 +62,40 @@ Docker `brk` is **stopped** with `restart=no` so it does not fight native BRK fo
 
 ## What we changed
 
-### 1. Litecoin as a supervised service
+### 1. Dogecoin as a supervised service
 
-- **Files:** `litecoin.sh`, `com.litview.litecoin.plist`
-- Runs Litecoin-Qt with `-daemon`, then **waits on the pid** so launchd `KeepAlive` restarts after exit (including disk-write crashes).
+- **Files:** `dogecoin.sh`, `com.dogeview.dogecoin.plist`
+- Runs Dogecoin-Qt with `-daemon`, then **waits on the pid** so launchd `KeepAlive` restarts after exit (including disk-write crashes).
 - Adopts an already-running node if present.
 
 ### 2. Native BRK instead of Docker Desktop
 
-- **Files:** `brk.sh`, `com.litview.brk.plist`
-- Uses repo binary: `target/release/brk` built with `--features litecoin`
+- **Files:** `brk.sh`, `com.dogeview.brk.plist`
+- Uses repo binary: `target/release/brk` built with `--features dogecoin`
 - Listens on **`--brkport 7070`** (matches tunnel ingress)
 - Data: `~/.brk` (same tree Docker was bind-mounting)
-- Chain data: `~/Library/Application Support/Litecoin` (read via `--bitcoindir` / `--blocksdir`)
+- Chain data: `~/Library/Application Support/Dogecoin` (read via `--bitcoindir` / `--blocksdir`)
 - RPC settings remain in `~/.brk/config.toml` (and/or env)
 
 **Why:** removes Docker Desktop from the serving path. Process crash → launchd restart → index **resumes** from `~/.brk` when consistent (full reset only if BRK detects inconsistency).
 
 ### 3. cloudflared as a LaunchAgent
 
-- **Files:** `com.litview.cloudflared.plist`
+- **Files:** `com.dogeview.cloudflared.plist`
 - Same `docker/cloudflared/config.yml` (ingress → `http://127.0.0.1:7070`)
 - Survives closed terminals / Cursor sessions; restarts on crash
 - Demo `./start.sh` is optional; prefer the agent for always-on
 
 ### 4. Watchdog
 
-- **Files:** `watchdog.sh`, `com.litview.watchdog.plist` (`StartInterval` = 60s)
+- **Files:** `watchdog.sh`, `com.dogeview.watchdog.plist` (`StartInterval` = 60s)
 - Checks:
-  - Litecoin RPC (`getblockcount` on `:9332`) → kickstart `com.litview.litecoin` if down
-  - BRK process if `/health` fails → kickstart `com.litview.brk` only when `brk` is not running (avoids killing a healthy indexer mid-sync)
+  - Dogecoin RPC (`getblockcount` on `:22555`) → kickstart `com.dogeview.dogecoin` if down
+  - BRK process if `/health` fails → kickstart `com.dogeview.brk` only when `brk` is not running (avoids killing a healthy indexer mid-sync)
   - `cloudflared tunnel` process → kickstart tunnel agent
   - Free space on `/System/Volumes/Data` → **WARN** if below 50 GB (no automatic delete)
 
-Logs: `~/Library/Logs/litview/watchdog.log`
+Logs: `~/Library/Logs/dogeview/watchdog.log`
 
 ### 5. Install / uninstall
 
@@ -108,7 +108,7 @@ Logs: `~/Library/Logs/litview/watchdog.log`
 
 | Failure mode | Old behavior | New behavior |
 |--------------|--------------|--------------|
-| Litecoin crash | Site dead until manual relaunch | KeepAlive / watchdog restarts node |
+| Dogecoin crash | Site dead until manual relaunch | KeepAlive / watchdog restarts node |
 | `brk` exit / panic | Depends on Docker + human | KeepAlive restarts native binary |
 | Tunnel terminal closed | Immediate Cloudflare errors | LaunchAgent keeps tunnel up |
 | Docker Desktop freeze | Hard to diagnose; API hung | Not on the request path anymore |
@@ -125,29 +125,29 @@ Logs: `~/Library/Logs/litview/watchdog.log`
 ./docker/services/install.sh
 
 # Follow BRK
-tail -f ~/Library/Logs/litview/brk.out.log
+tail -f ~/Library/Logs/dogeview/brk.out.log
 
 # Status
-launchctl print gui/$(id -u)/com.litview.brk | head
+launchctl print gui/$(id -u)/com.dogeview.brk | head
 curl -sf http://127.0.0.1:7070/health && echo OK
 
 # After rebuilding BRK
-cargo build --release -p brk_cli --features litecoin
-# Prefer: stop gracefully when idle, then launchctl start com.litview.brk
+cargo build --release -p brk_cli --features dogecoin
+# Prefer: stop gracefully when idle, then launchctl start com.dogeview.brk
 # Avoid kickstart -k while indexing — it waits on process exit
 ```
 
 **Do not** `docker compose up brk` while native BRK is serving — port and data dir conflict.
 
-**Pause indexing safely:** stop the BRK agent (or `kill` the `brk` pid); `~/.brk` keeps flushed progress. Resume by starting `com.litview.brk` again.
+**Pause indexing safely:** stop the BRK agent (or `kill` the `brk` pid); `~/.brk` keeps flushed progress. Resume by starting `com.dogeview.brk` again.
 
 ---
 
 ## Remaining work (not done yet)
 
-1. **Free disk / external SSD** — keep substantial free space; Litecoin + `~/.brk` are hundreds of GB on one volume.
+1. **Free disk / external SSD** — keep substantial free space; Dogecoin + `~/.brk` are hundreds of GB on one volume.
 2. **Snapshot `~/.brk`** to external storage when available so a full reset is not the only recovery path.
-3. **Optional later:** second machine + shared Cloudflare tunnel connectors; Linux/`litecoind` instead of Litecoin-Qt; fix BRK health-task panic (`Internal("data unavailable")`) so a tip reorg does not always force a full reset after a crash.
+3. **Optional later:** second machine + shared Cloudflare tunnel connectors; Linux/`dogecoind` instead of Dogecoin-Qt; fix BRK health-task panic (`Internal("data unavailable")`) so a tip reorg does not always force a full reset after a crash.
 
 ---
 
@@ -155,12 +155,12 @@ cargo build --release -p brk_cli --features litecoin
 
 | Path | Role |
 |------|------|
-| `litecoin.sh` / `com.litview.litecoin.plist` | Supervised Litecoin |
-| `brk.sh` / `com.litview.brk.plist` | Native BRK on `:7070` |
-| `com.litview.cloudflared.plist` | Supervised tunnel |
-| `watchdog.sh` / `com.litview.watchdog.plist` | 60s health + disk warn |
+| `dogecoin.sh` / `com.dogeview.dogecoin.plist` | Supervised Dogecoin |
+| `brk.sh` / `com.dogeview.brk.plist` | Native BRK on `:7070` |
+| `com.dogeview.cloudflared.plist` | Supervised tunnel |
+| `watchdog.sh` / `com.dogeview.watchdog.plist` | 60s health + disk warn |
 | `install.sh` / `uninstall.sh` | Load / unload agents |
 | `../cloudflared/config.yml` | Tunnel → `127.0.0.1:7070` |
 | `../.env` | RPC creds for watchdog (`CHAIN_DATA_DIR` quoted) |
-| `~/Library/Logs/litview/` | Runtime logs |
-| `~/Library/LaunchAgents/com.litview.*.plist` | Installed agents |
+| `~/Library/Logs/dogeview/` | Runtime logs |
+| `~/Library/LaunchAgents/com.dogeview.*.plist` | Installed agents |

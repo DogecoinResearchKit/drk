@@ -17,13 +17,13 @@ T = TypeVar('T')
 
 # Type definitions
 
-# Litecoin address string
+# Dogecoin address string
 Addr = str
 # Transaction ID (hash)
 Txid = str
 # US Dollar amount
 Dollars = float
-# Amount in litoshis (1 LTC = 100,000,000 lits)
+# Amount in koinu (1 DOGE = 100,000,000 koinu)
 Sats = int
 # Index within its type (e.g., 0 for first P2WPKH address)
 TypeIndex = int
@@ -51,7 +51,7 @@ BasisPointsSigned16 = int
 # Use for unbounded signed values (returns, growth rates, volatility, z-scores, etc.).
 # `i32::MIN` is reserved as a NaN sentinel.
 BasisPointsSigned32 = int
-# Litecoin amount as floating point (1 LTC = 100,000,000 litoshis)
+# Dogecoin amount as floating point (1 DOGE = 100,000,000 koinu)
 Bitcoin = float
 # URL-friendly mining pool identifier
 PoolSlug = Literal["unknown", "blockfills", "ultimuspool", "terrapool", "luxor", "1thash", "btccom", "bitfarms", "huobipool", "wayicn", "canoepool", "btctop", "bitcoincom", "175btc", "gbminers", "axbt", "asicminer", "bitminter", "bitcoinrussia", "btcserv", "simplecoinus", "btcguild", "eligius", "ozcoin", "eclipsemc", "maxbtc", "triplemining", "coinlab", "50btc", "ghashio", "stminingcorp", "bitparking", "mmpool", "polmine", "kncminer", "bitalo", "f2pool", "hhtt", "megabigpower", "mtred", "nmcbit", "yourbtcnet", "givemecoins", "braiinspool", "antpool", "multicoinco", "bcpoolio", "cointerra", "kanopool", "solock", "ckpool", "nicehash", "bitclub", "bitcoinaffiliatenetwork", "btcc", "bwpool", "exxbw", "bitsolo", "bitfury", "21inc", "digitalbtc", "8baochi", "mybtccoinpool", "tbdice", "hashpool", "nexious", "bravomining", "hotpool", "okexpool", "bcmonster", "1hash", "bixin", "tatmaspool", "viabtc", "connectbtc", "batpool", "waterhole", "dcexploration", "dcex", "btpool", "58coin", "bitcoinindia", "shawnp0wers", "phashio", "rigpool", "haozhuzhu", "7pool", "miningkings", "hashbx", "dpool", "rawpool", "haominer", "helix", "bitcoinukraine", "poolin", "secretsuperstar", "tigerpoolnet", "sigmapoolcom", "okpooltop", "hummerpool", "tangpool", "bytepool", "spiderpool", "novablock", "miningcity", "binancepool", "minerium", "lubiancom", "okkong", "aaopool", "emcdpool", "foundryusa", "sbicrypto", "arkpool", "purebtccom", "marapool", "kucoinpool", "entrustcharitypool", "okminer", "titan", "pegapool", "btcnuggets", "cloudhashing", "digitalxmintsy", "telco214", "btcpoolparty", "multipool", "transactioncoinmining", "btcdig", "trickysbtcpool", "btcmp", "eobot", "unomp", "patels", "gogreenlight", "bitcoinindiapool", "ekanembtc", "canoe", "tiger", "1m1x", "zulupool", "secpool", "ocean", "whitepool", "wiz", "wk057", "futurebitapollosolo", "carbonnegative", "portlandhodl", "phoenix", "neopool", "maxipool", "bitfufupool", "gdpool", "miningdutch", "publicpool", "miningsquared", "innopolistech", "btclab", "parasite", "redrockpool", "est3lar", "braiinssolo", "solopoolcom", "noderunners", "kupool", "litecoinpoolorg", "hash700", "lsoftwaredmcc", "hashspace", "dogegogocom", "longpool", "kryptex", "dxpool", "k1pool", "molepool", "solopoolorg", "prohashing", "hashhut", "happychina", "himpool", "p2pspbxyz", "hyperdonkey", "zergpool"]
@@ -88,14 +88,14 @@ Vout = int
 # 
 # Wraps `bitcoin::Witness` (single-buffer layout with offsets, much
 # more compact than `Vec<Vec<u8>>`). Serializes as a JSON array of
-# hex strings - the format used by Litecoin Core REST and mempool.space
+# hex strings - the format used by Dogecoin Core REST and mempool.space
 # and matching brk's `script_sig: ScriptBuf` (bytes internally, hex
 # on the wire).
 Witness = List[str]
 # Chain-wide transaction index (0 = the genesis coinbase). For an
 # in-block position, use `BlockTxIndex` instead.
 TxIndex = int
-# Raw transaction version (i32) from Litecoin protocol.
+# Raw transaction version (i32) from Dogecoin protocol.
 # Unlike TxVersion (u8, indexed), this preserves non-standard values
 # used in coinbase txs for miner signaling/branding.
 TxVersionRaw = int
@@ -267,7 +267,7 @@ Year1 = int
 Year10 = int
 class AddrAfterTxidParam(TypedDict):
     """
-    Litecoin address + last-seen txid path parameters (Esplora-style pagination)
+    Dogecoin address + last-seen txid path parameters (Esplora-style pagination)
 
     Attributes:
         after_txid: Last txid from the previous page (return transactions strictly older than this)
@@ -283,9 +283,9 @@ class AddrChainStats(TypedDict):
 
     Attributes:
         funded_txo_count: Total number of transaction outputs that funded this address
-        funded_txo_sum: Total amount in litoshis received by this address across all funded outputs
+        funded_txo_sum: Total amount in koinu received by this address across all funded outputs
         spent_txo_count: Total number of transaction outputs spent from this address
-        spent_txo_sum: Total amount in litoshis spent from this address
+        spent_txo_sum: Total amount in koinu spent from this address
         tx_count: Total number of confirmed transactions involving this address
         type_index: Index of this address within its type on the blockchain
         realized_price: Realized price (average cost basis) in USD
@@ -316,9 +316,9 @@ class AddrMempoolStats(TypedDict):
 
     Attributes:
         funded_txo_count: Number of unconfirmed transaction outputs funding this address
-        funded_txo_sum: Total amount in litoshis being received in unconfirmed transactions
+        funded_txo_sum: Total amount in koinu being received in unconfirmed transactions
         spent_txo_count: Number of unconfirmed transaction inputs spending from this address
-        spent_txo_sum: Total amount in litoshis being spent in unconfirmed transactions
+        spent_txo_sum: Total amount in koinu being spent in unconfirmed transactions
         tx_count: Number of unconfirmed transactions involving this address
     """
     funded_txo_count: int
@@ -329,7 +329,7 @@ class AddrMempoolStats(TypedDict):
 
 class AddrParam(TypedDict):
     """
-    Litecoin address path parameter
+    Dogecoin address path parameter
     """
     address: Addr
 
@@ -338,7 +338,7 @@ class AddrStats(TypedDict):
     Address information compatible with mempool.space API format
 
     Attributes:
-        address: Litecoin address string
+        address: Dogecoin address string
         addr_type: Address type (p2pkh, p2sh, v0_p2wpkh, v0_p2wsh, v1_p2tr, etc.)
         chain_stats: Statistics for confirmed transactions on the blockchain
         mempool_stats: Statistics for unconfirmed transactions in the mempool
@@ -404,12 +404,12 @@ class BlockExtras(TypedDict):
     Extended block data matching mempool.space /api/v1/blocks extras
 
     Attributes:
-        totalFees: Total fees in litoshis
+        totalFees: Total fees in koinu
         medianFee: Median fee rate in sat/vB
         feeRange: Fee rate range: [min, 10%, 25%, 50%, 75%, 90%, max]
-        reward: Total block reward (subsidy + fees) in litoshis
+        reward: Total block reward (subsidy + fees) in koinu
         pool: Mining pool that mined this block
-        avgFee: Average fee per transaction in litoshis
+        avgFee: Average fee per transaction in koinu
         avgFeeRate: Average fee rate in sat/vB
         coinbaseRaw: Raw coinbase transaction scriptsig as hex
         coinbaseAddress: Primary coinbase output address
@@ -419,9 +419,9 @@ class BlockExtras(TypedDict):
         avgTxSize: Average transaction size in bytes
         totalInputs: Total number of inputs (excluding coinbase)
         totalOutputs: Total number of outputs
-        totalOutputAmt: Total output amount in litoshis
-        medianFeeAmt: Median fee amount in litoshis
-        feePercentiles: Fee amount percentiles in litoshis: [min, 10%, 25%, 50%, 75%, 90%, max]
+        totalOutputAmt: Total output amount in koinu
+        medianFeeAmt: Median fee amount in koinu
+        feePercentiles: Fee amount percentiles in koinu: [min, 10%, 25%, 50%, 75%, 90%, max]
         segwitTotalTxs: Number of segwit transactions
         segwitTotalSize: Total size of segwit transactions in bytes
         segwitTotalWeight: Total weight of segwit transactions
@@ -430,7 +430,7 @@ class BlockExtras(TypedDict):
 Note: intentionally differs from utxo_set_size diff which excludes unspendable outputs.
 Matches mempool.space/bitcoin-cli behavior.
         utxoSetSize: Total spendable UTXO set size at this height (excludes OP_RETURN and other unspendable outputs)
-        totalInputAmt: Total input amount in litoshis
+        totalInputAmt: Total input amount in koinu
         virtualSize: Virtual size in vbytes
         firstSeen: Timestamp when the block was first seen (always null, not yet supported)
         orphans: Orphaned blocks (always empty)
@@ -498,8 +498,8 @@ class BlockFeesEntry(TypedDict):
     Attributes:
         avgHeight: Average block height in this window
         timestamp: Unix timestamp at the window midpoint
-        avgFees: Average fees per block in this window (lits)
-        USD: LTC/USD price at this height
+        avgFees: Average fees per block in this window (koinu)
+        USD: DOGE/USD price at this height
     """
     avgHeight: Height
     timestamp: Timestamp
@@ -517,7 +517,7 @@ class BlockHashStartIndex(TypedDict):
     Block hash + starting transaction index path parameters
 
     Attributes:
-        hash: Litecoin block hash
+        hash: Dogecoin block hash
         start_index: Starting transaction index within the block (0-based)
     """
     hash: BlockHash
@@ -528,7 +528,7 @@ class BlockHashTxIndex(TypedDict):
     Block hash + transaction index path parameters
 
     Attributes:
-        hash: Litecoin block hash
+        hash: Dogecoin block hash
         index: Transaction index within the block (0-based)
     """
     hash: BlockHash
@@ -611,8 +611,8 @@ class BlockRewardsEntry(TypedDict):
     Attributes:
         avgHeight: Average block height in this window
         timestamp: Unix timestamp at the window midpoint
-        avgRewards: Average coinbase reward per block (subsidy + fees, lits)
-        USD: LTC/USD price at this height
+        avgRewards: Average coinbase reward per block (subsidy + fees, koinu)
+        USD: DOGE/USD price at this height
     """
     avgHeight: Height
     timestamp: Timestamp
@@ -677,7 +677,7 @@ class MempoolBlock(TypedDict):
         blockSize: Total serialized block size in bytes (witness + non-witness).
         blockVSize: Total block virtual size in vbytes
         nTx: Number of transactions in the projected block
-        totalFees: Total fees in litoshis
+        totalFees: Total fees in koinu
         medianFee: Median fee rate in sat/vB
         feeRange: Fee rate range: [min, 10%, 25%, 50%, 75%, 90%, max]
     """
@@ -694,7 +694,7 @@ class TxOut(TypedDict):
 
     Attributes:
         scriptpubkey: Script pubkey (locking script)
-        value: Value of the output in litoshis
+        value: Value of the output in koinu
     """
     scriptpubkey: str
     value: Sats
@@ -748,14 +748,14 @@ class Transaction(TypedDict):
     Attributes:
         index: Internal transaction index (brk-specific, not in mempool.space)
         txid: Transaction ID
-        version: Transaction version (raw i32 from Litecoin protocol, may contain non-standard values in coinbase txs)
+        version: Transaction version (raw i32 from Dogecoin protocol, may contain non-standard values in coinbase txs)
         locktime: Transaction lock time
         vin: Transaction inputs
         vout: Transaction outputs
         size: Transaction size in bytes
         weight: Transaction weight
         sigops: Number of signature operations
-        fee: Transaction fee in litoshis
+        fee: Transaction fee in koinu
         status: Confirmation status (confirmed, block height/hash/time)
     """
     index: Union[TxIndex, None]
@@ -772,7 +772,7 @@ class Transaction(TypedDict):
 
 class BlockTemplate(TypedDict):
     """
-    Projected next-block contents from Litecoin Core's `getblocktemplate`
+    Projected next-block contents from Dogecoin Core's `getblocktemplate`
     (block 0 of the snapshot). Returned by
     `GET /api/v1/mempool/block-template`.
 
@@ -894,7 +894,7 @@ This is the seed's chunk feerate after lift-merging, i.e. the
 rate Core/mempool.space would surface for this tx.
         sigops: BIP-141 sigop cost for the seed tx (witness sigops count as 1,
 legacy and P2SH-redeem sigops count as 4).
-        fee: Transaction fee (lits).
+        fee: Transaction fee (koinu).
         vsize: Virtual size of the seed tx (vbytes).
         adjustedVsize: Policy-adjusted virtual size: `max(vsize, sigops * 5)`.
         cluster: Cluster the seed belongs to: full tx list, SFL-linearized chunks,
@@ -1121,15 +1121,15 @@ class Health(TypedDict):
         status: Health status ("healthy")
         service: Service name
         version: Server version
-        chain: Active chain ("bitcoin" or "litecoin")
-        ticker: Active chain ticker symbol ("BTC" or "LTC")
-        coin_name: Active chain display name ("Bitcoin" or "Litecoin")
+        chain: Active chain ("bitcoin" or "dogecoin")
+        ticker: Active chain ticker symbol ("BTC" or "DOGE")
+        coin_name: Active chain display name ("Bitcoin" or "Dogecoin")
         timestamp: Current server time (ISO 8601)
         started_at: Server start time (ISO 8601)
         uptime_seconds: Uptime in seconds
         indexed_height: Height of the last indexed block
         computed_height: Height of the last computed block (series)
-        tip_height: Height of the chain tip (from Litecoin node)
+        tip_height: Height of the chain tip (from Dogecoin node)
         blocks_behind: Number of blocks behind the tip
         last_indexed_at: Human-readable timestamp of the last indexed block (ISO 8601)
         last_indexed_at_unix: Unix timestamp of the last indexed block
@@ -1170,7 +1170,7 @@ class HistoricalPriceEntry(TypedDict):
 
     Attributes:
         time: Unix timestamp
-        USD: LTC/USD price
+        USD: DOGE/USD price
     """
     time: Timestamp
     USD: Dollars
@@ -1217,7 +1217,7 @@ class MempoolInfo(TypedDict):
     Attributes:
         count: Number of transactions in the mempool
         vsize: Total virtual size of all transactions in the mempool (vbytes)
-        total_fee: Total fees of all transactions in the mempool (litoshis)
+        total_fee: Total fees of all transactions in the mempool (koinu)
         fee_histogram: Fee histogram: `[[fee_rate, vsize], ...]` sorted by descending fee rate
     """
     count: int
@@ -1231,9 +1231,9 @@ class MempoolRecentTx(TypedDict):
 
     Attributes:
         txid: Transaction ID
-        fee: Transaction fee (lits)
+        fee: Transaction fee (koinu)
         vsize: Virtual size (vbytes)
-        value: Total output value (lits)
+        value: Total output value (koinu)
     """
     txid: Txid
     fee: Sats
@@ -1477,7 +1477,7 @@ class Prices(TypedDict):
 
     Attributes:
         time: Unix timestamp
-        USD: LTC/USD price
+        USD: DOGE/USD price
     """
     time: Timestamp
     USD: Dollars
@@ -1557,8 +1557,8 @@ class RewardStats(TypedDict):
     Attributes:
         startBlock: First block in the range
         endBlock: Last block in the range
-        totalReward: Total coinbase rewards (subsidy + fees) in lits
-        totalFee: Total transaction fees in lits
+        totalReward: Total coinbase rewards (subsidy + fees) in koinu
+        totalFee: Total transaction fees in koinu
         totalTx: Total number of transactions
     """
     startBlock: Height
@@ -1668,7 +1668,7 @@ class SyncStatus(TypedDict):
     Attributes:
         indexed_height: Height of the last indexed block
         computed_height: Height of the last computed block (series)
-        tip_height: Height of the chain tip (from Litecoin node)
+        tip_height: Height of the chain tip (from Dogecoin node)
         blocks_behind: Number of blocks behind the tip
         last_indexed_at: Human-readable timestamp of the last indexed block (ISO 8601)
         last_indexed_at_unix: Unix timestamp of the last indexed block
@@ -1750,7 +1750,7 @@ class UrpdBucket(TypedDict):
 
     Attributes:
         price_floor: Lower bound of the bucket, in USD. Equals the exact realized price for `Raw`.
-        supply: Supply held with a last-move price inside this bucket, in LTC.
+        supply: Supply held with a last-move price inside this bucket, in DOGE.
         realized_cap: Realized cap contribution in USD: sum of `realized_price * supply` over the coins in this bucket.
         unrealized_pnl: Unrealized P&L in USD against the close on the snapshot date: `close * supply - realized_cap`. Can be negative.
     """
@@ -1764,14 +1764,14 @@ class Urpd(TypedDict):
     UTXO Realized Price Distribution for a cohort on a specific date.
     
     Supply is grouped by the close price at which each UTXO was last moved.
-    Each bucket exposes three values: supply in LTC, realized cap contribution
+    Each bucket exposes three values: supply in DOGE, realized cap contribution
     in USD (sum of `realized_price * supply` over the coins in the bucket), and
     unrealized P&L in USD (`close * supply - realized_cap`, can be negative).
 
     Attributes:
         aggregation: Aggregation strategy applied to the buckets.
         close: Close price on `date`, in USD. Anchor for `unrealized_pnl`.
-        total_supply: Sum of `supply` across all buckets, in LTC.
+        total_supply: Sum of `supply` across all buckets, in DOGE.
     """
     cohort: Cohort
     date: Date
@@ -1810,7 +1810,7 @@ class Utxo(TypedDict):
         txid: Transaction ID of the UTXO
         vout: Output index
         status: Confirmation status
-        value: Output value in litoshis
+        value: Output value in koinu
     """
     txid: Txid
     vout: Vout
@@ -1820,7 +1820,7 @@ class Utxo(TypedDict):
 class ValidateAddrParam(TypedDict):
     """
     Attributes:
-        address: Litecoin address to validate (can be any string)
+        address: Dogecoin address to validate (can be any string)
     """
     address: str
 
@@ -2039,9 +2039,9 @@ def address_payload_hash_prefix(payload: Union[bytes, bytearray, memoryview], ni
 
 
 # Date conversion constants
-_GENESIS = date(2011, 1, 1)  # day1 0, week1 0
-_DAY_ONE = date(2011, 1, 2)  # day1 1
-_EPOCH = datetime(2011, 1, 1, tzinfo=timezone.utc)
+_GENESIS = date(2013, 1, 1)  # day1 0, week1 0
+_DAY_ONE = date(2013, 1, 2)  # day1 1
+_EPOCH = datetime(2013, 1, 1, tzinfo=timezone.utc)
 _DATE_INDEXES = frozenset([
     'minute10', 'minute30',
     'hour1', 'hour4', 'hour12',
@@ -2069,17 +2069,17 @@ def _index_to_date(index: str, i: int) -> Union[date, datetime]:
     elif index == 'week1':
         return _GENESIS + timedelta(weeks=i)
     elif index == 'month1':
-        return date(2011 + (0 + i) // 12, (0 + i) % 12 + 1, 1)
+        return date(2013 + (0 + i) // 12, (0 + i) % 12 + 1, 1)
     elif index == 'month3':
         m = i * 3
-        return date(2011 + (0 + m) // 12, (0 + m) % 12 + 1, 1)
+        return date(2013 + (0 + m) // 12, (0 + m) % 12 + 1, 1)
     elif index == 'month6':
         m = i * 6
-        return date(2011 + (0 + m) // 12, (0 + m) % 12 + 1, 1)
+        return date(2013 + (0 + m) // 12, (0 + m) % 12 + 1, 1)
     elif index == 'year1':
-        return date(2011 + i, 1, 1)
+        return date(2013 + i, 1, 1)
     elif index == 'year10':
-        return date(2011 + i * 10, 1, 1)
+        return date(2013 + i * 10, 1, 1)
     else:
         raise ValueError(f"{index} is not a date-based index")
 
@@ -2105,19 +2105,19 @@ def _date_to_index(index: str, d: Union[date, datetime]) -> int:
             return 0
         return 1 + (dd - _DAY_ONE).days
     elif index == 'day3':
-        return (dd - date(2011, 0, 28)).days // 3
+        return (dd - date(2013, 0, 28)).days // 3
     elif index == 'week1':
         return (dd - _GENESIS).days // 7
     elif index == 'month1':
-        return (dd.year - 2011) * 12 + (dd.month - 1 - 0)
+        return (dd.year - 2013) * 12 + (dd.month - 1 - 0)
     elif index == 'month3':
-        return ((dd.year - 2011) * 12 + (dd.month - 1 - 0)) // 3
+        return ((dd.year - 2013) * 12 + (dd.month - 1 - 0)) // 3
     elif index == 'month6':
-        return ((dd.year - 2011) * 12 + (dd.month - 1 - 0)) // 6
+        return ((dd.year - 2013) * 12 + (dd.month - 1 - 0)) // 6
     elif index == 'year1':
-        return dd.year - 2011
+        return dd.year - 2013
     elif index == 'year10':
-        return (dd.year - 2011) // 10
+        return (dd.year - 2013) // 10
     else:
         raise ValueError(f"{index} is not a date-based index")
 
@@ -7628,214 +7628,214 @@ class BrkClient(BrkClientBase):
     AMOUNT_RANGE_NAMES = {
       "_0sats": {
         "id": "0sats",
-        "short": "0 litoshis",
-        "long": "0 Litoshis"
+        "short": "0 koinu",
+        "long": "0 Koinu"
       },
       "_1sat_to_10sats": {
         "id": "1sat_to_10sats",
-        "short": "1-10 lits",
-        "long": "1-10 Lits"
+        "short": "1-10 koinu",
+        "long": "1-10 Koinu"
       },
       "_10sats_to_100sats": {
         "id": "10sats_to_100sats",
-        "short": "10-100 lits",
-        "long": "10-100 Lits"
+        "short": "10-100 koinu",
+        "long": "10-100 Koinu"
       },
       "_100sats_to_1k_sats": {
         "id": "100sats_to_1k_sats",
-        "short": "100-1k lits",
-        "long": "100-1K Lits"
+        "short": "100-1k koinu",
+        "long": "100-1K Koinu"
       },
       "_1k_sats_to_10k_sats": {
         "id": "1k_sats_to_10k_sats",
-        "short": "1k-10k lits",
-        "long": "1K-10K Lits"
+        "short": "1k-10k koinu",
+        "long": "1K-10K Koinu"
       },
       "_10k_sats_to_100k_sats": {
         "id": "10k_sats_to_100k_sats",
-        "short": "10k-100k lits",
-        "long": "10K-100K Lits"
+        "short": "10k-100k koinu",
+        "long": "10K-100K Koinu"
       },
       "_100k_sats_to_1m_sats": {
         "id": "100k_sats_to_1m_sats",
-        "short": "100k-1M lits",
-        "long": "100K-1M Lits"
+        "short": "100k-1M koinu",
+        "long": "100K-1M Koinu"
       },
       "_1m_sats_to_10m_sats": {
         "id": "1m_sats_to_10m_sats",
-        "short": "1M-10M lits",
-        "long": "1M-10M Lits"
+        "short": "1M-10M koinu",
+        "long": "1M-10M Koinu"
       },
       "_10m_sats_to_1btc": {
         "id": "10m_sats_to_1btc",
-        "short": "0.1-1 LTC",
-        "long": "0.1-1 LTC"
+        "short": "0.1-1 DOGE",
+        "long": "0.1-1 DOGE"
       },
       "_1btc_to_10btc": {
         "id": "1btc_to_10btc",
-        "short": "1-10 LTC",
-        "long": "1-10 LTC"
+        "short": "1-10 DOGE",
+        "long": "1-10 DOGE"
       },
       "_10btc_to_100btc": {
         "id": "10btc_to_100btc",
-        "short": "10-100 LTC",
-        "long": "10-100 LTC"
+        "short": "10-100 DOGE",
+        "long": "10-100 DOGE"
       },
       "_100btc_to_1k_btc": {
         "id": "100btc_to_1k_btc",
-        "short": "100-1k LTC",
-        "long": "100-1K LTC"
+        "short": "100-1k DOGE",
+        "long": "100-1K DOGE"
       },
       "_1k_btc_to_10k_btc": {
         "id": "1k_btc_to_10k_btc",
-        "short": "1k-10k LTC",
-        "long": "1K-10K LTC"
+        "short": "1k-10k DOGE",
+        "long": "1K-10K DOGE"
       },
       "_10k_btc_to_100k_btc": {
         "id": "10k_btc_to_100k_btc",
-        "short": "10k-100k LTC",
-        "long": "10K-100K LTC"
+        "short": "10k-100k DOGE",
+        "long": "10K-100K DOGE"
       },
       "over_100k_btc": {
         "id": "over_100k_btc",
-        "short": "100k+ LTC",
-        "long": "100K+ LTC"
+        "short": "100k+ DOGE",
+        "long": "100K+ DOGE"
       }
     }
 
     OVER_AMOUNT_NAMES = {
       "_1sat": {
         "id": "over_1sat",
-        "short": "1+ lits",
-        "long": "Over 1 Lit"
+        "short": "1+ koinu",
+        "long": "Over 1 Koinu"
       },
       "_10sats": {
         "id": "over_10sats",
-        "short": "10+ lits",
-        "long": "Over 10 Lits"
+        "short": "10+ koinu",
+        "long": "Over 10 Koinu"
       },
       "_100sats": {
         "id": "over_100sats",
-        "short": "100+ lits",
-        "long": "Over 100 Lits"
+        "short": "100+ koinu",
+        "long": "Over 100 Koinu"
       },
       "_1k_sats": {
         "id": "over_1k_sats",
-        "short": "1k+ lits",
-        "long": "Over 1K Lits"
+        "short": "1k+ koinu",
+        "long": "Over 1K Koinu"
       },
       "_10k_sats": {
         "id": "over_10k_sats",
-        "short": "10k+ lits",
-        "long": "Over 10K Lits"
+        "short": "10k+ koinu",
+        "long": "Over 10K Koinu"
       },
       "_100k_sats": {
         "id": "over_100k_sats",
-        "short": "100k+ lits",
-        "long": "Over 100K Lits"
+        "short": "100k+ koinu",
+        "long": "Over 100K Koinu"
       },
       "_1m_sats": {
         "id": "over_1m_sats",
-        "short": "1M+ lits",
-        "long": "Over 1M Lits"
+        "short": "1M+ koinu",
+        "long": "Over 1M Koinu"
       },
       "_10m_sats": {
         "id": "over_10m_sats",
-        "short": "0.1+ LTC",
-        "long": "Over 0.1 LTC"
+        "short": "0.1+ DOGE",
+        "long": "Over 0.1 DOGE"
       },
       "_1btc": {
         "id": "over_1btc",
-        "short": "1+ LTC",
-        "long": "Over 1 LTC"
+        "short": "1+ DOGE",
+        "long": "Over 1 DOGE"
       },
       "_10btc": {
         "id": "over_10btc",
-        "short": "10+ LTC",
-        "long": "Over 10 LTC"
+        "short": "10+ DOGE",
+        "long": "Over 10 DOGE"
       },
       "_100btc": {
         "id": "over_100btc",
-        "short": "100+ LTC",
-        "long": "Over 100 LTC"
+        "short": "100+ DOGE",
+        "long": "Over 100 DOGE"
       },
       "_1k_btc": {
         "id": "over_1k_btc",
-        "short": "1k+ LTC",
-        "long": "Over 1K LTC"
+        "short": "1k+ DOGE",
+        "long": "Over 1K DOGE"
       },
       "_10k_btc": {
         "id": "over_10k_btc",
-        "short": "10k+ LTC",
-        "long": "Over 10K LTC"
+        "short": "10k+ DOGE",
+        "long": "Over 10K DOGE"
       }
     }
 
     UNDER_AMOUNT_NAMES = {
       "_10sats": {
         "id": "under_10sats",
-        "short": "<10 lits",
-        "long": "Under 10 Lits"
+        "short": "<10 koinu",
+        "long": "Under 10 Koinu"
       },
       "_100sats": {
         "id": "under_100sats",
-        "short": "<100 lits",
-        "long": "Under 100 Lits"
+        "short": "<100 koinu",
+        "long": "Under 100 Koinu"
       },
       "_1k_sats": {
         "id": "under_1k_sats",
-        "short": "<1k lits",
-        "long": "Under 1K Lits"
+        "short": "<1k koinu",
+        "long": "Under 1K Koinu"
       },
       "_10k_sats": {
         "id": "under_10k_sats",
-        "short": "<10k lits",
-        "long": "Under 10K Lits"
+        "short": "<10k koinu",
+        "long": "Under 10K Koinu"
       },
       "_100k_sats": {
         "id": "under_100k_sats",
-        "short": "<100k lits",
-        "long": "Under 100K Lits"
+        "short": "<100k koinu",
+        "long": "Under 100K Koinu"
       },
       "_1m_sats": {
         "id": "under_1m_sats",
-        "short": "<1M lits",
-        "long": "Under 1M Lits"
+        "short": "<1M koinu",
+        "long": "Under 1M Koinu"
       },
       "_10m_sats": {
         "id": "under_10m_sats",
-        "short": "<0.1 LTC",
-        "long": "Under 0.1 LTC"
+        "short": "<0.1 DOGE",
+        "long": "Under 0.1 DOGE"
       },
       "_1btc": {
         "id": "under_1btc",
-        "short": "<1 LTC",
-        "long": "Under 1 LTC"
+        "short": "<1 DOGE",
+        "long": "Under 1 DOGE"
       },
       "_10btc": {
         "id": "under_10btc",
-        "short": "<10 LTC",
-        "long": "Under 10 LTC"
+        "short": "<10 DOGE",
+        "long": "Under 10 DOGE"
       },
       "_100btc": {
         "id": "under_100btc",
-        "short": "<100 LTC",
-        "long": "Under 100 LTC"
+        "short": "<100 DOGE",
+        "long": "Under 100 DOGE"
       },
       "_1k_btc": {
         "id": "under_1k_btc",
-        "short": "<1k LTC",
-        "long": "Under 1K LTC"
+        "short": "<1k DOGE",
+        "long": "Under 1K DOGE"
       },
       "_10k_btc": {
         "id": "under_10k_btc",
-        "short": "<10k LTC",
-        "long": "Under 10K LTC"
+        "short": "<10k DOGE",
+        "long": "Under 10K DOGE"
       },
       "_100k_btc": {
         "id": "under_100k_btc",
-        "short": "<100k LTC",
-        "long": "Under 100K LTC"
+        "short": "<100k DOGE",
+        "long": "Under 100K DOGE"
       }
     }
 
@@ -8150,7 +8150,7 @@ class BrkClient(BrkClientBase):
     def get_disk_usage(self) -> DiskUsage:
         """Disk usage.
 
-        Returns the disk space used by LRK and Litecoin data.
+        Returns the disk space used by DRK and Dogecoin data.
 
         Endpoint: `GET /api/server/disk`"""
         return self.get_json('/api/server/disk')
@@ -8345,9 +8345,9 @@ class BrkClient(BrkClientBase):
         return self.get_json('/api/v1/difficulty-adjustment')
 
     def get_prices(self) -> Prices:
-        """Current LTC price.
+        """Current DOGE price.
 
-        Returns litecoin latest price (exchange-derived, USD only).
+        Returns dogecoin latest price (exchange-derived, USD only).
 
         *[Mempool.space docs](https://mempool.space/docs/api/rest#get-price)*
 
@@ -8357,7 +8357,7 @@ class BrkClient(BrkClientBase):
     def get_historical_price(self, timestamp: Optional[Timestamp] = None) -> HistoricalPrice:
         """Historical price.
 
-        Get historical LTC/USD price. Optionally specify a UNIX timestamp to get the price at that time.
+        Get historical DOGE/USD price. Optionally specify a UNIX timestamp to get the price at that time.
 
         *[Mempool.space docs](https://mempool.space/docs/api/rest#get-historical-price)*
 
@@ -8379,7 +8379,7 @@ class BrkClient(BrkClientBase):
     def get_address(self, address: Addr) -> AddrStats:
         """Address information.
 
-        Retrieve address information including balance and transaction counts. Supports all standard Litecoin address types (P2PKH, P2SH, P2WPKH, P2WSH, P2TR).
+        Retrieve address information including balance and transaction counts. Supports all standard Dogecoin address types (P2PKH, P2SH, P2WPKH, P2WSH, P2TR).
 
         *[Mempool.space docs](https://mempool.space/docs/api/rest#get-address)*
 
@@ -8439,7 +8439,7 @@ class BrkClient(BrkClientBase):
     def validate_address(self, address: str) -> AddrValidation:
         """Validate address.
 
-        Validate a Litecoin address and get information about its type and scriptPubKey. Returns `isvalid: false` with an error message for invalid addresses.
+        Validate a Dogecoin address and get information about its type and scriptPubKey. Returns `isvalid: false` with an error message for invalid addresses.
 
         *[Mempool.space docs](https://mempool.space/docs/api/rest#get-address-validate)*
 
@@ -8789,7 +8789,7 @@ class BrkClient(BrkClientBase):
     def get_mempool_blocks(self) -> List[MempoolBlock]:
         """Projected mempool blocks.
 
-        Projected blocks for fee estimation. Block 0 reflects Litecoin Core's actual next-block selection; blocks 1+ are a fee-tier approximation.
+        Projected blocks for fee estimation. Block 0 reflects Dogecoin Core's actual next-block selection; blocks 1+ are a fee-tier approximation.
 
         *[Mempool.space docs](https://mempool.space/docs/api/rest#get-mempool-blocks-fees)*
 
@@ -8877,7 +8877,7 @@ class BrkClient(BrkClientBase):
     def get_block_template(self) -> BlockTemplate:
         """Projected next block template.
 
-        Litecoin Core's `getblocktemplate` selection: full transaction bodies in GBT order with aggregate stats. The returned `hash` is an opaque content token; pass it as `<hash>` on `/api/v1/mempool/block-template/diff/{hash}` to fetch deltas instead of refetching the whole template.
+        Dogecoin Core's `getblocktemplate` selection: full transaction bodies in GBT order with aggregate stats. The returned `hash` is an opaque content token; pass it as `<hash>` on `/api/v1/mempool/block-template/diff/{hash}` to fetch deltas instead of refetching the whole template.
 
         Endpoint: `GET /api/v1/mempool/block-template`"""
         return self.get_json('/api/v1/mempool/block-template')
@@ -8891,17 +8891,17 @@ class BrkClient(BrkClientBase):
         return self.get_json(f'/api/v1/mempool/block-template/diff/{hash}')
 
     def get_live_price(self) -> Dollars:
-        """Live LTC/USD price.
+        """Live DOGE/USD price.
 
-        Returns the current LTC/USD price in dollars, derived from on-chain round-dollar output patterns in the last 12 blocks plus mempool.
+        Returns the current DOGE/USD price in dollars, derived from on-chain round-dollar output patterns in the last 12 blocks plus mempool.
 
         Endpoint: `GET /api/mempool/price`"""
         return self.get_json('/api/mempool/price')
 
     def get_oracle_price(self) -> Dollars:
-        """Live LTC/USD price.
+        """Live DOGE/USD price.
 
-        Current LTC/USD price in dollars. Same value as `/api/mempool/price`. Confirmed per-height history is available at `/api/vecs/height-to-price`.
+        Current DOGE/USD price in dollars. Same value as `/api/mempool/price`. Confirmed per-height history is available at `/api/vecs/height-to-price`.
 
         Endpoint: `GET /api/oracle/price`"""
         return self.get_json('/api/oracle/price')

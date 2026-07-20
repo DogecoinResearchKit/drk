@@ -25,11 +25,12 @@ import { defaultTooltip } from "./tooltip/index.js";
 const AGGREGATION = "log2000";
 const MIN_LOG = -2;
 const MAX_LOG = 6;
-// Litecoin's realized prices sit far below Bitcoin's range (historically ~$1
-// to ~$400), so default the visible band to $1–$1k. A Bitcoin-scale default
-// ($1k–$250k) would clip every point out of the grid and render blank.
-const DEFAULT_MIN_LOG = 0;
-const DEFAULT_MAX_LOG = Math.log10(1_000);
+// Dogecoin's realized prices sit far below Bitcoin's range (historically well
+// under $1, peaking near $0.70), so default the visible band to $0.01–$1. A
+// Bitcoin-scale default ($1k–$250k) would clip every point out of the grid and
+// render blank.
+const DEFAULT_MIN_LOG = -2;
+const DEFAULT_MAX_LOG = 0;
 const PRICE_CHOICES = [
   { label: "$0.01", key: "0.01", value: Math.log10(0.01) },
   { label: "$0.1", key: "0.1", value: Math.log10(0.1) },
@@ -266,7 +267,7 @@ function formatPrice(value) {
 
 /** @param {number} value */
 function formatBitcoin(value) {
-  return `${numberToShortUSFormat(value)} LTC`;
+  return `${numberToShortUSFormat(value)} DOGE`;
 }
 
 /** @param {number} value */

@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-# Lightweight health checks + launchd kickstarts. Logs to ~/Library/Logs/litview/.
+# Lightweight health checks + launchd kickstarts. Logs to ~/Library/Logs/dogeview/.
 set -euo pipefail
 
 UID_NUM="$(id -u)"
 ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
-ENV_FILE="${LITVIEW_ENV:-$ROOT/docker/.env}"
-LOG_DIR="${LITVIEW_LOG_DIR:-$HOME/Library/Logs/litview}"
+ENV_FILE="${DOGEVIEW_ENV:-$ROOT/docker/.env}"
+LOG_DIR="${DOGEVIEW_LOG_DIR:-$HOME/Library/Logs/dogeview}"
 mkdir -p "$LOG_DIR"
 LOG="$LOG_DIR/watchdog.log"
 DISK_WARN_GB="${DISK_WARN_GB:-50}"
@@ -33,31 +33,31 @@ if [[ -n "${avail_gb:-}" ]] && [[ "$avail_gb" -lt "$DISK_WARN_GB" ]]; then
   log "WARN disk ${avail_gb}GB free (< ${DISK_WARN_GB}GB)"
 fi
 
-# Litecoin RPC: cookie auth (default) or RPC_USER/RPC_PASSWORD from docker/.env
+# Dogecoin RPC: cookie auth (default) or RPC_USER/RPC_PASSWORD from docker/.env
 rpc_auth_args=()
-cookie_file="${CHAIN_DATA_DIR:-$HOME/Library/Application Support/Litecoin}/.cookie"
+cookie_file="${CHAIN_DATA_DIR:-$HOME/Library/Application Support/Dogecoin}/.cookie"
 if [[ -n "${RPC_USER:-}" && -n "${RPC_PASSWORD:-}" ]]; then
   rpc_auth_args=(--user "${RPC_USER}:${RPC_PASSWORD}")
 elif [[ -f "$cookie_file" ]]; then
   rpc_auth_args=(--user "$(cat "$cookie_file")")
 else
-  rpc_auth_args=(--user "litecoin:litecoin")
+  rpc_auth_args=(--user "dogecoin:dogecoin")
 fi
 
 if ! curl -sf --max-time 3 "${rpc_auth_args[@]}" \
   --data-binary '{"jsonrpc":"1.0","id":"wd","method":"getblockcount","params":[]}' \
   -H 'content-type: text/plain;' \
-  "http://127.0.0.1:${RPC_PORT:-9332}/" >/dev/null 2>&1; then
-  log "WARN litecoin RPC down — kickstarting com.litview.litecoin"
-  kick com.litview.litecoin
+  "http://127.0.0.1:${RPC_PORT:-22555}/" >/dev/null 2>&1; then
+  log "WARN dogecoin RPC down — kickstarting com.dogeview.dogecoin"
+  kick com.dogeview.dogecoin
 fi
 
 # BRK HTTP (only alert/kick if process should be managed)
 if ! curl -sf --max-time 3 "http://127.0.0.1:${BRK_PORT:-7070}/health" >/dev/null 2>&1; then
   # During deep sync BRK may reset connections; only kick if binary not running.
   if ! pgrep -qx brk; then
-    log "WARN brk not running — kickstarting com.litview.brk"
-    kick com.litview.brk
+    log "WARN brk not running — kickstarting com.dogeview.brk"
+    kick com.dogeview.brk
   else
     log "INFO brk process up but /health not ready (likely indexing)"
   fi
@@ -65,6 +65,6 @@ fi
 
 # Tunnel
 if ! pgrep -qf 'cloudflared tunnel'; then
-  log "WARN cloudflared down — kickstarting com.litview.cloudflared"
-  kick com.litview.cloudflared
+  log "WARN cloudflared down — kickstarting com.dogeview.cloudflared"
+  kick com.dogeview.cloudflared
 fi

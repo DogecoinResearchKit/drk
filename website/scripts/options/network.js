@@ -1232,7 +1232,7 @@ export function createNetworkSection() {
             bottom: [
               line({
                 series: supply.velocity.native,
-                name: "LTC",
+                name: "DOGE",
                 unit: Unit.ratio,
               }),
               line({

@@ -113,7 +113,7 @@ initPrice(brk);
 
 onPrice((price) => {
   console.log("close:", price);
-  window.document.title = `${price.toLocaleString("en-us")} | litview`;
+  window.document.title = `${price.toLocaleString("en-us")} | dogeview`;
 });
 
 const options = initOptions();

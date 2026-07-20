@@ -18,7 +18,7 @@ import { units } from "../../../chart/units.js";
 export const supplySection = {
   title: "Supply",
   description:
-    "Litecoin has a fixed issuance schedule. This chart shows how many LTC are in circulation over time, so you can see supply rising toward the 21 million limit.",
+    "Dogecoin has a fixed per-block issuance of 10,000 DOGE with no supply cap. This chart shows how many DOGE are in circulation over time, so you can see the steadily growing, uncapped supply.",
   chart: {
     title: "Circulating supply",
     unit: units.btc,
@@ -38,7 +38,7 @@ export const supplySection = {
     {
       title: "Exposed",
       description:
-        "Shows LTC held by addresses whose public key is already visible on-chain. This can happen because the address type exposes the key directly, or because coins were spent from that address before.",
+        "Shows DOGE held by addresses whose public key is already visible on-chain. This can happen because the address type exposes the key directly, or because coins were spent from that address before.",
       chart: {
         title: "Exposed supply",
         unit: units.btc,
@@ -81,7 +81,7 @@ export const supplySection = {
     {
       title: "UTXO Balance",
       description:
-        "Groups supply by the size of each unspent output. A UTXO is a spendable piece of litecoin created by a transaction, so this shows the size distribution of coin fragments.",
+        "Groups supply by the size of each unspent output. A UTXO is a spendable piece of dogecoin created by a transaction, so this shows the size distribution of coin fragments.",
       chart: {
         title: "Supply by UTXO balance",
         unit: units.btc,
@@ -91,7 +91,7 @@ export const supplySection = {
     {
       title: "Address Balance",
       description:
-        "Groups supply by the total LTC held at each address. An address is not the same as a person or entity, but this still helps show how balances are distributed on-chain.",
+        "Groups supply by the total DOGE held at each address. An address is not the same as a person or entity, but this still helps show how balances are distributed on-chain.",
       chart: {
         title: "Supply by address balance",
         unit: units.btc,
@@ -101,7 +101,7 @@ export const supplySection = {
     {
       title: "Type",
       description:
-        "Groups supply by Litecoin output type. The output type is the script format that defines how coins can be spent.",
+        "Groups supply by Dogecoin output type. The output type is the script format that defines how coins can be spent.",
       chart: {
         title: "Supply by type",
         unit: units.btc,
@@ -111,7 +111,7 @@ export const supplySection = {
     {
       title: "Epoch",
       description:
-        "Groups supply by the halving epoch when coins were mined. A halving epoch is a period between two subsidy halvings, when the amount of new LTC paid to miners changes.",
+        "Groups supply by the halving epoch when coins were mined. A halving epoch is a period between two subsidy halvings, when the amount of new DOGE paid to miners changes.",
       chart: {
         title: "Supply by epoch",
         unit: units.btc,

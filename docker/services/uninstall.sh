@@ -6,10 +6,10 @@ UID_NUM="$(id -u)"
 DOMAIN="gui/${UID_NUM}"
 
 labels=(
-  com.litview.watchdog
-  com.litview.cloudflared
-  com.litview.brk
-  com.litview.litecoin
+  com.dogeview.watchdog
+  com.dogeview.cloudflared
+  com.dogeview.brk
+  com.dogeview.dogecoin
 )
 
 for label in "${labels[@]}"; do
