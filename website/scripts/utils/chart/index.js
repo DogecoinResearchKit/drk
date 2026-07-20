@@ -280,6 +280,19 @@ export function createChart({ parent, brk, fitContent }) {
 
   ichart.panes().at(0)?.setStretchFactor(1);
 
+  // Sub-cent resolution: the library default (minMove 0.01) floors the price
+  // axis at one cent, hiding fractional-cent prices like DOGE. A tiny minMove
+  // lets ticks resolve down to koinu; labels stay clean via priceFormatter.
+  const priceFormat = /** @type {const} */ ({ precision: 8, minMove: 1e-8 });
+
+  /**
+   * @param {Parameters<typeof ichart.addSeries>[0]} definition
+   * @param {Parameters<typeof ichart.addSeries>[1]} [options]
+   * @param {number} [paneIndex]
+   */
+  const addSeries = (definition, options, paneIndex) =>
+    ichart.addSeries(definition, { priceFormat, ...options }, paneIndex);
+
   /** @typedef {(visibleBarsCount: number) => void} ZoomChangeCallback */
 
   const initialRange = getRange();
@@ -845,7 +858,7 @@ export function createChart({ parent, brk, fitContent }) {
       const downColor = customColors?.[1] ?? colors.default;
 
       const candlestickISeries = /** @type {CandlestickISeries} */ (
-        ichart.addSeries(
+        addSeries(
           /** @type {SeriesDefinition<'Candlestick'>} */ (CandlestickSeries),
           { visible: false, borderVisible: true, ...options },
           paneIndex,
@@ -853,7 +866,7 @@ export function createChart({ parent, brk, fitContent }) {
       );
 
       const lineISeries = /** @type {LineISeries} */ (
-        ichart.addSeries(
+        addSeries(
           /** @type {SeriesDefinition<'Line'>} */ (LineSeries),
           { visible: false, lineWidth, priceLineVisible: true },
           paneIndex,
@@ -962,7 +975,7 @@ export function createChart({ parent, brk, fitContent }) {
       const negativeColor = isDualColor ? color[1] : color;
 
       const iseries = /** @type {HistogramISeries} */ (
-        ichart.addSeries(
+        addSeries(
           /** @type {SeriesDefinition<'Histogram'>} */ (HistogramSeries),
           { priceLineVisible: false, ...options },
           paneIndex,
@@ -1042,7 +1055,7 @@ export function createChart({ parent, brk, fitContent }) {
       options,
     }) {
       const iseries = /** @type {LineISeries} */ (
-        ichart.addSeries(
+        addSeries(
           /** @type {SeriesDefinition<'Line'>} */ (LineSeries),
           { lineWidth, priceLineVisible: false, ...options },
           paneIndex,
@@ -1109,7 +1122,7 @@ export function createChart({ parent, brk, fitContent }) {
       options,
     }) {
       const iseries = /** @type {LineISeries} */ (
-        ichart.addSeries(
+        addSeries(
           /** @type {SeriesDefinition<'Line'>} */ (LineSeries),
           {
             priceLineVisible: false,
@@ -1189,7 +1202,7 @@ export function createChart({ parent, brk, fitContent }) {
       options,
     }) {
       const iseries = /** @type {BaselineISeries} */ (
-        ichart.addSeries(
+        addSeries(
           /** @type {SeriesDefinition<'Baseline'>} */ (BaselineSeries),
           {
             lineWidth,
@@ -1260,7 +1273,7 @@ export function createChart({ parent, brk, fitContent }) {
       options,
     }) {
       const iseries = /** @type {BaselineISeries} */ (
-        ichart.addSeries(
+        addSeries(
           /** @type {SeriesDefinition<'Baseline'>} */ (BaselineSeries),
           {
             lineWidth,

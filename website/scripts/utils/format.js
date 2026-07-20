@@ -20,6 +20,10 @@ export function numberToShortUSFormat(value, digits) {
 
   if (isNaN(value) || !isFinite(value)) {
     return "";
+  } else if (absoluteValue > 0 && absoluteValue < 0.001) {
+    // Fractional-cent prices (e.g. DOGE) collapse to "0.000" at 3 decimals,
+    // so fall back to significant digits to keep them readable.
+    return value.toLocaleString("en-us", { maximumSignificantDigits: 3 });
   } else if (absoluteValue < 10) {
     return numberToUSNumber(value, Math.min(3, digits || 10));
   } else if (absoluteValue < 1_000) {

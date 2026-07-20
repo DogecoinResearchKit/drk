@@ -90,6 +90,29 @@ function formatCompact(value, index, length, useGrouping) {
   return "Inf.";
 }
 
+const significantDigits = [3, 2, 1];
+
+/**
+ * @param {number} value
+ * @param {number} length
+ * @param {boolean} useGrouping
+ */
+function formatSmall(value, length, useGrouping) {
+  for (const digits of significantDigits) {
+    const formatted = value.toLocaleString("en-US", {
+      maximumSignificantDigits: digits,
+      useGrouping,
+    });
+
+    if (formatted.length <= length) return formatted;
+  }
+
+  return value.toLocaleString("en-US", {
+    maximumSignificantDigits: 1,
+    useGrouping,
+  });
+}
+
 /**
  * @param {number} value
  * @param {number} length
@@ -118,6 +141,9 @@ function formatValue(value, length, useGrouping = true) {
   const absolute = Math.abs(value);
 
   if (absolute >= compactMax) return "Inf.";
+  // Fractional-cent values (e.g. DOGE) would round to "0.000" with fixed
+  // fraction digits, so switch to significant digits below a milli-unit.
+  if (absolute < 0.001) return formatSmall(value, length, useGrouping);
   if (absolute < compactBase) return formatPlain(value, length, useGrouping);
 
   return formatCompact(value, getCompactIndex(absolute), length, useGrouping);

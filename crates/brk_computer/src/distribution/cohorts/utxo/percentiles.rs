@@ -85,7 +85,7 @@ impl UTXOCohorts {
                 };
                 let mut merged: Vec<(CentsCompact, Sats)> = Vec::new();
                 for (&price, &sats) in state.cost_basis_map().iter() {
-                    let rounded = price.round_to_dollar(COST_BASIS_PRICE_DIGITS);
+                    let rounded = price.round_to(COST_BASIS_PRICE_DIGITS);
                     if let Some(last) = merged.last_mut()
                         && last.0 == rounded
                     {
@@ -223,7 +223,7 @@ impl MergeTarget {
 
     fn finalize_price(&mut self, price: Cents) {
         if self.price_sats > 0 {
-            let rounded: CentsCompact = price.round_to_dollar(COST_BASIS_PRICE_DIGITS).into();
+            let rounded: CentsCompact = price.round_to(COST_BASIS_PRICE_DIGITS).into();
             if let Some((lp, ls)) = self.merged.last_mut()
                 && *lp == rounded
             {

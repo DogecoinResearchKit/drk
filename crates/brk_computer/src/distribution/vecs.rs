@@ -42,7 +42,7 @@ use super::{
     metrics::AvgAmountMetrics,
 };
 
-const VERSION: Version = Version::new(24 + brk_oracle::VERSION);
+const VERSION: Version = Version::new(25 + brk_oracle::VERSION);
 
 #[derive(Traversable)]
 pub struct AddrMetricsVecs<M: StorageMode = Rw> {

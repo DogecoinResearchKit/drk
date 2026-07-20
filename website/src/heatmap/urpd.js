@@ -23,15 +23,18 @@ import { defaultTooltip } from "./tooltip/index.js";
 /** @typedef {{ name: string, cohort: UrpdCohort }} UrpdCohortFolder */
 
 const AGGREGATION = "log2000";
-const MIN_LOG = -2;
+const MIN_LOG = -5;
 const MAX_LOG = 6;
-// Dogecoin's realized prices sit far below Bitcoin's range (historically well
-// under $1, peaking near $0.70), so default the visible band to $0.01–$1. A
-// Bitcoin-scale default ($1k–$250k) would clip every point out of the grid and
-// render blank.
-const DEFAULT_MIN_LOG = -2;
+// Dogecoin's realized prices sit far below Bitcoin's range: historically as low
+// as ~$0.0001 (2015) and peaking near $0.70 (2021). Default the visible band to
+// $0.0001–$1 so the full distribution is shown; a higher floor (e.g. $0.01)
+// clips every pre-2019 coin out of the grid and renders large gaps.
+const DEFAULT_MIN_LOG = -4;
 const DEFAULT_MAX_LOG = 0;
 const PRICE_CHOICES = [
+  { label: "$0.00001", key: "0.00001", value: Math.log10(0.00001) },
+  { label: "$0.0001", key: "0.0001", value: Math.log10(0.0001) },
+  { label: "$0.001", key: "0.001", value: Math.log10(0.001) },
   { label: "$0.01", key: "0.01", value: Math.log10(0.01) },
   { label: "$0.1", key: "0.1", value: Math.log10(0.1) },
   { label: "$1", key: "1", value: 0 },
@@ -262,6 +265,9 @@ function formatPrice(value) {
   const price = 10 ** value;
   if (price >= 1_000_000) return `$${formatCompact(price / 1_000_000)}M`;
   if (price >= 1_000) return `$${formatCompact(price / 1_000)}k`;
+  // Sub-cent prices would collapse to "$0" via formatCompact's 2-decimal cap,
+  // so use the significant-digit formatter instead.
+  if (price < 0.01) return `$${numberToShortUSFormat(price)}`;
   return `$${formatCompact(price)}`;
 }
 

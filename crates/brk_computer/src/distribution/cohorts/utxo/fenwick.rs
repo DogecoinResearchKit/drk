@@ -14,16 +14,26 @@ use super::COST_BASIS_PRICE_DIGITS;
 /// Number of age range cohorts (21: 20 boundaries + 1 unbounded).
 const AGE_RANGE_COUNT: usize = 21;
 
-// Tier boundaries for 5-significant-digit dollar bucketing.
-// Matches the rounding used by `Cents::round_to_dollar(5)`.
-const TIER0_COUNT: usize = 100_000; // $0-$99,999 exact dollars
-const TIER1_COUNT: usize = 90_000; // $100,000-$999,990 step $10
-const OVERFLOW: usize = 1; // $1,000,000+ clamped to last bucket
-
-const TIER1_START: usize = TIER0_COUNT;
+// Bucket layout: `COST_BASIS_PRICE_DIGITS` significant digits of the fixed-point
+// price value, matching `Cents::round_to`. It is scale-invariant, so it keeps
+// full resolution on both the cent scale (Bitcoin) and the micro-dollar scale
+// (Dogecoin) — a dollar-based layout would collapse every sub-dollar price into
+// one bucket.
+//
+//   - Region A: values in [0, REGION_A_SIZE) are already <= 5 significant digits,
+//     so they get one exact bucket each.
+//   - Region B: values >= REGION_A_SIZE are packed as (exponent, mantissa) with
+//     MANTISSA_COUNT slots per decade.
+//   - One trailing overflow bucket for anything beyond the covered range.
+const SIG_DIGITS: u32 = COST_BASIS_PRICE_DIGITS as u32; // 5
+const SIG_POW: u64 = 10u64.pow(SIG_DIGITS - 1); // 10_000: smallest N-digit mantissa
+const REGION_A_SIZE: usize = 10usize.pow(SIG_DIGITS); // 100_000 exact-value buckets
+const MANTISSA_COUNT: usize = REGION_A_SIZE - SIG_POW as usize; // 90_000 slots per decade
+const MAX_DECADES: u32 = 5; // covers every u32 fixed-point price (up to ~10^10)
+const OVERFLOW: usize = 1;
 
 /// Total number of buckets.
-const TREE_SIZE: usize = TIER0_COUNT + TIER1_COUNT + OVERFLOW; // 190,001
+const TREE_SIZE: usize = REGION_A_SIZE + MAX_DECADES as usize * MANTISSA_COUNT + OVERFLOW;
 
 /// 4-field Fenwick tree node for combined cost basis tracking.
 #[derive(Clone, Copy, Default)]
@@ -86,33 +96,50 @@ pub(super) struct CostBasisFenwick {
 }
 
 // ---------------------------------------------------------------------------
-// Bucket mapping: 5-significant-digit dollar precision
-// Uses Cents::round_to_dollar(5) for rounding, then maps rounded dollars
-// to a flat bucket index across two tiers.
+// Bucket mapping: significant-digit precision on the native fixed-point scale.
+// The mantissa extraction below rounds to `SIG_DIGITS` significant digits,
+// exactly like `Cents::round_to(SIG_DIGITS)` used by the URPD snapshots.
 // ---------------------------------------------------------------------------
 
-/// Prices >= $1M are clamped to the last bucket.
+/// Map a fixed-point price value (native `Cents` units) to a bucket index,
+/// rounding to `SIG_DIGITS` significant digits. Monotonic and scale-invariant.
 #[inline]
-fn dollars_to_bucket(dollars: u64) -> usize {
-    if dollars < 100_000 {
-        dollars as usize
-    } else if dollars < 1_000_000 {
-        TIER1_START + ((dollars - 100_000) / 10) as usize
-    } else {
-        TREE_SIZE - 1 // overflow bucket for $1M+
+fn value_to_bucket(value: u64) -> usize {
+    if (value as usize) < REGION_A_SIZE {
+        return value as usize;
     }
+    let mut exp = value.ilog10() - (SIG_DIGITS - 1); // >= 1
+    let pow = 10u64.pow(exp);
+    let mut mantissa = (value + pow / 2) / pow;
+    if mantissa as usize >= REGION_A_SIZE {
+        // Rounding carried into the next decade (e.g. 999_996 -> 1_000_000).
+        exp += 1;
+        mantissa /= 10;
+    }
+    if exp > MAX_DECADES {
+        return TREE_SIZE - 1; // overflow
+    }
+    REGION_A_SIZE + (exp - 1) as usize * MANTISSA_COUNT + (mantissa as usize - SIG_POW as usize)
+}
+
+/// Inverse of `value_to_bucket`: representative fixed-point value for a bucket.
+#[inline]
+fn bucket_to_value(bucket: usize) -> u64 {
+    if bucket < REGION_A_SIZE {
+        return bucket as u64;
+    }
+    if bucket >= TREE_SIZE - 1 {
+        return SIG_POW * 10u64.pow(MAX_DECADES + 1); // overflow representative
+    }
+    let b = bucket - REGION_A_SIZE;
+    let exp = (b / MANTISSA_COUNT) as u32 + 1;
+    let mantissa = (b % MANTISSA_COUNT) as u64 + SIG_POW;
+    mantissa * 10u64.pow(exp)
 }
 
 #[inline]
 fn bucket_to_cents(bucket: usize) -> Cents {
-    let dollars: u64 = if bucket < TIER1_START {
-        bucket as u64
-    } else if bucket < TREE_SIZE - 1 {
-        100_000 + (bucket - TIER1_START) as u64 * 10
-    } else {
-        1_000_000
-    };
-    Cents::from(dollars * 100)
+    Cents::from(bucket_to_value(bucket))
 }
 
 #[inline]
@@ -122,7 +149,7 @@ fn price_to_bucket(price: CentsCompact) -> usize {
 
 #[inline]
 fn cents_to_bucket(price: Cents) -> usize {
-    dollars_to_bucket(u64::from(price.round_to_dollar(COST_BASIS_PRICE_DIGITS)) / 100)
+    value_to_bucket(u64::from(price))
 }
 
 impl Default for CostBasisFenwick {

@@ -6,7 +6,9 @@ mod send;
 mod tick_tock;
 mod vecs;
 
-/// Rounding precision for UTXO cost basis prices (5 significant digits in dollars).
+/// Rounding precision for UTXO cost basis prices, in significant digits. Applied
+/// via `round_to` (scale-invariant) rather than `round_to_dollar`, which would
+/// collapse every sub-dollar price to $0 on the Dogecoin micro-dollar scale.
 const COST_BASIS_PRICE_DIGITS: i32 = 5;
 
 pub use groups::*;
