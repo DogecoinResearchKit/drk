@@ -14,6 +14,8 @@
 mod chain;
 pub use chain::{Chain, ChainConstants};
 
+pub mod address;
+
 // Re-export the active chain's primitive types under a stable module path so
 // downstream crates can write `use brk_chain::primitives as bitcoin` and keep
 // all existing `bitcoin::Foo` references working without modification.

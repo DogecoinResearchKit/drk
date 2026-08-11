@@ -3,6 +3,7 @@ use std::io::Read;
 
 use bitcoin::consensus::Decodable;
 use bitcoin::hex::DisplayHex;
+use brk_chain::address::{Address, MAINNET};
 use brk_error::{Error, OptionData, Result};
 use brk_types::{
     BlockExtras, BlockHash, BlockHashPrefix, BlockHeader, BlockInfo, BlockInfoV1, BlockPool,
@@ -693,7 +694,7 @@ impl Query {
             .output
             .iter()
             .filter_map(|output| {
-                bitcoin::Address::from_script(&output.script_pubkey, bitcoin::Network::Bitcoin)
+                Address::from_script(&output.script_pubkey, MAINNET)
                     .ok()
                     .map(|a| a.to_string())
             })

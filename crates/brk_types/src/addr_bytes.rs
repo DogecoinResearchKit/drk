@@ -1,7 +1,8 @@
 use brk_chain::primitives as bitcoin;
 use std::str::FromStr;
 
-use bitcoin::{Network, PublicKey, ScriptBuf, opcodes, script::Builder};
+use bitcoin::{PublicKey, ScriptBuf, opcodes, script::Builder};
+use brk_chain::address::{Address, MAINNET};
 use brk_error::Error;
 
 use super::{
@@ -204,8 +205,8 @@ impl From<P2ABytes> for AddrBytes {
 impl AddrBytes {
     /// Parse an address string to a ScriptBuf
     pub fn addr_to_script(addr: &str) -> Result<ScriptBuf, Error> {
-        if let Ok(addr) = bitcoin::Address::from_str(addr) {
-            if !addr.is_valid_for_network(Network::Bitcoin) {
+        if let Ok(addr) = Address::from_str(addr) {
+            if !addr.is_valid_for_network(MAINNET) {
                 return Err(Error::InvalidNetwork);
             }
             let addr = addr.assume_checked();

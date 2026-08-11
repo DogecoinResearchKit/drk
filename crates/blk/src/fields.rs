@@ -2,9 +2,9 @@ use brk_chain::primitives as bitcoin;
 use std::cell::OnceCell;
 
 use bitcoin::{
-    Address, Block, Network, ScriptBuf, Transaction, TxIn, TxOut, consensus::encode::serialize_hex,
-    hex::DisplayHex,
+    Block, ScriptBuf, Transaction, TxIn, TxOut, consensus::encode::serialize_hex, hex::DisplayHex,
 };
+use brk_chain::address::{Address, Network};
 use brk_error::{Error, Result};
 use brk_types::{Chain, ReadBlock};
 use serde_json::{Map, Value, json};
