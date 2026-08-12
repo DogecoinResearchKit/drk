@@ -192,7 +192,11 @@ impl Vecs {
                             OutputType::P2A => Some(AddrBytes::from(p2a.get(ti))),
                             _ => None,
                         }
-                        .map(|bytes| Addr::try_from(&bytes).unwrap())
+                        // Not every indexed output has an address encoding on
+                        // every chain — Dogecoin has no segwit, so a
+                        // witness-shaped coinbase output has no `D...` form.
+                        // Skip those rather than panicking.
+                        .and_then(|bytes| Addr::try_from(&bytes).ok())
                         .and_then(|addr| self.pools.find_from_addr(&addr))
                     })
                     .or_else(|| self.pools.find_from_coinbase_tag(&coinbase_tag.as_str()))

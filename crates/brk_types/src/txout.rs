@@ -33,10 +33,21 @@ pub struct TxOut {
     #[schemars(with = "OutputType", example = &"v0_p2wpkh")]
     script_pubkey_type: (),
 
-    /// Bitcoin address (if applicable, None for OP_RETURN)
+    /// Address (if applicable, None for OP_RETURN)
     #[allow(dead_code)]
     #[serde(skip, rename = "scriptpubkey_address")]
-    #[schemars(with = "Option<Addr>", example = Some("bc1q8vryck26jhuh0uqr2ttwj96szfnu4nwxfmu39y".to_string()))]
+    #[cfg_attr(
+        all(feature = "dogecoin", not(feature = "litecoin")),
+        schemars(with = "Option<Addr>", example = Some("DPLUJYD5fLTybiPWBH2hKqW7Ek9cbir1Mm".to_string()))
+    )]
+    #[cfg_attr(
+        feature = "litecoin",
+        schemars(with = "Option<Addr>", example = Some("LdRL2VaGSaokKWu4cq2S46QGZpnbRYJW56".to_string()))
+    )]
+    #[cfg_attr(
+        not(any(feature = "litecoin", feature = "dogecoin")),
+        schemars(with = "Option<Addr>", example = Some("bc1q8vryck26jhuh0uqr2ttwj96szfnu4nwxfmu39y".to_string()))
+    )]
     script_pubkey_addr: (),
 
     /// Value of the output in satoshis

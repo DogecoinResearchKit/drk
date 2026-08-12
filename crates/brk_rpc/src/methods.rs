@@ -574,12 +574,15 @@ impl Client {
         self.0.call_with_retry("getblockchaininfo", &[])
     }
 
-    /// Bitcoin network the connected node is running on, derived from
+    /// Network the connected node is running on, derived from
     /// `getblockchaininfo.chain`.
-    pub fn get_network(&self) -> Result<bitcoin::Network> {
+    ///
+    /// Resolves against the active chain's `Network`, so a Dogecoin node's
+    /// `"main"` yields `Network::Dogecoin` rather than Bitcoin mainnet.
+    pub fn get_network(&self) -> Result<brk_chain::address::Network> {
         let chain = self.get_blockchain_info()?.chain;
-        bitcoin::Network::from_core_arg(&chain)
-            .map_err(|e| Error::Parse(format!("getblockchaininfo.chain '{chain}': {e}")))
+        brk_chain::address::network_from_core_arg(&chain)
+            .ok_or_else(|| Error::Parse(format!("getblockchaininfo.chain '{chain}': unknown")))
     }
 
     pub fn wait_for_synced_node(&self) -> Result<()> {
