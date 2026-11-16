@@ -214,3 +214,23 @@ impl<const N: usize> PriceIndex<N> {
         })
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    /// Buckets follow significant digits of the stored units, so they keep their resolution at
+    /// any `CENTS_PER_DOLLAR` (Dogecoin's micro-dollar prices sit far below one Bitcoin cent).
+    #[test]
+    fn buckets_are_scale_invariant() {
+        for units in [1u64, 123, 9_999, 70_000, 70_010, 1_234_000, 9_999_000_000] {
+            let bucket = cents_to_bucket(Cents::from(units));
+            assert_eq!(u64::from(bucket_to_cents(bucket)), units);
+            assert!(cents_to_bucket(Cents::from(units + 1)) >= bucket);
+        }
+        assert_ne!(
+            cents_to_bucket(Cents::from(70_000u64)),
+            cents_to_bucket(Cents::from(70_010u64))
+        );
+    }
+}
