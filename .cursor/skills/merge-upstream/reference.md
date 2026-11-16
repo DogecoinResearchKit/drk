@@ -103,8 +103,9 @@ false`); dev builds panic. Peaks at the current tip:
   Affected: `bitview_plugin_transactions` `transfer_volume`, holders `activity.transfer_volume` (and
   in profit / loss), age `aged_out` and transfer volume in profit / loss, address balance bands,
   UTXO cohorts and creation cohorts (`bitview_distribution` `CumulativeValue`), and supply
-  velocity, which reads the 1y sum. Per-block values and 24h windows are deltas of the stored total.
-  They come out exact in release, which wraps, as long as the true value is under 184.5B DOGE.
+  velocity, which reads the 1y sum. Per-block values and windows are deltas of the stored total
+  (`checked_sub(..).unwrap_or_default()`), so the block where the total wraps reads 0, and so does
+  any window spanning it. At today's volume that happens every week or two.
 - **Around 2031 (supply-bounded, ~162B DOGE now, +5.26B a year):** supply snapshots (holders,
   utxo set, address types and bands, bedrock, profit / loss supply), mining `coinbase` / `subsidy`
   cumulatives, pools' per-pool coinbase totals (`pool_heights` `Rewards`).
