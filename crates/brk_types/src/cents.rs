@@ -14,7 +14,15 @@ use crate::{CheckedSub, unlikely};
 #[cfg(feature = "storage")]
 use vecdb::Pco;
 
-/// An amount in US cents (100 cents = 1 USD).
+/// The integer price units per US dollar shared by every cents type. Dogecoin traded under a cent
+/// for most of its history, so its build counts micro-dollars instead.
+#[cfg(not(feature = "dogecoin"))]
+pub const CENTS_PER_DOLLAR: u64 = 100;
+#[cfg(feature = "dogecoin")]
+pub const CENTS_PER_DOLLAR: u64 = 1_000_000;
+pub const CENTS_PER_DOLLAR_F64: f64 = CENTS_PER_DOLLAR as f64;
+
+/// An amount in US cents (100 cents = 1 USD; micro-dollars under `dogecoin`).
 ///
 /// Unsigned; `u64::MAX` is reserved as a NaN sentinel.
 #[derive(
@@ -107,7 +115,7 @@ impl Cents {
     pub fn sats_per_dollar(self) -> Sats {
         debug_assert!(!self.is_nan(), "a NaN price has no sats per dollar");
         Sats::new(
-            (100 * Sats::ONE_BTC_U64)
+            (CENTS_PER_DOLLAR * Sats::ONE_BTC_U64)
                 .checked_div(self.inner())
                 .unwrap_or_default(),
         )
@@ -117,7 +125,7 @@ impl Cents {
         if unlikely(self.is_nan()) {
             Dollars::NAN
         } else {
-            Dollars::from(self.0 as f64 / 100.0)
+            Dollars::from(self.0 as f64 / CENTS_PER_DOLLAR_F64)
         }
     }
 
@@ -143,7 +151,7 @@ impl Cents {
 impl From<Dollars> for Cents {
     #[inline]
     fn from(value: Dollars) -> Self {
-        Self::from(f64::from(value) * 100.0)
+        Self::from(f64::from(value) * CENTS_PER_DOLLAR_F64)
     }
 }
 
@@ -284,3 +292,29 @@ impl CheckedSub for Cents {
 }
 
 crate::impl_int_format!(Cents, nullable);
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn dollars_round_trip_at_chain_scale() {
+        for dollars in [0.07, 1.0, 64_000.12] {
+            let cents = Cents::from(Dollars::from(dollars));
+            assert_eq!(cents.inner(), (dollars * CENTS_PER_DOLLAR_F64).round() as u64);
+            assert!((f64::from(cents.to_dollars()) - dollars).abs() < 1e-6);
+        }
+        assert_eq!(
+            Cents::from(Dollars::from(2.0)).sats_per_dollar(),
+            Sats::new(Sats::ONE_BTC_U64 / 2)
+        );
+    }
+
+    #[cfg(feature = "dogecoin")]
+    #[test]
+    fn sub_cent_prices_survive() {
+        let cents = Cents::from(Dollars::from(0.000_123));
+        assert_eq!(cents.inner(), 123);
+        assert_eq!(cents.sats_per_dollar(), Sats::new(8_130 * Sats::ONE_BTC_U64 + 8_130_081));
+    }
+}

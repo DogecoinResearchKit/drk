@@ -4,17 +4,59 @@ use bitview_plugin_indexer::Indexer;
 use bitview_primitives::Float64;
 use brk_error::{OptionData, Result};
 use brk_exit::Exit;
+use brk_oracle::cents_to_bin;
+#[cfg(not(feature = "dogecoin"))]
 use brk_oracle::{
-    Config, Oracle, START_HEIGHT_FAST, START_HEIGHT_SLOW, bin_to_cents, cents_to_bin,
-    pre_oracle_prices_from,
+    Config, Oracle, START_HEIGHT_FAST, START_HEIGHT_SLOW, bin_to_cents, pre_oracle_prices_from,
 };
+#[cfg(not(feature = "dogecoin"))]
 use brk_types::Height;
+#[cfg(not(feature = "dogecoin"))]
 use tracing::info;
 use vecdb::{AnyStoredVec, AnyVec, ReadableVec, VecIndex, WritableVec};
 
-use crate::{Dependencies, Vecs, feed_blocks_for_warmup, feed_blocks_with};
+use crate::{Dependencies, Vecs};
+#[cfg(not(feature = "dogecoin"))]
+use crate::{feed_blocks_for_warmup, feed_blocks_with};
 
 impl Vecs {
+    /// Dogecoin's prices: every block at its date's exchange close (see [`crate::exchange`]).
+    /// `oracle_bin` keeps the bin of that price, so the live oracle starts from it.
+    #[cfg(feature = "dogecoin")]
+    fn compute_prices(&mut self, indexer: &Indexer, exit: &Exit) -> Result<()> {
+        use bitview_primitives::Date;
+        use brk_types::Version;
+
+        let starting_height = indexer.compute_start().height;
+        let vecs = indexer.vecs();
+        let source_version =
+            vecs.blocks.timestamp.version() + Version::new(crate::exchange::VERSION);
+        let total_heights = vecs.blocks.timestamp.len();
+        let committed = prepare_computed(
+            [
+                &mut self.spot.cents.height as &mut dyn AnyStoredVec,
+                &mut self.oracle_bin,
+            ],
+            source_version,
+            starting_height.to_usize(),
+            exit,
+        )?;
+        if committed >= total_heights {
+            return Ok(());
+        }
+        let timestamps = vecs.blocks.timestamp.collect_range_at(committed, total_heights);
+        let mut closes = crate::exchange::closes();
+        closes.ensure(Date::from(*timestamps.last().data()?))?;
+        for timestamp in timestamps {
+            let cents = closes.price_at(Date::from(timestamp));
+            self.spot.cents.height.push(cents);
+            self.oracle_bin
+                .push(Float64::from(cents_to_bin(f64::from(cents))));
+        }
+        Ok(())
+    }
+
+    #[cfg(not(feature = "dogecoin"))]
     fn compute_prices(&mut self, indexer: &Indexer, exit: &Exit) -> Result<()> {
         let starting_height = indexer.compute_start().height;
 

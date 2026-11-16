@@ -66,7 +66,7 @@ impl CentsCompact {
         if unlikely(self.is_nan()) {
             Dollars::NAN
         } else {
-            Dollars::from(self.0 as f64 / 100.0)
+            Dollars::from(self.0 as f64 / brk_types::CENTS_PER_DOLLAR_F64)
         }
     }
 
@@ -111,7 +111,7 @@ impl From<Dollars> for CentsCompact {
         } else if f < 0.0 {
             Self::ZERO
         } else {
-            let cents = (f * 100.0).round();
+            let cents = (f * brk_types::CENTS_PER_DOLLAR_F64).round();
             debug_assert!(
                 cents < u32::MAX as f64,
                 "price ${f} exceeds CentsCompact finite range"

@@ -910,7 +910,9 @@ dependencies = [
  "derive_more",
  "rangeindex",
  "rayon",
+ "serde_json",
  "tracing",
+ "ureq",
  "vecdb",
 ]
 

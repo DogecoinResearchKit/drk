@@ -1,6 +1,8 @@
 mod compute;
 mod dependencies;
 mod endpoint;
+#[cfg(feature = "dogecoin")]
+mod exchange;
 mod has;
 mod import;
 mod ohlc;
@@ -15,14 +17,24 @@ use bitview_plugin::{Plugin, PluginId, PluginStorage};
 use bitview_primitives::Float64;
 use bitview_traversable::Traversable;
 use bitview_vecs::{LazyPerBlock, PerBlock, Price};
-use brk_oracle::{Oracle, VERSION as ORACLE_VERSION};
+#[cfg(not(feature = "dogecoin"))]
+use brk_oracle::Oracle;
+use brk_oracle::VERSION as ORACLE_VERSION;
 use brk_types::{Cents, Height, Sats, Version};
 use vecdb::{Database, PcoVec, Rw, StorageMode};
 
 use crate::{ohlc::OhlcPrice, split::SplitPrice};
 
-const STORAGE: PluginStorage =
-    PluginStorage::new(PluginId::new("price"), Version::new(20 + ORACLE_VERSION));
+#[cfg(not(feature = "dogecoin"))]
+const CHAIN_VERSION: u32 = 0;
+/// Offsets Dogecoin's store (micro-dollar prices from exchange closes) from Bitcoin's.
+#[cfg(feature = "dogecoin")]
+const CHAIN_VERSION: u32 = 1_000 + exchange::VERSION;
+
+const STORAGE: PluginStorage = PluginStorage::new(
+    PluginId::new("price"),
+    Version::new(20 + ORACLE_VERSION + CHAIN_VERSION),
+);
 pub const ID: PluginId = STORAGE.id();
 
 #[derive(Traversable, Plugin)]
@@ -66,5 +78,6 @@ pub struct Vecs<M: StorageMode = Rw> {
     pub oracle_bin: M::Stored<PcoVec<Height, Float64>>,
     /// The oracle after the last computed height (the length it continues at): the next update
     /// resumes it instead of rebuilding it from the stored bin and its warmup blocks.
+    #[cfg(not(feature = "dogecoin"))]
     oracle: M::WriteOnly<Option<(usize, Oracle)>>,
 }

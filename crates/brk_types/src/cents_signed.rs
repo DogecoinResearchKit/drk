@@ -107,7 +107,7 @@ impl From<CentsSigned> for i64 {
 impl From<Dollars> for CentsSigned {
     #[inline]
     fn from(value: Dollars) -> Self {
-        Self::from(*value * 100.0)
+        Self::from(*value * crate::CENTS_PER_DOLLAR_F64)
     }
 }
 
@@ -117,7 +117,7 @@ impl From<CentsSigned> for Dollars {
         if unlikely(value.is_nan()) {
             Dollars::NAN
         } else {
-            Self::from(value.0 as f64 / 100.0)
+            Self::from(value.0 as f64 / crate::CENTS_PER_DOLLAR_F64)
         }
     }
 }

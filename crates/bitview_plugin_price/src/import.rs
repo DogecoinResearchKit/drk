@@ -28,6 +28,7 @@ impl Vecs {
             spot,
             sats_per_dollar,
             oracle_bin,
+            #[cfg(not(feature = "dogecoin"))]
             oracle: None,
         };
         STORAGE.finalize_database(&this.db)?;

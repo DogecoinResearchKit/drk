@@ -125,7 +125,7 @@ impl From<CentsFract> for Cents {
 impl From<CentsFract> for Dollars {
     #[inline]
     fn from(value: CentsFract) -> Self {
-        Self::from(f64::from(value) / 100.0)
+        Self::from(f64::from(value) / brk_types::CENTS_PER_DOLLAR_F64)
     }
 }
 

@@ -29,5 +29,5 @@ pub fn bin_to_cents(bin: f64) -> Cents {
 /// its cent rounding; zero maps to positive infinity.
 #[inline]
 pub fn cents_to_bin(cents: f64) -> f64 {
-    (10.0 - (cents / 100.0).log10()) * BINS_PER_DECADE as f64
+    (10.0 - (cents / brk_types::CENTS_PER_DOLLAR_F64).log10()) * BINS_PER_DECADE as f64
 }

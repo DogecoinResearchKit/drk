@@ -9,7 +9,7 @@ pub(super) struct AvivNupl;
 impl<P: From<f64>> BinaryTransform<Dollars, CentsSigned, P> for AvivNupl {
     #[inline(always)]
     fn apply(active_cap: Dollars, investor_cap: CentsSigned) -> P {
-        let active_cents = f64::from(active_cap) * 100.0;
+        let active_cents = f64::from(active_cap) * brk_types::CENTS_PER_DOLLAR_F64;
         P::from((active_cents - f64::from(investor_cap)) / active_cents)
     }
 }
