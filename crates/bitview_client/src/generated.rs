@@ -1012,10 +1012,10 @@ pub mod tree {
         _1m: Value = "*_1m",
         _1y: Value = "*_1y",
     } }
-    shape! { PoolFees at "series().pools._175btc.fees" {
+    shape! { PoolFees at "series().pools.antpool.fees" {
         avg: OpReturnWindows = "*",
     } }
-    shape! { Coinbase at "series().pools._175btc.coinbase" {
+    shape! { Coinbase at "series().pools.antpool.coinbase" {
         cumulative: Value = "*_cumulative",
         sum: OpReturnWindows = "*_sum",
     } }
@@ -1715,7 +1715,7 @@ pub mod tree {
         cumulative: SeriesPattern1<Count> = "*_cumulative",
         sum: Windows<Count> = "*_sum",
     } }
-    shape! { Pool at "series().pools._175btc" {
+    shape! { Pool at "series().pools.antpool" {
         block_count: CumulativeFlow = "*_block_count",
         block_share: Share = "*_block_share",
         coinbase: Coinbase = "*_coinbase",
@@ -1725,171 +1725,39 @@ pub mod tree {
     shape! { Pools at "series().pools" {
         block_pool: SeriesPattern18<PoolSlug> = "block_*",
         unknown: Pool = "*_unknown",
-        blockfills: Pool = "*_blockfills",
-        ultimuspool: Pool = "*_ultimuspool",
-        terrapool: Pool = "*_terrapool",
         luxor: Pool = "*_luxor",
-        _1thash: Pool = "*_1thash",
         btccom: Pool = "*_btccom",
-        bitfarms: Pool = "*_bitfarms",
-        huobipool: Pool = "*_huobipool",
-        wayicn: Pool = "*_wayicn",
-        canoepool: Pool = "*_canoepool",
-        btctop: Pool = "*_btctop",
-        bitcoincom: Pool = "*_bitcoincom",
-        _175btc: Pool = "*_175btc",
-        gbminers: Pool = "*_gbminers",
-        axbt: Pool = "*_axbt",
-        asicminer: Pool = "*_asicminer",
-        bitminter: Pool = "*_bitminter",
-        bitcoinrussia: Pool = "*_bitcoinrussia",
-        btcserv: Pool = "*_btcserv",
-        simplecoinus: Pool = "*_simplecoinus",
-        btcguild: Pool = "*_btcguild",
-        eligius: Pool = "*_eligius",
-        ozcoin: Pool = "*_ozcoin",
-        eclipsemc: Pool = "*_eclipsemc",
-        maxbtc: Pool = "*_maxbtc",
-        triplemining: Pool = "*_triplemining",
-        coinlab: Pool = "*_coinlab",
-        _50btc: Pool = "*_50btc",
-        ghashio: Pool = "*_ghashio",
-        stminingcorp: Pool = "*_stminingcorp",
-        bitparking: Pool = "*_bitparking",
-        mmpool: Pool = "*_mmpool",
-        polmine: Pool = "*_polmine",
-        kncminer: Pool = "*_kncminer",
-        bitalo: Pool = "*_bitalo",
         f2pool: Pool = "*_f2pool",
-        hhtt: Pool = "*_hhtt",
-        megabigpower: Pool = "*_megabigpower",
-        mtred: Pool = "*_mtred",
-        nmcbit: Pool = "*_nmcbit",
-        yourbtcnet: Pool = "*_yourbtcnet",
-        givemecoins: Pool = "*_givemecoins",
-        braiinspool: Pool = "*_braiinspool",
         antpool: Pool = "*_antpool",
-        multicoinco: Pool = "*_multicoinco",
-        bcpoolio: Pool = "*_bcpoolio",
-        cointerra: Pool = "*_cointerra",
-        kanopool: Pool = "*_kanopool",
-        solock: Pool = "*_solock",
-        ckpool: Pool = "*_ckpool",
         nicehash: Pool = "*_nicehash",
-        bitclub: Pool = "*_bitclub",
-        bitcoinaffiliatenetwork: Pool = "*_bitcoinaffiliatenetwork",
-        btcc: Pool = "*_btcc",
-        bwpool: Pool = "*_bwpool",
-        exxbw: Pool = "*_exxbw",
-        bitsolo: Pool = "*_bitsolo",
-        bitfury: Pool = "*_bitfury",
-        _21inc: Pool = "*_21inc",
-        digitalbtc: Pool = "*_digitalbtc",
-        _8baochi: Pool = "*_8baochi",
-        mybtccoinpool: Pool = "*_mybtccoinpool",
-        tbdice: Pool = "*_tbdice",
-        hashpool: Pool = "*_hashpool",
-        nexious: Pool = "*_nexious",
-        bravomining: Pool = "*_bravomining",
-        hotpool: Pool = "*_hotpool",
-        okexpool: Pool = "*_okexpool",
-        bcmonster: Pool = "*_bcmonster",
-        _1hash: Pool = "*_1hash",
-        bixin: Pool = "*_bixin",
-        tatmaspool: Pool = "*_tatmaspool",
         viabtc: Pool = "*_viabtc",
-        connectbtc: Pool = "*_connectbtc",
-        batpool: Pool = "*_batpool",
-        waterhole: Pool = "*_waterhole",
-        dcexploration: Pool = "*_dcexploration",
-        dcex: Pool = "*_dcex",
-        btpool: Pool = "*_btpool",
-        _58coin: Pool = "*_58coin",
-        bitcoinindia: Pool = "*_bitcoinindia",
-        shawnp0wers: Pool = "*_shawnp0wers",
-        phashio: Pool = "*_phashio",
-        rigpool: Pool = "*_rigpool",
-        haozhuzhu: Pool = "*_haozhuzhu",
-        _7pool: Pool = "*_7pool",
-        miningkings: Pool = "*_miningkings",
-        hashbx: Pool = "*_hashbx",
-        dpool: Pool = "*_dpool",
-        rawpool: Pool = "*_rawpool",
-        haominer: Pool = "*_haominer",
-        helix: Pool = "*_helix",
-        bitcoinukraine: Pool = "*_bitcoinukraine",
         poolin: Pool = "*_poolin",
-        secretsuperstar: Pool = "*_secretsuperstar",
-        tigerpoolnet: Pool = "*_tigerpoolnet",
         sigmapoolcom: Pool = "*_sigmapoolcom",
-        okpooltop: Pool = "*_okpooltop",
-        hummerpool: Pool = "*_hummerpool",
-        tangpool: Pool = "*_tangpool",
-        bytepool: Pool = "*_bytepool",
         spiderpool: Pool = "*_spiderpool",
-        novablock: Pool = "*_novablock",
-        miningcity: Pool = "*_miningcity",
         binancepool: Pool = "*_binancepool",
-        minerium: Pool = "*_minerium",
-        lubiancom: Pool = "*_lubiancom",
-        okkong: Pool = "*_okkong",
-        aaopool: Pool = "*_aaopool",
         emcdpool: Pool = "*_emcdpool",
-        foundryusa: Pool = "*_foundryusa",
         sbicrypto: Pool = "*_sbicrypto",
-        arkpool: Pool = "*_arkpool",
-        purebtccom: Pool = "*_purebtccom",
-        marapool: Pool = "*_marapool",
-        kucoinpool: Pool = "*_kucoinpool",
-        entrustcharitypool: Pool = "*_entrustcharitypool",
-        okminer: Pool = "*_okminer",
-        titan: Pool = "*_titan",
-        pegapool: Pool = "*_pegapool",
-        btcnuggets: Pool = "*_btcnuggets",
-        cloudhashing: Pool = "*_cloudhashing",
-        digitalxmintsy: Pool = "*_digitalxmintsy",
-        telco214: Pool = "*_telco214",
-        btcpoolparty: Pool = "*_btcpoolparty",
-        multipool: Pool = "*_multipool",
-        transactioncoinmining: Pool = "*_transactioncoinmining",
-        btcdig: Pool = "*_btcdig",
-        trickysbtcpool: Pool = "*_trickysbtcpool",
-        btcmp: Pool = "*_btcmp",
-        eobot: Pool = "*_eobot",
-        unomp: Pool = "*_unomp",
-        patels: Pool = "*_patels",
-        gogreenlight: Pool = "*_gogreenlight",
-        bitcoinindiapool: Pool = "*_bitcoinindiapool",
-        ekanembtc: Pool = "*_ekanembtc",
-        canoe: Pool = "*_canoe",
-        tiger: Pool = "*_tiger",
-        _1m1x: Pool = "*_1m1x",
         zulupool: Pool = "*_zulupool",
-        secpool: Pool = "*_secpool",
-        ocean: Pool = "*_ocean",
-        whitepool: Pool = "*_whitepool",
-        wiz: Pool = "*_wiz",
-        wk057: Pool = "*_wk057",
-        futurebitapollosolo: Pool = "*_futurebitapollosolo",
-        carbonnegative: Pool = "*_carbonnegative",
-        portlandhodl: Pool = "*_portlandhodl",
-        phoenix: Pool = "*_phoenix",
-        neopool: Pool = "*_neopool",
-        maxipool: Pool = "*_maxipool",
-        bitfufupool: Pool = "*_bitfufupool",
-        gdpool: Pool = "*_gdpool",
         miningdutch: Pool = "*_miningdutch",
-        publicpool: Pool = "*_publicpool",
-        miningsquared: Pool = "*_miningsquared",
-        innopolistech: Pool = "*_innopolistech",
-        btclab: Pool = "*_btclab",
-        parasite: Pool = "*_parasite",
-        redrockpool: Pool = "*_redrockpool",
-        est3lar: Pool = "*_est3lar",
-        braiinssolo: Pool = "*_braiinssolo",
-        solopoolcom: Pool = "*_solopoolcom",
-        noderunners: Pool = "*_noderunners",
-        dmnd: Pool = "*_dmnd",
+        kupool: Pool = "*_kupool",
+        litecoinpoolorg: Pool = "*_litecoinpoolorg",
+        hash700: Pool = "*_hash700",
+        lsoftwaredmcc: Pool = "*_lsoftwaredmcc",
+        hashspace: Pool = "*_hashspace",
+        dogegogocom: Pool = "*_dogegogocom",
+        longpool: Pool = "*_longpool",
+        kryptex: Pool = "*_kryptex",
+        dxpool: Pool = "*_dxpool",
+        k1pool: Pool = "*_k1pool",
+        molepool: Pool = "*_molepool",
+        solopoolorg: Pool = "*_solopoolorg",
+        prohashing: Pool = "*_prohashing",
+        hashhut: Pool = "*_hashhut",
+        happychina: Pool = "*_happychina",
+        himpool: Pool = "*_himpool",
+        p2pspbxyz: Pool = "*_p2pspbxyz",
+        hyperdonkey: Pool = "*_hyperdonkey",
+        zergpool: Pool = "*_zergpool",
     } }
     shape! { Blocks at "series().blocks" {
         count: CumulativeFlow = "*_count",
@@ -2351,7 +2219,7 @@ impl BitviewClient {
 
     /// Health check
     ///
-    /// Local health and query-readiness check. Returns server identity, uptime, and a coherent local sync snapshot without a bitcoind round-trip. Reads the published prefix during processing; an empty index returns 503 `state_updating` at once. Responses are not cached. For chain-tip catch-up, request `GET /api/server/sync`.
+    /// Local health and query-readiness check. Returns server identity, uptime, and a coherent local sync snapshot without a dogecoind round-trip. Reads the published prefix during processing; an empty index returns 503 `state_updating` at once. Responses are not cached. For chain-tip catch-up, request `GET /api/server/sync`.
     ///
     /// Endpoint: `GET /health`
     pub fn get_health(&self) -> Result<Health> {
@@ -2367,7 +2235,7 @@ impl BitviewClient {
 
     /// Sync status
     ///
-    /// Returns a coherent local index snapshot and a separately observed Bitcoin Core tip height. The two heights can differ during indexing or a reorg. Conditional requests refresh these observations before validation.
+    /// Returns a coherent local index snapshot and a separately observed Dogecoin Core tip height. The two heights can differ during indexing or a reorg. Conditional requests refresh these observations before validation.
     ///
     /// Endpoint: `GET /api/server/sync`
     pub fn get_sync_status(&self) -> Result<SyncStatus> {
@@ -2395,7 +2263,7 @@ impl BitviewClient {
 
     /// Disk usage
     ///
-    /// Returns allocated file bytes (file lengths on non-Unix platforms) for BRK and Bitcoin data. Each request scans both trees; these are independent observations, not an atomic filesystem snapshot. Conditional requests validate the newly observed totals. Directory-link cycles and excessive nesting fail without returning partial totals.
+    /// Returns allocated file bytes (file lengths on non-Unix platforms) for BRK and Dogecoin data. Each request scans both trees; these are independent observations, not an atomic filesystem snapshot. Conditional requests validate the newly observed totals. Directory-link cycles and excessive nesting fail without returning partial totals.
     ///
     /// Endpoint: `GET /api/server/disk`
     pub fn get_disk_usage(&self) -> Result<DiskUsage> {
@@ -2692,7 +2560,7 @@ impl BitviewClient {
 
     /// URPD at block height or date
     ///
-    /// URPD for a cohort at a block height or the last block of a UTC day. Returns `{ height, hash, date, cohort, weight, aggregation, close, supply, buckets }` where `buckets` is columns, `{ price, supply, realized_cap, unrealized_pnl }`, one entry per bucket in ascending price: the same block header and columnar layout as `GET /api/utxo-set/{point}`. `close`, `price`, `realized_cap`, and `unrealized_pnl` are USD; `supply` is BTC. `unrealized_pnl` can be negative. Bucket `realized_cap` and `unrealized_pnl` value each coin at its creation price on the price grid (four significant digits of the price in cents, within 0.05% of the exact price), rounded to the cent per bucket, so the buckets need not sum to the realized cap series. With a `wakefulness` or `mobility` `weight`, `supply` is the weighted supply (whole satoshis) and the bucket values follow it.
+    /// URPD for a cohort at a block height or the last block of a UTC day. Returns `{ height, hash, date, cohort, weight, aggregation, close, supply, buckets }` where `buckets` is columns, `{ price, supply, realized_cap, unrealized_pnl }`, one entry per bucket in ascending price: the same block header and columnar layout as `GET /api/utxo-set/{point}`. `close`, `price`, `realized_cap`, and `unrealized_pnl` are USD; `supply` is DOGE. `unrealized_pnl` can be negative. Bucket `realized_cap` and `unrealized_pnl` value each coin at its creation price on the price grid (four significant digits of the price in cents, within 0.05% of the exact price), rounded to the cent per bucket, so the buckets need not sum to the realized cap series. With a `wakefulness` or `mobility` `weight`, `supply` is the weighted supply (whole koinu) and the bucket values follow it.
     ///
     /// Endpoint: `GET /api/urpd/{cohort}/{point}`
     pub fn get_urpd(
@@ -2735,9 +2603,9 @@ impl BitviewClient {
             .get_json(&format!("/api/v1/difficulty-adjustment"))
     }
 
-    /// Current BTC price
+    /// Current DOGE price
     ///
-    /// Returns bitcoin latest price (on-chain derived, USD only).
+    /// Returns dogecoin latest price (on-chain derived, USD only).
     ///
     /// *[Mempool.space docs](https://mempool.space/docs/api/rest#get-price)*
     ///
@@ -2748,7 +2616,7 @@ impl BitviewClient {
 
     /// Historical price
     ///
-    /// Completed four-hour BTC/USD closes, newest first as mempool.space lists them, labeled by interval end, from the first priced interval (2010-08-16). With a UNIX timestamp, returns the latest nonempty completed close at or before it; before the first close returns an empty list. The current partial interval is excluded. USD only (`currency` accepts `USD`); exchangeRates is empty.
+    /// Completed four-hour DOGE/USD closes, newest first as mempool.space lists them, labeled by interval end, from the first priced interval (2013-12-06). With a UNIX timestamp, returns the latest nonempty completed close at or before it; before the first close returns an empty list. The current partial interval is excluded. USD only (`currency` accepts `USD`); exchangeRates is empty.
     ///
     /// *[Mempool.space docs](https://mempool.space/docs/api/rest#get-historical-price)*
     ///
@@ -2935,7 +2803,7 @@ impl BitviewClient {
 
     /// Validate address
     ///
-    /// Validate a Bitcoin address and get information about its type and scriptPubKey. Returns `isvalid: false` with an error message for invalid addresses; a string that isn't 2 to 130 letters and digits answers 400.
+    /// Validate a Dogecoin address and get information about its type and scriptPubKey. Returns `isvalid: false` with an error message for invalid addresses; a string that isn't 2 to 130 letters and digits answers 400.
     ///
     /// *[Mempool.space docs](https://mempool.space/docs/api/rest#get-address-validate)*
     ///
@@ -3366,7 +3234,7 @@ impl BitviewClient {
 
     /// Block fee rates
     ///
-    /// Get block fee rate percentiles (min, 10th, 25th, median, 75th, 90th, max) for a time period, each a whole sat/vB (`/precise` for 3 decimals).
+    /// Get block fee rate percentiles (min, 10th, 25th, median, 75th, 90th, max) for a time period, each a whole koinu/vB (`/precise` for 3 decimals).
     ///
     /// *[Mempool.space docs](https://mempool.space/docs/api/rest#get-block-feerates)*
     ///
@@ -3380,7 +3248,7 @@ impl BitviewClient {
 
     /// Block fee rates (precise)
     ///
-    /// Get block fee rate percentiles (min, 10th, 25th, median, 75th, 90th, max) for a time period, each in sat/vB to 3 decimals.
+    /// Get block fee rate percentiles (min, 10th, 25th, median, 75th, 90th, max) for a time period, each in koinu/vB to 3 decimals.
     ///
     /// *[Mempool.space docs](https://mempool.space/docs/api/rest#get-block-feerates)*
     ///
@@ -3411,7 +3279,7 @@ impl BitviewClient {
 
     /// Projected mempool blocks
     ///
-    /// Projected blocks for fee estimation. Block 0 reflects Bitcoin Core's actual next-block selection; blocks 1+ are a fee-tier approximation.
+    /// Projected blocks for fee estimation. Block 0 reflects Dogecoin Core's actual next-block selection; blocks 1+ are a fee-tier approximation.
     ///
     /// *[Mempool.space docs](https://mempool.space/docs/api/rest#get-mempool-blocks-fees)*
     ///
@@ -3422,7 +3290,7 @@ impl BitviewClient {
 
     /// Recommended fees
     ///
-    /// Recommended fee rates by confirmation target, in whole sat/vB.
+    /// Recommended fee rates by confirmation target, in whole koinu/vB.
     ///
     /// *[Mempool.space docs](https://mempool.space/docs/api/rest#get-recommended-fees)*
     ///
@@ -3433,7 +3301,7 @@ impl BitviewClient {
 
     /// Recommended fee rates (precise)
     ///
-    /// Recommended fee rates by confirmation target, with up to three decimal places and support for sub-sat/vB rates.
+    /// Recommended fee rates by confirmation target, with up to three decimal places and support for sub-koinu/vB rates.
     ///
     /// *[Mempool.space docs](https://mempool.space/docs/api/rest#get-recommended-fees-precise)*
     ///
@@ -3497,7 +3365,7 @@ impl BitviewClient {
 
     /// Projected mempool block
     ///
-    /// A projected mempool block with its transactions in order and its stats, by position as `GET /api/v1/fees/mempool-blocks` lists them: 0 is the next block, Bitcoin Core's `getblocktemplate` selection, and the only one served for now (others answer 404). The returned `hash` is an opaque content token: poll `GET /api/mempool-blocks/{index}/diff/{hash}` to follow changes instead of refetching the block.
+    /// A projected mempool block with its transactions in order and its stats, by position as `GET /api/v1/fees/mempool-blocks` lists them: 0 is the next block, Dogecoin Core's `getblocktemplate` selection, and the only one served for now (others answer 404). The returned `hash` is an opaque content token: poll `GET /api/mempool-blocks/{index}/diff/{hash}` to follow changes instead of refetching the block.
     ///
     /// Endpoint: `GET /api/mempool-blocks/{index}`
     pub fn get_mempool_block(&self, index: MempoolBlockIndex) -> Result<MempoolBlockContent> {
@@ -3699,7 +3567,7 @@ impl BitviewClient {
 
     /// UTXO set at block height or date
     ///
-    /// The UTXO set after a block (`840000`) or after the last published block of a UTC day (`YYYY-MM-DD`), by creation height. Returns `{ height, hash, date, count, supply, origins }`; entry `i` of `origins.count` and `origins.supply` (BTC) is what remains unspent of block `i`'s outputs.
+    /// The UTXO set after a block (`840000`) or after the last published block of a UTC day (`YYYY-MM-DD`), by creation height. Returns `{ height, hash, date, count, supply, origins }`; entry `i` of `origins.count` and `origins.supply` (DOGE) is what remains unspent of block `i`'s outputs.
     ///
     /// Endpoint: `GET /api/utxo-set/{point}`
     pub fn get_utxo_set(&self, point: HeightOrDate) -> Result<UtxoSet> {
@@ -3709,7 +3577,7 @@ impl BitviewClient {
 
     /// UTXO set changes of a block or date
     ///
-    /// What a block (`840000`) or a UTC day's published blocks (`YYYY-MM-DD`) changed in the UTXO set. Returns `{ first, last, hash, date, created, spent }`: `created` has one row per block, `spent` one row per creation height, each as columnar `height`, `count` and `supply` (BTC). The set after block `first - 1` plus `created` minus `spent` is the set after block `last`.
+    /// What a block (`840000`) or a UTC day's published blocks (`YYYY-MM-DD`) changed in the UTXO set. Returns `{ first, last, hash, date, created, spent }`: `created` has one row per block, `spent` one row per creation height, each as columnar `height`, `count` and `supply` (DOGE). The set after block `first - 1` plus `created` minus `spent` is the set after block `last`.
     ///
     /// Endpoint: `GET /api/utxo-set/{point}/diff`
     pub fn get_utxo_set_diff(&self, point: HeightOrDate) -> Result<UtxoSetDiff> {
@@ -3717,9 +3585,9 @@ impl BitviewClient {
             .get_json(&format!("/api/utxo-set/{}/diff", path_segment(point)))
     }
 
-    /// Live BTC/USD price
+    /// Live DOGE/USD price
     ///
-    /// Current BTC/USD price in dollars, derived from on-chain round-dollar output patterns in the oracle's recent-block window, with the mempool's outputs blended in when available, to the cent: `price` of `GET /api/oracle/live`. Confirmed per-height history is available at `GET /api/series/price/height`. Not found before the oracle's first prices.
+    /// Current DOGE/USD price in dollars, derived from on-chain round-dollar output patterns in the oracle's recent-block window, with the mempool's outputs blended in when available, to the cent: `price` of `GET /api/oracle/live`. Confirmed per-height history is available at `GET /api/series/price/height`. Not found before the oracle's first prices.
     ///
     /// Endpoint: `GET /api/oracle/price`
     pub fn get_live_price(&self) -> Result<Dollars> {
@@ -3747,7 +3615,7 @@ impl BitviewClient {
 
     /// The oracle's payments, 144 blocks at a time
     ///
-    /// For each of the 144 blocks from `start` (a multiple of 144, else a bad request; from 508,032, earlier ones out of range): its payments as the oracle filters them, each read as each of its 19 round-dollar amounts ($1 to $10,000) at its exact amount in sats, counted by the price each reading implies, in buckets a tenth of a bin wide (0.115% of price) over the block's search window: finer than the oracle's bins, the evidence behind its prices. The chunk at the tip holds its blocks so far, `hash` its last block's; a whole, settled chunk never changes.
+    /// For each of the 144 blocks from `start` (a multiple of 144, else a bad request; from 508,032, earlier ones out of range): its payments as the oracle filters them, each read as each of its 19 round-dollar amounts ($1 to $10,000) at its exact amount in koinu, counted by the price each reading implies, in buckets a tenth of a bin wide (0.115% of price) over the block's search window: finer than the oracle's bins, the evidence behind its prices. The chunk at the tip holds its blocks so far, `hash` its last block's; a whole, settled chunk never changes.
     ///
     /// Endpoint: `GET /api/oracle/payments/{start}`
     pub fn get_oracle_payments(&self, start: Height) -> Result<OraclePayments> {

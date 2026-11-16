@@ -2,7 +2,7 @@
 // Do not edit manually
 
 /**
- * Bitcoin address, or the hex public key of a P2PK output.
+ * Dogecoin address, or the hex public key of a P2PK output.
  *
  * @typedef {string} Address
  */
@@ -17,11 +17,11 @@
  * Based on mempool.space's format with type_index extension.
  *
  * @typedef {Object} AddressChainStats
- * @property {Sats} balance - Current confirmed balance in satoshis
+ * @property {Sats} balance - Current confirmed balance in koinu
  * @property {number} fundedTxoCount - Total number of transaction outputs that funded this address
- * @property {Sats} fundedTxoSum - Total amount in satoshis received by this address across all funded outputs
+ * @property {Sats} fundedTxoSum - Total amount in koinu received by this address across all funded outputs
  * @property {number} spentTxoCount - Total number of transaction outputs spent from this address
- * @property {Sats} spentTxoSum - Total amount in satoshis spent from this address
+ * @property {Sats} spentTxoSum - Total amount in koinu spent from this address
  * @property {number} txCount - Total number of confirmed transactions involving this address
  * @property {(TypeIndex|null)=} typeIndex - Index of this address within its type on the blockchain, null for an address without
 confirmed activity
@@ -50,11 +50,11 @@ address payload bytes.
  * Address statistics in the mempool (unconfirmed transactions only), in mempool.space's format.
  *
  * @typedef {Object} AddressMempoolStats
- * @property {SatsSigned} balanceDelta - Net pending (unconfirmed) balance change in satoshis; negative when pending spends exceed receipts
+ * @property {SatsSigned} balanceDelta - Net pending (unconfirmed) balance change in koinu; negative when pending spends exceed receipts
  * @property {number} fundedTxoCount - Number of unconfirmed transaction outputs funding this address
- * @property {Sats} fundedTxoSum - Total amount in satoshis being received in unconfirmed transactions
+ * @property {Sats} fundedTxoSum - Total amount in koinu being received in unconfirmed transactions
  * @property {number} spentTxoCount - Number of unconfirmed transaction inputs spending from this address
- * @property {Sats} spentTxoSum - Total amount in satoshis being spent in unconfirmed transactions
+ * @property {Sats} spentTxoSum - Total amount in koinu being spent in unconfirmed transactions
  * @property {number} txCount - Number of unconfirmed transactions involving this address
  */
 /**
@@ -76,11 +76,11 @@ address payload bytes.
  * Address information compatible with mempool.space API format.
  *
  * @typedef {Object} AddressStats
- * @property {Address} address - Bitcoin address, or the hex public key of a P2PK output
+ * @property {Address} address - Dogecoin address, or the hex public key of a P2PK output
  * @property {OutputType} addressType - Output script type
  * @property {AddressChainStats} chainStats - Statistics for confirmed transactions on the blockchain
  * @property {AddressMempoolStats} mempoolStats - Statistics for unconfirmed transactions in the mempool
- * @property {Sats} balance - Total current balance in satoshis, including pending (unconfirmed) mempool changes
+ * @property {Sats} balance - Total current balance in koinu, including pending (unconfirmed) mempool changes
  */
 /**
  * A page of an address's transactions, mempool ones first.
@@ -103,7 +103,7 @@ cursor skips the mempool). One that is neither answers 422.
  * @property {?string=} error - Error message for invalid addresses
  */
 /**
- * An amount in bitcoin, as a decimal number (1 BTC = 100,000,000 satoshis).
+ * An amount in dogecoin, as a decimal number (1 DOGE = 100,000,000 koinu).
  *
  * @typedef {number} Bitcoin
  */
@@ -115,13 +115,13 @@ cursor skips the mempool). One that is neither answers 422.
  * Extended block data matching mempool.space /api/v1/blocks extras
  *
  * @typedef {Object} BlockExtras
- * @property {Sats} totalFees - Total fees in satoshis
- * @property {FeeRate} medianFee - Median fee rate in sat/vB
+ * @property {Sats} totalFees - Total fees in koinu
+ * @property {FeeRate} medianFee - Median fee rate in koinu/vB
  * @property {FeeRate[]} feeRange - Fee rate range: [min, 10%, 25%, 50%, 75%, 90%, max]
- * @property {Sats} reward - Total block reward (subsidy + fees) in satoshis
+ * @property {Sats} reward - Total block reward (subsidy + fees) in koinu
  * @property {BlockPool} pool
- * @property {Sats} avgFee - Mean fee per non-coinbase transaction in satoshis, rounded down (0 without any)
- * @property {FeeRate} avgFeeRate - Average fee rate in sat/vB
+ * @property {Sats} avgFee - Mean fee per non-coinbase transaction in koinu, rounded down (0 without any)
+ * @property {FeeRate} avgFeeRate - Average fee rate in koinu/vB
  * @property {Hex} coinbaseRaw - Raw coinbase transaction scriptsig as hex
  * @property {(Address|null)=} coinbaseAddress - Primary coinbase output address
  * @property {Address[]} coinbaseAddresses - All coinbase output addresses
@@ -131,17 +131,17 @@ cursor skips the mempool). One that is neither answers 422.
 2 decimals
  * @property {number} totalInputs - Total number of inputs (excluding coinbase)
  * @property {number} totalOutputs
- * @property {Sats} totalOutputAmt - Total output amount in satoshis, coinbase excluded
- * @property {Sats} medianFeeAmt - Median fee amount in satoshis
- * @property {Sats[]} feePercentiles - Fee amount percentiles in satoshis: [min, 10%, 25%, 50%, 75%, 90%, max]
+ * @property {Sats} totalOutputAmt - Total output amount in koinu, coinbase excluded
+ * @property {Sats} medianFeeAmt - Median fee amount in koinu
+ * @property {Sats[]} feePercentiles - Fee amount percentiles in koinu: [min, 10%, 25%, 50%, 75%, 90%, max]
  * @property {number} segwitTotalTxs
  * @property {number} segwitTotalSize - Total size of segwit transactions in bytes
  * @property {Weight} segwitTotalWeight
  * @property {Hex} header - Raw 80-byte block header as hex
- * @property {number} utxoSetChange - UTXO set change as mempool.space and bitcoin-cli report it: total outputs minus total
+ * @property {number} utxoSetChange - UTXO set change as mempool.space and dogecoin-cli report it: total outputs minus total
 inputs, unspendable outputs (OP_RETURN) included, unlike `utxoSetSize`
  * @property {number} utxoSetSize - Total spendable UTXO set size at this height (excludes OP_RETURN and other unspendable outputs)
- * @property {Sats} totalInputAmt - Total input amount in satoshis
+ * @property {Sats} totalInputAmt - Total input amount in koinu
  * @property {number} virtualSize - Virtual size in vbytes: weight / 4, unrounded
  * @property {?boolean=} coinbaseBip54 - Whether the coinbase follows BIP54 (its lock time is the height minus one and its input's
 sequence isn't final), from timestamp 1,771,507,776 on; null before
@@ -156,18 +156,18 @@ sequence isn't final), from timestamp 1,771,507,776 on; null before
 /**
  * One time bucket of blocks. Each `avgFee_*` field is the bucket's mean of its blocks' own
  * percentile of their non-coinbase transactions' effective fee rates, weighted by vsize (a block
- * without such transactions counts as 0), rounded to a whole sat/vB.
+ * without such transactions counts as 0), rounded to a whole koinu/vB.
  *
  * @typedef {Object} BlockFeeRatesEntry
  * @property {Height} avgHeight - Average block height in this bucket
  * @property {Timestamp} timestamp - Average block timestamp in this bucket
- * @property {number} avgFee_0 - Mean of the blocks' minimum fee rate (sat/vB)
- * @property {number} avgFee_10 - Mean of the blocks' 10th percentile fee rate (sat/vB)
- * @property {number} avgFee_25 - Mean of the blocks' 25th percentile fee rate (sat/vB)
- * @property {number} avgFee_50 - Mean of the blocks' median fee rate (sat/vB)
- * @property {number} avgFee_75 - Mean of the blocks' 75th percentile fee rate (sat/vB)
- * @property {number} avgFee_90 - Mean of the blocks' 90th percentile fee rate (sat/vB)
- * @property {number} avgFee_100 - Mean of the blocks' maximum fee rate (sat/vB)
+ * @property {number} avgFee_0 - Mean of the blocks' minimum fee rate (koinu/vB)
+ * @property {number} avgFee_10 - Mean of the blocks' 10th percentile fee rate (koinu/vB)
+ * @property {number} avgFee_25 - Mean of the blocks' 25th percentile fee rate (koinu/vB)
+ * @property {number} avgFee_50 - Mean of the blocks' median fee rate (koinu/vB)
+ * @property {number} avgFee_75 - Mean of the blocks' 75th percentile fee rate (koinu/vB)
+ * @property {number} avgFee_90 - Mean of the blocks' 90th percentile fee rate (koinu/vB)
+ * @property {number} avgFee_100 - Mean of the blocks' maximum fee rate (koinu/vB)
  */
 /**
  * One time bucket of blocks, as [`BlockFeeRatesEntry`] with each `avgFee_*` field to 3
@@ -176,13 +176,13 @@ sequence isn't final), from timestamp 1,771,507,776 on; null before
  * @typedef {Object} BlockFeeRatesPreciseEntry
  * @property {Height} avgHeight - Average block height in this bucket
  * @property {Timestamp} timestamp - Average block timestamp in this bucket
- * @property {FeeRate} avgFee_0 - Mean of the blocks' minimum fee rate (sat/vB)
- * @property {FeeRate} avgFee_10 - Mean of the blocks' 10th percentile fee rate (sat/vB)
- * @property {FeeRate} avgFee_25 - Mean of the blocks' 25th percentile fee rate (sat/vB)
- * @property {FeeRate} avgFee_50 - Mean of the blocks' median fee rate (sat/vB)
- * @property {FeeRate} avgFee_75 - Mean of the blocks' 75th percentile fee rate (sat/vB)
- * @property {FeeRate} avgFee_90 - Mean of the blocks' 90th percentile fee rate (sat/vB)
- * @property {FeeRate} avgFee_100 - Mean of the blocks' maximum fee rate (sat/vB)
+ * @property {FeeRate} avgFee_0 - Mean of the blocks' minimum fee rate (koinu/vB)
+ * @property {FeeRate} avgFee_10 - Mean of the blocks' 10th percentile fee rate (koinu/vB)
+ * @property {FeeRate} avgFee_25 - Mean of the blocks' 25th percentile fee rate (koinu/vB)
+ * @property {FeeRate} avgFee_50 - Mean of the blocks' median fee rate (koinu/vB)
+ * @property {FeeRate} avgFee_75 - Mean of the blocks' 75th percentile fee rate (koinu/vB)
+ * @property {FeeRate} avgFee_90 - Mean of the blocks' 90th percentile fee rate (koinu/vB)
+ * @property {FeeRate} avgFee_100 - Mean of the blocks' maximum fee rate (koinu/vB)
  */
 /**
  * One time bucket of blocks.
@@ -191,10 +191,10 @@ sequence isn't final), from timestamp 1,771,507,776 on; null before
  * @property {Height} avgHeight - Average block height in this bucket
  * @property {Timestamp} timestamp - Average block timestamp in this bucket
  * @property {Sats} avgFees - Mean fees per block in this bucket, rounded half up (sats)
- * @property {Dollars} USD - Mean BTC/USD spot price over the bucket's blocks (the price, not the fees in USD)
+ * @property {Dollars} USD - Mean DOGE/USD spot price over the bucket's blocks (the price, not the fees in USD)
  */
 /**
- * Double-SHA256 block-header hash, serialized in Bitcoin's conventional
+ * Double-SHA256 block-header hash, serialized in Dogecoin's conventional
  * hexadecimal byte order.
  *
  * @typedef {string} BlockHash
@@ -252,7 +252,7 @@ sequence isn't final), from timestamp 1,771,507,776 on; null before
  * @property {BlockExtras} extras
  */
 /**
- * A stale block at a height of the best chain: a fork tip the node knows (bitcoind's
+ * A stale block at a height of the best chain: a fork tip the node knows (dogecoind's
  * `getchaintips`), as mempool.space lists it.
  *
  * @typedef {Object} BlockOrphan
@@ -263,7 +263,7 @@ sequence isn't final), from timestamp 1,771,507,776 on; null before
  * @property {BlockHash} prevhash - Hash of the block the stale block builds on
  */
 /**
- * How far the node validated a fork tip (bitcoind's `getchaintips` statuses other than
+ * How far the node validated a fork tip (dogecoind's `getchaintips` statuses other than
  * `active`).
  *
  * @typedef {(("invalid")|("headers-only")|("valid-headers")|("valid-fork"))} BlockOrphanStatus
@@ -283,7 +283,7 @@ sequence isn't final), from timestamp 1,771,507,776 on; null before
  * @property {Height} avgHeight - Average block height in this bucket
  * @property {Timestamp} timestamp - Average block timestamp in this bucket
  * @property {Sats} avgRewards - Mean coinbase reward (subsidy + fees) per block in this bucket, rounded half up (sats)
- * @property {Dollars} USD - Mean BTC/USD spot price over the bucket's blocks (the price, not the rewards in USD)
+ * @property {Dollars} USD - Mean DOGE/USD spot price over the bucket's blocks (the price, not the rewards in USD)
  */
 /**
  * One time bucket of blocks.
@@ -373,7 +373,7 @@ sequence isn't final), from timestamp 1,771,507,776 on; null before
  * @property {CpfpEntry[]} ancestors
  * @property {CpfpEntry[]} descendants
  * @property {FeeRate} effectiveFeePerVsize - Feerate of the chunk holding the transaction when its block's relatives are linearized
-(sat/vB).
+(koinu/vB).
  * @property {CpfpCluster} cluster - The transaction's relatives in its block.
  */
 /**
@@ -444,7 +444,7 @@ sequence isn't final), from timestamp 1,771,507,776 on; null before
  * @property {CpfpEntry[]} ancestors
  * @property {(CpfpEntry|null)=} bestDescendant - Best (highest fee rate) descendant, if any.
  * @property {CpfpEntry[]} descendants
- * @property {FeeRate} effectiveFeePerVsize - Effective fee rate considering CPFP relationships (sat/vB).
+ * @property {FeeRate} effectiveFeePerVsize - Effective fee rate considering CPFP relationships (koinu/vB).
 This is the seed's chunk feerate after lift-merging, i.e. the
 rate Core/mempool.space would surface for this tx.
  * @property {SigOps} sigops - BIP-141 sigop cost for the seed tx (witness sigops count as 1,
@@ -517,7 +517,7 @@ legacy and P2SH-redeem sigops count as 4).
 blocks, where it spans the last 503 blocks, those before the retarget scaled by it
  * @property {number} timeOffset - Testnet's offset for its 20-minute minimum-difficulty rule (milliseconds): always 0 on
 mainnet, as mempool.space
- * @property {number} expectedBlocks - Blocks expected at the 10-minute target between the epoch's first block and the tip block
+ * @property {number} expectedBlocks - Blocks expected at the one-minute target between the epoch's first block and the tip block
  */
 /**
  * A difficulty adjustment, written as an array (as mempool.space does): `[timestamp, height, difficulty, adjustment]`.
@@ -542,9 +542,9 @@ mainnet, as mempool.space
  * @typedef {Object} DiskUsage
  * @property {string} brk - Human-readable brk data size (e.g., "48.8 GiB")
  * @property {number} brkBytes - brk data size in bytes
- * @property {string} bitcoin - Human-readable Bitcoin blocks directory size
- * @property {number} bitcoinBytes - Bitcoin blocks directory size in bytes
- * @property {number} ratio - Ratio of BRK bytes to Bitcoin bytes; zero when Bitcoin bytes are zero.
+ * @property {string} bitcoin - Human-readable Dogecoin blocks directory size
+ * @property {number} bitcoinBytes - Dogecoin blocks directory size in bytes
+ * @property {number} ratio - Ratio of BRK bytes to Dogecoin bytes; zero when Dogecoin bytes are zero.
  */
 /**
  * US dollars multiplied by blocks: coinblocks valued at the spot price.
@@ -600,7 +600,7 @@ mainnet, as mempool.space
  * @typedef {Object} ExchangeRates
  */
 /**
- * Fee rate stored in milli-sat/vB and exposed as sat/vB.
+ * Fee rate stored in milli-koinu/vB and exposed as koinu/vB.
  *
  * @typedef {number} FeeRate
  */
@@ -652,7 +652,7 @@ mainnet, as mempool.space
  * @property {number} uptimeSeconds - Uptime in seconds
  * @property {Height} indexedHeight - Height of the last indexed block
  * @property {Height} computedHeight - Height of the last computed block (series)
- * @property {Height} tipHeight - Height of the Bitcoin node's chain tip; `/health` reports `indexed_height` instead, without
+ * @property {Height} tipHeight - Height of the Dogecoin node's chain tip; `/health` reports `indexed_height` instead, without
 asking the node
  * @property {Height} blocksBehind - Number of blocks behind the tip
  * @property {string} lastIndexedAt - Human-readable timestamp of the last indexed block (ISO 8601)
@@ -762,14 +762,14 @@ server restarted.
 or coinbase.
  * @property {number} blockVSize - Sum of the transactions' virtual sizes in vbytes
  * @property {number} nTx - Number of transactions in the projected block
- * @property {Sats} totalFees - Total fees in satoshis
- * @property {FeeRate} medianFee - Median fee rate in sat/vB
- * @property {FeeRate[]} feeRange - Vsize-weighted percentiles of the transactions' CPFP chunk fee rates, in sat/vB:
+ * @property {Sats} totalFees - Total fees in koinu
+ * @property {FeeRate} medianFee - Median fee rate in koinu/vB
+ * @property {FeeRate[]} feeRange - Vsize-weighted percentiles of the transactions' CPFP chunk fee rates, in koinu/vB:
 [0, 10, 25, 50, 75, 90, 100] for the first block, [5, 10, 25, 50, 75, 90, 95] for the
 later projected ones
  */
 /**
- * A projected mempool block with its transactions: block 0 is Bitcoin Core's
+ * A projected mempool block with its transactions: block 0 is Dogecoin Core's
  * `getblocktemplate` selection. Returned by `GET /api/mempool-blocks/{index}`.
  *
  * @typedef {Object} MempoolBlockContent
@@ -821,7 +821,7 @@ later projected ones
  */
 /**
  * A projected mempool block's position, as `/api/v1/fees/mempool-blocks` lists them: 0 is the
- * next block, Bitcoin Core's `getblocktemplate` selection.
+ * next block, Dogecoin Core's `getblocktemplate` selection.
  *
  * @typedef {number} MempoolBlockIndex
  */
@@ -835,7 +835,7 @@ later projected ones
  * @typedef {Object} MempoolInfo
  * @property {number} count - Number of transactions in the mempool
  * @property {VSize} vsize - Total virtual size of all transactions in the mempool (vbytes)
- * @property {Sats} totalFee - Total fees of all transactions in the mempool (satoshis)
+ * @property {Sats} totalFee - Total fees of all transactions in the mempool (koinu)
  * @property {number[][]} feeHistogram - Fee histogram as Esplora bins it: `[[fee_rate, vsize], ...]` by descending fee rate, each
 entry the vsize of the transactions paying from its fee rate up to the previous entry's,
 a bin closing at the first fee rate change past 50,000 vB
@@ -850,7 +850,7 @@ a bin closing at the first fee rate change past 50,000 vB
  * @property {Sats} value - Total output value (sats)
  */
 /**
- * A merkle tree node: a double-SHA256 hash, hex-encoded in Bitcoin's display byte order.
+ * A merkle tree node: a double-SHA256 hash, hex-encoded in Dogecoin's display byte order.
  *
  * @typedef {string} MerkleNode
  */
@@ -912,7 +912,7 @@ a bin closing at the first fee rate change past 50,000 vB
  * The oracle at one block: what it counted (`histogram`, `outputs`), where it looked (`first_bin`,
  * `scores`) and what it found (`bin`, `price`).
  *
- * Bins are the oracle's log scale of amounts in sats, 200 a decade: amount `sats` is in bin
+ * Bins are the oracle's log scale of amounts in koinu, 200 a decade: amount `sats` is in bin
  * `round(log10(sats) * 200)`, bin 0 at 1 sat to bin 2399 just under 10^12. Read as where $100
  * lands, a bin is a price: `10^(10 - bin / 200)` dollars, higher bins lower prices.
  *
@@ -957,13 +957,13 @@ before it (live, the mempool's as the next block's), each block's counts weighte
 630,000): batch payouts.
  * @property {number} opReturn - Those of transactions carrying an OP_RETURN output: data, not payments.
  * @property {number} taproot - Taproot outputs: mostly protocol traffic.
- * @property {number} dust - Under 1,000 sats.
- * @property {number} roundBtc - Round amounts in bitcoin (within 0.1% of 1, 2, 3, 5 or 6 times a power of ten sats).
+ * @property {number} dust - Under 1,000 koinu.
+ * @property {number} roundBtc - Round amounts in dogecoin (within 0.1% of 1, 2, 3, 5 or 6 times a power of ten sats).
  * @property {number} payments - The rest: the payments it counted.
  */
 /**
  * 144 blocks' payments, each read as each of the oracle's 19 round-dollar amounts ($1 to
- * $10,000) at its exact amount in sats, counted by the price each reading implies in buckets a
+ * $10,000) at its exact amount in koinu, counted by the price each reading implies in buckets a
  * tenth of the oracle's bins.
  *
  * A reading of `sats` as `amount` dollars implies $100 lands at bin
@@ -1164,7 +1164,7 @@ as a decimal string
 /**
  * A mining pool's identifier, as written in URLs.
  *
- * @typedef {("unknown"|"blockfills"|"ultimuspool"|"terrapool"|"luxor"|"1thash"|"btccom"|"bitfarms"|"huobipool"|"wayicn"|"canoepool"|"btctop"|"bitcoincom"|"175btc"|"gbminers"|"axbt"|"asicminer"|"bitminter"|"bitcoinrussia"|"btcserv"|"simplecoinus"|"btcguild"|"eligius"|"ozcoin"|"eclipsemc"|"maxbtc"|"triplemining"|"coinlab"|"50btc"|"ghashio"|"stminingcorp"|"bitparking"|"mmpool"|"polmine"|"kncminer"|"bitalo"|"f2pool"|"hhtt"|"megabigpower"|"mtred"|"nmcbit"|"yourbtcnet"|"givemecoins"|"braiinspool"|"antpool"|"multicoinco"|"bcpoolio"|"cointerra"|"kanopool"|"solock"|"ckpool"|"nicehash"|"bitclub"|"bitcoinaffiliatenetwork"|"btcc"|"bwpool"|"exxbw"|"bitsolo"|"bitfury"|"21inc"|"digitalbtc"|"8baochi"|"mybtccoinpool"|"tbdice"|"hashpool"|"nexious"|"bravomining"|"hotpool"|"okexpool"|"bcmonster"|"1hash"|"bixin"|"tatmaspool"|"viabtc"|"connectbtc"|"batpool"|"waterhole"|"dcexploration"|"dcex"|"btpool"|"58coin"|"bitcoinindia"|"shawnp0wers"|"phashio"|"rigpool"|"haozhuzhu"|"7pool"|"miningkings"|"hashbx"|"dpool"|"rawpool"|"haominer"|"helix"|"bitcoinukraine"|"poolin"|"secretsuperstar"|"tigerpoolnet"|"sigmapoolcom"|"okpooltop"|"hummerpool"|"tangpool"|"bytepool"|"spiderpool"|"novablock"|"miningcity"|"binancepool"|"minerium"|"lubiancom"|"okkong"|"aaopool"|"emcdpool"|"foundryusa"|"sbicrypto"|"arkpool"|"purebtccom"|"marapool"|"kucoinpool"|"entrustcharitypool"|"okminer"|"titan"|"pegapool"|"btcnuggets"|"cloudhashing"|"digitalxmintsy"|"telco214"|"btcpoolparty"|"multipool"|"transactioncoinmining"|"btcdig"|"trickysbtcpool"|"btcmp"|"eobot"|"unomp"|"patels"|"gogreenlight"|"bitcoinindiapool"|"ekanembtc"|"canoe"|"tiger"|"1m1x"|"zulupool"|"secpool"|"ocean"|"whitepool"|"wiz"|"wk057"|"futurebitapollosolo"|"carbonnegative"|"portlandhodl"|"phoenix"|"neopool"|"maxipool"|"bitfufupool"|"gdpool"|"miningdutch"|"publicpool"|"miningsquared"|"innopolistech"|"btclab"|"parasite"|"redrockpool"|"est3lar"|"braiinssolo"|"solopoolcom"|"noderunners"|"dmnd")} PoolSlug
+ * @typedef {("unknown"|"blockfills"|"ultimuspool"|"terrapool"|"luxor"|"1thash"|"btccom"|"bitfarms"|"huobipool"|"wayicn"|"canoepool"|"btctop"|"bitcoincom"|"175btc"|"gbminers"|"axbt"|"asicminer"|"bitminter"|"bitcoinrussia"|"btcserv"|"simplecoinus"|"btcguild"|"eligius"|"ozcoin"|"eclipsemc"|"maxbtc"|"triplemining"|"coinlab"|"50btc"|"ghashio"|"stminingcorp"|"bitparking"|"mmpool"|"polmine"|"kncminer"|"bitalo"|"f2pool"|"hhtt"|"megabigpower"|"mtred"|"nmcbit"|"yourbtcnet"|"givemecoins"|"braiinspool"|"antpool"|"multicoinco"|"bcpoolio"|"cointerra"|"kanopool"|"solock"|"ckpool"|"nicehash"|"bitclub"|"bitcoinaffiliatenetwork"|"btcc"|"bwpool"|"exxbw"|"bitsolo"|"bitfury"|"21inc"|"digitalbtc"|"8baochi"|"mybtccoinpool"|"tbdice"|"hashpool"|"nexious"|"bravomining"|"hotpool"|"okexpool"|"bcmonster"|"1hash"|"bixin"|"tatmaspool"|"viabtc"|"connectbtc"|"batpool"|"waterhole"|"dcexploration"|"dcex"|"btpool"|"58coin"|"bitcoinindia"|"shawnp0wers"|"phashio"|"rigpool"|"haozhuzhu"|"7pool"|"miningkings"|"hashbx"|"dpool"|"rawpool"|"haominer"|"helix"|"bitcoinukraine"|"poolin"|"secretsuperstar"|"tigerpoolnet"|"sigmapoolcom"|"okpooltop"|"hummerpool"|"tangpool"|"bytepool"|"spiderpool"|"novablock"|"miningcity"|"binancepool"|"minerium"|"lubiancom"|"okkong"|"aaopool"|"emcdpool"|"foundryusa"|"sbicrypto"|"arkpool"|"purebtccom"|"marapool"|"kucoinpool"|"entrustcharitypool"|"okminer"|"titan"|"pegapool"|"btcnuggets"|"cloudhashing"|"digitalxmintsy"|"telco214"|"btcpoolparty"|"multipool"|"transactioncoinmining"|"btcdig"|"trickysbtcpool"|"btcmp"|"eobot"|"unomp"|"patels"|"gogreenlight"|"bitcoinindiapool"|"ekanembtc"|"canoe"|"tiger"|"1m1x"|"zulupool"|"secpool"|"ocean"|"whitepool"|"wiz"|"wk057"|"futurebitapollosolo"|"carbonnegative"|"portlandhodl"|"phoenix"|"neopool"|"maxipool"|"bitfufupool"|"gdpool"|"miningdutch"|"publicpool"|"miningsquared"|"innopolistech"|"btclab"|"parasite"|"redrockpool"|"est3lar"|"braiinssolo"|"solopoolcom"|"noderunners"|"dmnd"|"kupool"|"litecoinpoolorg"|"hash700"|"lsoftwaredmcc"|"hashspace"|"dogegogocom"|"longpool"|"kryptex"|"dxpool"|"k1pool"|"molepool"|"solopoolorg"|"prohashing"|"hashhut"|"happychina"|"himpool"|"p2pspbxyz"|"hyperdonkey"|"zergpool")} PoolSlug
  */
 /**
  * @typedef {Object} PoolSlugAndHeightParam
@@ -1202,7 +1202,7 @@ string at mempool.space, from its own audits (always null: it needs the mempool 
  * @property {number} lastEstimatedHashrate1w - Estimated network hashrate over last 1 week (H/s)
  */
 /**
- * Recommended fee rates in sat/vB, to the thousandth (`/api/v1/fees/precise`)
+ * Recommended fee rates in koinu/vB, to the thousandth (`/api/v1/fees/precise`)
  *
  * @typedef {Object} PreciseRecommendedFees
  * @property {FeeRate} fastestFee - Fee rate for fastest confirmation (next block)
@@ -1210,14 +1210,14 @@ string at mempool.space, from its own audits (always null: it needs the mempool 
  * @property {FeeRate} hourFee - Fee rate for confirmation within ~1 hour (third projected block)
  * @property {FeeRate} economyFee - Smoothed, fullness-adjusted third-block fee estimate, bounded by `minimumFee` and twice
 it; `minimumFee` when no third projected block exists
- * @property {FeeRate} minimumFee - The node's current mempool minimum fee rate, rounded up to 0.001 sat/vB (at least 0.001)
+ * @property {FeeRate} minimumFee - The node's current mempool minimum fee rate, rounded up to 0.001 koinu/vB (at least 0.001)
  */
 /**
- * A BTC/USD price at a time: the current price (`/api/v1/prices`) or one historical close
+ * A DOGE/USD price at a time: the current price (`/api/v1/prices`) or one historical close
  *
  * @typedef {Object} PricePoint
  * @property {Timestamp} time - Unix timestamp
- * @property {Dollars} USD - BTC/USD price
+ * @property {Dollars} USD - DOGE/USD price
  */
 /**
  * A positional index, YYYY-MM-DD date, or ISO 8601 timestamp.
@@ -1260,7 +1260,7 @@ it; `minimumFee` when no third projected block exists
 this tx displaced at least one non-signaling predecessor.
  */
 /**
- * Recommended fee rates in whole sat/vB (`/api/v1/fees/recommended`)
+ * Recommended fee rates in whole koinu/vB (`/api/v1/fees/recommended`)
  *
  * @typedef {Object} RecommendedFees
  * @property {number} fastestFee - Fee rate for fastest confirmation (next block)
@@ -1268,7 +1268,7 @@ this tx displaced at least one non-signaling predecessor.
  * @property {number} hourFee - Fee rate for confirmation within ~1 hour (third projected block)
  * @property {number} economyFee - Smoothed, fullness-adjusted third-block fee estimate, bounded by `minimumFee` and twice
 it; `minimumFee` when no third projected block exists
- * @property {number} minimumFee - The node's current mempool minimum fee rate, rounded up to a whole sat/vB (at least 1)
+ * @property {number} minimumFee - The node's current mempool minimum fee rate, rounded up to a whole koinu/vB (at least 1)
  */
 /**
  * One node in an RBF replacement tree. The node's `tx` replaced each
@@ -1297,17 +1297,17 @@ on serialization otherwise.
  * @typedef {Object} RewardStats
  * @property {Height} startBlock - First block in the range
  * @property {Height} endBlock - Last block in the range
- * @property {string} totalReward - Total coinbase rewards (subsidy + fees) in sats
- * @property {string} totalFee - Total transaction fees in sats
+ * @property {string} totalReward - Total coinbase rewards (subsidy + fees) in koinu
+ * @property {string} totalFee - Total transaction fees in koinu
  * @property {string} totalTx - Total transactions, coinbase included
  */
 /**
- * An amount in satoshis (100,000,000 to a bitcoin).
+ * An amount in koinu (100,000,000 to a dogecoin).
  *
  * @typedef {number} Sats
  */
 /**
- * A signed amount in satoshis.
+ * A signed amount in koinu.
  *
  * @typedef {number} SatsSigned
  */
@@ -1407,7 +1407,7 @@ undefined one (e.g. NaN).
  * @typedef {Object} SyncStatus
  * @property {Height} indexedHeight - Height of the last indexed block
  * @property {Height} computedHeight - Height of the last computed block (series)
- * @property {Height} tipHeight - Height of the Bitcoin node's chain tip; `/health` reports `indexed_height` instead, without
+ * @property {Height} tipHeight - Height of the Dogecoin node's chain tip; `/health` reports `indexed_height` instead, without
 asking the node
  * @property {Height} blocksBehind - Number of blocks behind the tip
  * @property {string} lastIndexedAt - Human-readable timestamp of the last indexed block (ISO 8601)
@@ -1444,7 +1444,7 @@ asking the node
  * @property {number} size - Transaction size in bytes
  * @property {Weight} weight
  * @property {SigOps} sigops - BIP-141 signature-operation cost
- * @property {Sats} fee - Transaction fee in satoshis
+ * @property {Sats} fee - Transaction fee in koinu
  * @property {TxStatus} status
  */
 /** @typedef {({ [key: string]: TreeNode }|SeriesLeafWithSchema)} TreeNode */
@@ -1481,8 +1481,8 @@ asking the node
  * @property {Hex} scriptpubkey - Script pubkey (locking script), encoded as hexadecimal.
  * @property {string} scriptpubkeyAsm - Script pubkey in assembly format.
  * @property {OutputTypeNormalized} scriptpubkeyType - Esplora/mempool.space script type.
- * @property {Address=} scriptpubkeyAddress - Bitcoin address, omitted for scripts without an address (P2PK included, as Esplora).
- * @property {Sats} value - Value of the output in satoshis.
+ * @property {Address=} scriptpubkeyAddress - Dogecoin address, omitted for scripts without an address (P2PK included, as Esplora).
+ * @property {Sats} value - Value of the output in koinu.
  */
 /**
  * Index of a transaction output.
@@ -1562,7 +1562,7 @@ asking the node
  * @property {UrpdWeight} weight
  * @property {UrpdAggregation} aggregation
  * @property {Dollars} close - Price at `height`, in USD. Anchor for `unrealized_pnl`.
- * @property {Bitcoin} supply - Sum of `buckets.supply`, in BTC.
+ * @property {Bitcoin} supply - Sum of `buckets.supply`, in DOGE.
  * @property {UrpdBuckets} buckets
  */
 /**
@@ -1578,8 +1578,8 @@ asking the node
  * @typedef {Object} UrpdBuckets
  * @property {Dollars[]} price - Each bucket's price, in USD: its lower bound when aggregated, and for `raw` the price its
 coins' creation prices round to (four significant digits of the price in cents).
- * @property {Bitcoin[]} supply - Supply held with a last-move price inside each bucket, in BTC. With a `wakefulness` or
-`mobility` weight, the weighted supply, floored to whole satoshis at each grid price.
+ * @property {Bitcoin[]} supply - Supply held with a last-move price inside each bucket, in DOGE. With a `wakefulness` or
+`mobility` weight, the weighted supply, floored to whole koinu at each grid price.
  * @property {Dollars[]} realizedCap - Realized cap contribution in USD: `price * supply` summed over the coins in each bucket,
 each coin's creation price taken on the price grid (the `raw` bucket price, within 0.05%
 of the exact price), rounded to the cent: a bucket worth under half a cent shows 0. The
@@ -1623,7 +1623,7 @@ capital, rounded to the cent once. Can be negative.
  * @property {Txid} txid
  * @property {Vout} vout
  * @property {TxStatus} status
- * @property {Sats} value - Output value in satoshis
+ * @property {Sats} value - Output value in koinu
  */
 /**
  * Columnar counts and supplies by creation height.
@@ -1631,20 +1631,19 @@ capital, rounded to the cent once. Can be negative.
  * @typedef {Object} UtxoChanges
  * @property {Height[]} height - Creation height of each row.
  * @property {number[]} count - Number of outputs in each row.
- * @property {Bitcoin[]} supply - BTC held by the outputs in each row.
+ * @property {Bitcoin[]} supply - DOGE held by the outputs in each row.
  */
 /**
  * Columnar unspent amounts indexed by creation height.
  *
  * @typedef {Object} UtxoOrigins
  * @property {number[]} count - Number of unspent outputs per creation height.
- * @property {Bitcoin[]} supply - BTC held by the unspent outputs per creation height.
+ * @property {Bitcoin[]} supply - DOGE held by the unspent outputs per creation height.
  */
 /**
  * The UTXO set after a block, grouped by the height of the block that created each output.
  *
- * The set excludes `OP_RETURN` outputs and the genesis coinbase, which are unspendable, and the
- * coinbases of blocks 91812 and 91722 once duplicates at 91842 and 91880 overwrite them; it
+ * The set excludes `OP_RETURN` outputs and the genesis coinbase, which are unspendable; it
  * includes zero-value outputs. The set after block `first - 1` plus a diff's `created` minus its
  * `spent` gives the set after block `last`; rounding each supply to 8 decimals keeps it exact.
  *
@@ -1654,7 +1653,7 @@ capital, rounded to the cent once. Can be negative.
  * @property {Date} date - UTC date of the represented block's monotonic timestamp (the running maximum of block
 times).
  * @property {number} count - Number of unspent outputs.
- * @property {Bitcoin} supply - BTC held by the unspent outputs.
+ * @property {Bitcoin} supply - DOGE held by the unspent outputs.
  * @property {UtxoOrigins} origins - Unspent outputs by creation height: entry `i` is what remains of block `i`'s outputs.
  */
 /**
@@ -1668,8 +1667,7 @@ block 0).
  * @property {Date} date - UTC date of block `last`'s monotonic timestamp.
  * @property {UtxoChanges} created - Outputs created, one row per block, including those spent again within the range (which
 `spent` lists too).
- * @property {UtxoChanges} spent - Outputs removed, one row per creation height in ascending order: spent outputs, plus the
-coinbase outputs of blocks 91812 and 91722, which duplicates at 91842 and 91880 overwrote.
+ * @property {UtxoChanges} spent - Outputs removed, one row per creation height in ascending order: spent outputs.
  */
 /**
  * Virtual size in vbytes (weight / 4, rounded up). Max block vsize is ~1,000,000 vB.
@@ -1678,7 +1676,7 @@ coinbase outputs of blocks 91812 and 91722, which duplicates at 91842 and 91880 
  */
 /**
  * @typedef {Object} ValidateAddressParam
- * @property {string} address - Bitcoin address to validate: 2 to 130 letters and digits (a P2PK public key in hex is 130);
+ * @property {string} address - Dogecoin address to validate: 2 to 130 letters and digits (a P2PK public key in hex is 130);
 anything else answers 400, as mempool.space does
  */
 /**
@@ -5921,341 +5919,77 @@ const _Pool = _s({
  * @typedef {{
  *   blockPool: SeriesPattern18<PoolSlug>,
  *   unknown: Pool,
- *   blockfills: Pool,
- *   ultimuspool: Pool,
- *   terrapool: Pool,
  *   luxor: Pool,
- *   _1thash: Pool,
  *   btccom: Pool,
- *   bitfarms: Pool,
- *   huobipool: Pool,
- *   wayicn: Pool,
- *   canoepool: Pool,
- *   btctop: Pool,
- *   bitcoincom: Pool,
- *   _175btc: Pool,
- *   gbminers: Pool,
- *   axbt: Pool,
- *   asicminer: Pool,
- *   bitminter: Pool,
- *   bitcoinrussia: Pool,
- *   btcserv: Pool,
- *   simplecoinus: Pool,
- *   btcguild: Pool,
- *   eligius: Pool,
- *   ozcoin: Pool,
- *   eclipsemc: Pool,
- *   maxbtc: Pool,
- *   triplemining: Pool,
- *   coinlab: Pool,
- *   _50btc: Pool,
- *   ghashio: Pool,
- *   stminingcorp: Pool,
- *   bitparking: Pool,
- *   mmpool: Pool,
- *   polmine: Pool,
- *   kncminer: Pool,
- *   bitalo: Pool,
  *   f2pool: Pool,
- *   hhtt: Pool,
- *   megabigpower: Pool,
- *   mtred: Pool,
- *   nmcbit: Pool,
- *   yourbtcnet: Pool,
- *   givemecoins: Pool,
- *   braiinspool: Pool,
  *   antpool: Pool,
- *   multicoinco: Pool,
- *   bcpoolio: Pool,
- *   cointerra: Pool,
- *   kanopool: Pool,
- *   solock: Pool,
- *   ckpool: Pool,
  *   nicehash: Pool,
- *   bitclub: Pool,
- *   bitcoinaffiliatenetwork: Pool,
- *   btcc: Pool,
- *   bwpool: Pool,
- *   exxbw: Pool,
- *   bitsolo: Pool,
- *   bitfury: Pool,
- *   _21inc: Pool,
- *   digitalbtc: Pool,
- *   _8baochi: Pool,
- *   mybtccoinpool: Pool,
- *   tbdice: Pool,
- *   hashpool: Pool,
- *   nexious: Pool,
- *   bravomining: Pool,
- *   hotpool: Pool,
- *   okexpool: Pool,
- *   bcmonster: Pool,
- *   _1hash: Pool,
- *   bixin: Pool,
- *   tatmaspool: Pool,
  *   viabtc: Pool,
- *   connectbtc: Pool,
- *   batpool: Pool,
- *   waterhole: Pool,
- *   dcexploration: Pool,
- *   dcex: Pool,
- *   btpool: Pool,
- *   _58coin: Pool,
- *   bitcoinindia: Pool,
- *   shawnp0wers: Pool,
- *   phashio: Pool,
- *   rigpool: Pool,
- *   haozhuzhu: Pool,
- *   _7pool: Pool,
- *   miningkings: Pool,
- *   hashbx: Pool,
- *   dpool: Pool,
- *   rawpool: Pool,
- *   haominer: Pool,
- *   helix: Pool,
- *   bitcoinukraine: Pool,
  *   poolin: Pool,
- *   secretsuperstar: Pool,
- *   tigerpoolnet: Pool,
  *   sigmapoolcom: Pool,
- *   okpooltop: Pool,
- *   hummerpool: Pool,
- *   tangpool: Pool,
- *   bytepool: Pool,
  *   spiderpool: Pool,
- *   novablock: Pool,
- *   miningcity: Pool,
  *   binancepool: Pool,
- *   minerium: Pool,
- *   lubiancom: Pool,
- *   okkong: Pool,
- *   aaopool: Pool,
  *   emcdpool: Pool,
- *   foundryusa: Pool,
  *   sbicrypto: Pool,
- *   arkpool: Pool,
- *   purebtccom: Pool,
- *   marapool: Pool,
- *   kucoinpool: Pool,
- *   entrustcharitypool: Pool,
- *   okminer: Pool,
- *   titan: Pool,
- *   pegapool: Pool,
- *   btcnuggets: Pool,
- *   cloudhashing: Pool,
- *   digitalxmintsy: Pool,
- *   telco214: Pool,
- *   btcpoolparty: Pool,
- *   multipool: Pool,
- *   transactioncoinmining: Pool,
- *   btcdig: Pool,
- *   trickysbtcpool: Pool,
- *   btcmp: Pool,
- *   eobot: Pool,
- *   unomp: Pool,
- *   patels: Pool,
- *   gogreenlight: Pool,
- *   bitcoinindiapool: Pool,
- *   ekanembtc: Pool,
- *   canoe: Pool,
- *   tiger: Pool,
- *   _1m1x: Pool,
  *   zulupool: Pool,
- *   secpool: Pool,
- *   ocean: Pool,
- *   whitepool: Pool,
- *   wiz: Pool,
- *   wk057: Pool,
- *   futurebitapollosolo: Pool,
- *   carbonnegative: Pool,
- *   portlandhodl: Pool,
- *   phoenix: Pool,
- *   neopool: Pool,
- *   maxipool: Pool,
- *   bitfufupool: Pool,
- *   gdpool: Pool,
  *   miningdutch: Pool,
- *   publicpool: Pool,
- *   miningsquared: Pool,
- *   innopolistech: Pool,
- *   btclab: Pool,
- *   parasite: Pool,
- *   redrockpool: Pool,
- *   est3lar: Pool,
- *   braiinssolo: Pool,
- *   solopoolcom: Pool,
- *   noderunners: Pool,
- *   dmnd: Pool,
+ *   kupool: Pool,
+ *   litecoinpoolorg: Pool,
+ *   hash700: Pool,
+ *   lsoftwaredmcc: Pool,
+ *   hashspace: Pool,
+ *   dogegogocom: Pool,
+ *   longpool: Pool,
+ *   kryptex: Pool,
+ *   dxpool: Pool,
+ *   k1pool: Pool,
+ *   molepool: Pool,
+ *   solopoolorg: Pool,
+ *   prohashing: Pool,
+ *   hashhut: Pool,
+ *   happychina: Pool,
+ *   himpool: Pool,
+ *   p2pspbxyz: Pool,
+ *   hyperdonkey: Pool,
+ *   zergpool: Pool,
  * }} Pools
  */
 const _Pools = _s({
   blockPool: [_i18, 'block_*'],
   unknown: [_Pool, '*_unknown'],
-  blockfills: [_Pool, '*_blockfills'],
-  ultimuspool: [_Pool, '*_ultimuspool'],
-  terrapool: [_Pool, '*_terrapool'],
   luxor: [_Pool, '*_luxor'],
-  _1thash: [_Pool, '*_1thash'],
   btccom: [_Pool, '*_btccom'],
-  bitfarms: [_Pool, '*_bitfarms'],
-  huobipool: [_Pool, '*_huobipool'],
-  wayicn: [_Pool, '*_wayicn'],
-  canoepool: [_Pool, '*_canoepool'],
-  btctop: [_Pool, '*_btctop'],
-  bitcoincom: [_Pool, '*_bitcoincom'],
-  _175btc: [_Pool, '*_175btc'],
-  gbminers: [_Pool, '*_gbminers'],
-  axbt: [_Pool, '*_axbt'],
-  asicminer: [_Pool, '*_asicminer'],
-  bitminter: [_Pool, '*_bitminter'],
-  bitcoinrussia: [_Pool, '*_bitcoinrussia'],
-  btcserv: [_Pool, '*_btcserv'],
-  simplecoinus: [_Pool, '*_simplecoinus'],
-  btcguild: [_Pool, '*_btcguild'],
-  eligius: [_Pool, '*_eligius'],
-  ozcoin: [_Pool, '*_ozcoin'],
-  eclipsemc: [_Pool, '*_eclipsemc'],
-  maxbtc: [_Pool, '*_maxbtc'],
-  triplemining: [_Pool, '*_triplemining'],
-  coinlab: [_Pool, '*_coinlab'],
-  _50btc: [_Pool, '*_50btc'],
-  ghashio: [_Pool, '*_ghashio'],
-  stminingcorp: [_Pool, '*_stminingcorp'],
-  bitparking: [_Pool, '*_bitparking'],
-  mmpool: [_Pool, '*_mmpool'],
-  polmine: [_Pool, '*_polmine'],
-  kncminer: [_Pool, '*_kncminer'],
-  bitalo: [_Pool, '*_bitalo'],
   f2pool: [_Pool, '*_f2pool'],
-  hhtt: [_Pool, '*_hhtt'],
-  megabigpower: [_Pool, '*_megabigpower'],
-  mtred: [_Pool, '*_mtred'],
-  nmcbit: [_Pool, '*_nmcbit'],
-  yourbtcnet: [_Pool, '*_yourbtcnet'],
-  givemecoins: [_Pool, '*_givemecoins'],
-  braiinspool: [_Pool, '*_braiinspool'],
   antpool: [_Pool, '*_antpool'],
-  multicoinco: [_Pool, '*_multicoinco'],
-  bcpoolio: [_Pool, '*_bcpoolio'],
-  cointerra: [_Pool, '*_cointerra'],
-  kanopool: [_Pool, '*_kanopool'],
-  solock: [_Pool, '*_solock'],
-  ckpool: [_Pool, '*_ckpool'],
   nicehash: [_Pool, '*_nicehash'],
-  bitclub: [_Pool, '*_bitclub'],
-  bitcoinaffiliatenetwork: [_Pool, '*_bitcoinaffiliatenetwork'],
-  btcc: [_Pool, '*_btcc'],
-  bwpool: [_Pool, '*_bwpool'],
-  exxbw: [_Pool, '*_exxbw'],
-  bitsolo: [_Pool, '*_bitsolo'],
-  bitfury: [_Pool, '*_bitfury'],
-  _21inc: [_Pool, '*_21inc'],
-  digitalbtc: [_Pool, '*_digitalbtc'],
-  _8baochi: [_Pool, '*_8baochi'],
-  mybtccoinpool: [_Pool, '*_mybtccoinpool'],
-  tbdice: [_Pool, '*_tbdice'],
-  hashpool: [_Pool, '*_hashpool'],
-  nexious: [_Pool, '*_nexious'],
-  bravomining: [_Pool, '*_bravomining'],
-  hotpool: [_Pool, '*_hotpool'],
-  okexpool: [_Pool, '*_okexpool'],
-  bcmonster: [_Pool, '*_bcmonster'],
-  _1hash: [_Pool, '*_1hash'],
-  bixin: [_Pool, '*_bixin'],
-  tatmaspool: [_Pool, '*_tatmaspool'],
   viabtc: [_Pool, '*_viabtc'],
-  connectbtc: [_Pool, '*_connectbtc'],
-  batpool: [_Pool, '*_batpool'],
-  waterhole: [_Pool, '*_waterhole'],
-  dcexploration: [_Pool, '*_dcexploration'],
-  dcex: [_Pool, '*_dcex'],
-  btpool: [_Pool, '*_btpool'],
-  _58coin: [_Pool, '*_58coin'],
-  bitcoinindia: [_Pool, '*_bitcoinindia'],
-  shawnp0wers: [_Pool, '*_shawnp0wers'],
-  phashio: [_Pool, '*_phashio'],
-  rigpool: [_Pool, '*_rigpool'],
-  haozhuzhu: [_Pool, '*_haozhuzhu'],
-  _7pool: [_Pool, '*_7pool'],
-  miningkings: [_Pool, '*_miningkings'],
-  hashbx: [_Pool, '*_hashbx'],
-  dpool: [_Pool, '*_dpool'],
-  rawpool: [_Pool, '*_rawpool'],
-  haominer: [_Pool, '*_haominer'],
-  helix: [_Pool, '*_helix'],
-  bitcoinukraine: [_Pool, '*_bitcoinukraine'],
   poolin: [_Pool, '*_poolin'],
-  secretsuperstar: [_Pool, '*_secretsuperstar'],
-  tigerpoolnet: [_Pool, '*_tigerpoolnet'],
   sigmapoolcom: [_Pool, '*_sigmapoolcom'],
-  okpooltop: [_Pool, '*_okpooltop'],
-  hummerpool: [_Pool, '*_hummerpool'],
-  tangpool: [_Pool, '*_tangpool'],
-  bytepool: [_Pool, '*_bytepool'],
   spiderpool: [_Pool, '*_spiderpool'],
-  novablock: [_Pool, '*_novablock'],
-  miningcity: [_Pool, '*_miningcity'],
   binancepool: [_Pool, '*_binancepool'],
-  minerium: [_Pool, '*_minerium'],
-  lubiancom: [_Pool, '*_lubiancom'],
-  okkong: [_Pool, '*_okkong'],
-  aaopool: [_Pool, '*_aaopool'],
   emcdpool: [_Pool, '*_emcdpool'],
-  foundryusa: [_Pool, '*_foundryusa'],
   sbicrypto: [_Pool, '*_sbicrypto'],
-  arkpool: [_Pool, '*_arkpool'],
-  purebtccom: [_Pool, '*_purebtccom'],
-  marapool: [_Pool, '*_marapool'],
-  kucoinpool: [_Pool, '*_kucoinpool'],
-  entrustcharitypool: [_Pool, '*_entrustcharitypool'],
-  okminer: [_Pool, '*_okminer'],
-  titan: [_Pool, '*_titan'],
-  pegapool: [_Pool, '*_pegapool'],
-  btcnuggets: [_Pool, '*_btcnuggets'],
-  cloudhashing: [_Pool, '*_cloudhashing'],
-  digitalxmintsy: [_Pool, '*_digitalxmintsy'],
-  telco214: [_Pool, '*_telco214'],
-  btcpoolparty: [_Pool, '*_btcpoolparty'],
-  multipool: [_Pool, '*_multipool'],
-  transactioncoinmining: [_Pool, '*_transactioncoinmining'],
-  btcdig: [_Pool, '*_btcdig'],
-  trickysbtcpool: [_Pool, '*_trickysbtcpool'],
-  btcmp: [_Pool, '*_btcmp'],
-  eobot: [_Pool, '*_eobot'],
-  unomp: [_Pool, '*_unomp'],
-  patels: [_Pool, '*_patels'],
-  gogreenlight: [_Pool, '*_gogreenlight'],
-  bitcoinindiapool: [_Pool, '*_bitcoinindiapool'],
-  ekanembtc: [_Pool, '*_ekanembtc'],
-  canoe: [_Pool, '*_canoe'],
-  tiger: [_Pool, '*_tiger'],
-  _1m1x: [_Pool, '*_1m1x'],
   zulupool: [_Pool, '*_zulupool'],
-  secpool: [_Pool, '*_secpool'],
-  ocean: [_Pool, '*_ocean'],
-  whitepool: [_Pool, '*_whitepool'],
-  wiz: [_Pool, '*_wiz'],
-  wk057: [_Pool, '*_wk057'],
-  futurebitapollosolo: [_Pool, '*_futurebitapollosolo'],
-  carbonnegative: [_Pool, '*_carbonnegative'],
-  portlandhodl: [_Pool, '*_portlandhodl'],
-  phoenix: [_Pool, '*_phoenix'],
-  neopool: [_Pool, '*_neopool'],
-  maxipool: [_Pool, '*_maxipool'],
-  bitfufupool: [_Pool, '*_bitfufupool'],
-  gdpool: [_Pool, '*_gdpool'],
   miningdutch: [_Pool, '*_miningdutch'],
-  publicpool: [_Pool, '*_publicpool'],
-  miningsquared: [_Pool, '*_miningsquared'],
-  innopolistech: [_Pool, '*_innopolistech'],
-  btclab: [_Pool, '*_btclab'],
-  parasite: [_Pool, '*_parasite'],
-  redrockpool: [_Pool, '*_redrockpool'],
-  est3lar: [_Pool, '*_est3lar'],
-  braiinssolo: [_Pool, '*_braiinssolo'],
-  solopoolcom: [_Pool, '*_solopoolcom'],
-  noderunners: [_Pool, '*_noderunners'],
-  dmnd: [_Pool, '*_dmnd'],
+  kupool: [_Pool, '*_kupool'],
+  litecoinpoolorg: [_Pool, '*_litecoinpoolorg'],
+  hash700: [_Pool, '*_hash700'],
+  lsoftwaredmcc: [_Pool, '*_lsoftwaredmcc'],
+  hashspace: [_Pool, '*_hashspace'],
+  dogegogocom: [_Pool, '*_dogegogocom'],
+  longpool: [_Pool, '*_longpool'],
+  kryptex: [_Pool, '*_kryptex'],
+  dxpool: [_Pool, '*_dxpool'],
+  k1pool: [_Pool, '*_k1pool'],
+  molepool: [_Pool, '*_molepool'],
+  solopoolorg: [_Pool, '*_solopoolorg'],
+  prohashing: [_Pool, '*_prohashing'],
+  hashhut: [_Pool, '*_hashhut'],
+  happychina: [_Pool, '*_happychina'],
+  himpool: [_Pool, '*_himpool'],
+  p2pspbxyz: [_Pool, '*_p2pspbxyz'],
+  hyperdonkey: [_Pool, '*_hyperdonkey'],
+  zergpool: [_Pool, '*_zergpool'],
 });
 
 /**
@@ -7238,171 +6972,39 @@ class BitviewClient extends BitviewClientBase {
   ]);
 
   POOL_SLUG_TO_NAME = /** @type {const} */ ({
-    "175btc": "175btc",
-    "1hash": "1Hash",
-    "1m1x": "1M1X",
-    "1thash": "1THash",
-    "21inc": "21 Inc.",
-    "50btc": "50BTC",
-    "58coin": "58COIN",
-    "7pool": "7pool",
-    "8baochi": "8baochi",
-    "aaopool": "AAO Pool",
     "antpool": "AntPool",
-    "arkpool": "ArkPool",
-    "asicminer": "ASICMiner",
-    "axbt": "A-XBT",
-    "batpool": "BATPOOL",
-    "bcmonster": "BCMonster",
-    "bcpoolio": "bcpool.io",
     "binancepool": "Binance Pool",
-    "bitalo": "Bitalo",
-    "bitclub": "BitClub",
-    "bitcoinaffiliatenetwork": "Bitcoin Affiliate Network",
-    "bitcoincom": "Bitcoin.com",
-    "bitcoinindia": "Bitcoin India",
-    "bitcoinindiapool": "BitcoinIndia",
-    "bitcoinrussia": "BitcoinRussia",
-    "bitcoinukraine": "Bitcoin-Ukraine",
-    "bitfarms": "Bitfarms",
-    "bitfufupool": "BitFuFuPool",
-    "bitfury": "BitFury",
-    "bitminter": "BitMinter",
-    "bitparking": "Bitparking",
-    "bitsolo": "Bitsolo",
-    "bixin": "Bixin",
-    "blockfills": "BlockFills",
-    "braiinspool": "Braiins Pool",
-    "braiinssolo": "Braiins Solo",
-    "bravomining": "Bravo Mining",
-    "btcc": "BTCC",
     "btccom": "BTC.com",
-    "btcdig": "BTCDig",
-    "btcguild": "BTC Guild",
-    "btclab": "BTCLab",
-    "btcmp": "BTCMP",
-    "btcnuggets": "BTC Nuggets",
-    "btcpoolparty": "BTC Pool Party",
-    "btcserv": "BTCServ",
-    "btctop": "BTC.TOP",
-    "btpool": "BTPOOL",
-    "bwpool": "BWPool",
-    "bytepool": "BytePool",
-    "canoe": "CANOE",
-    "canoepool": "CanoePool",
-    "carbonnegative": "Carbon Negative",
-    "ckpool": "CKPool",
-    "cloudhashing": "CloudHashing",
-    "coinlab": "CoinLab",
-    "cointerra": "Cointerra",
-    "connectbtc": "ConnectBTC",
-    "dcex": "DCEX",
-    "dcexploration": "DCExploration",
-    "digitalbtc": "digitalBTC",
-    "digitalxmintsy": "digitalX Mintsy",
-    "dmnd": "DMND",
-    "dpool": "DPOOL",
-    "eclipsemc": "EclipseMC",
-    "ekanembtc": "EkanemBTC",
-    "eligius": "Eligius",
+    "dogegogocom": "dogegogo.com",
+    "dxpool": "DxPool",
     "emcdpool": "EMCDPool",
-    "entrustcharitypool": "Entrust Charity Pool",
-    "eobot": "Eobot",
-    "est3lar": "Est3lar",
-    "exxbw": "EXX&BW",
     "f2pool": "F2Pool",
-    "foundryusa": "Foundry USA",
-    "futurebitapollosolo": "FutureBit Apollo Solo",
-    "gbminers": "GBMiners",
-    "gdpool": "GDPool",
-    "ghashio": "GHash.IO",
-    "givemecoins": "Give Me Coins",
-    "gogreenlight": "GoGreenLight",
-    "haominer": "haominer",
-    "haozhuzhu": "HAOZHUZHU",
-    "hashbx": "HashBX",
-    "hashpool": "HASHPOOL",
-    "helix": "Helix",
-    "hhtt": "HHTT",
-    "hotpool": "HotPool",
-    "hummerpool": "Hummerpool",
-    "huobipool": "Huobi.pool",
-    "innopolistech": "Innopolis Tech",
-    "kanopool": "KanoPool",
-    "kncminer": "KnCMiner",
-    "kucoinpool": "KuCoinPool",
-    "lubiancom": "Lubian.com",
-    "luxor": "Luxor",
-    "marapool": "MARA Pool",
-    "maxbtc": "MaxBTC",
-    "maxipool": "MaxiPool",
-    "megabigpower": "MegaBigPower",
-    "minerium": "Minerium",
-    "miningcity": "MiningCity",
-    "miningdutch": "Mining-Dutch",
-    "miningkings": "MiningKings",
-    "miningsquared": "Mining Squared",
-    "mmpool": "mmpool",
-    "mtred": "Mt Red",
-    "multicoinco": "MultiCoin.co",
-    "multipool": "Multipool",
-    "mybtccoinpool": "myBTCcoin Pool",
-    "neopool": "Neopool",
-    "nexious": "Nexious",
+    "happychina": "happychina",
+    "hash700": "Hash700",
+    "hashhut": "hash-hut",
+    "hashspace": "Hash Space",
+    "himpool": "HimPool",
+    "hyperdonkey": "HyperDonkey",
+    "k1pool": "K1Pool",
+    "kryptex": "Kryptex",
+    "kupool": "Kupool",
+    "litecoinpoolorg": "Litecoinpool.org",
+    "longpool": "LongPool",
+    "lsoftwaredmcc": "LSoftware DMCC",
+    "luxor": "Luxor Labs",
+    "miningdutch": "Mining Dutch",
+    "molepool": "molepool",
     "nicehash": "NiceHash",
-    "nmcbit": "NMCbit",
-    "noderunners": "Noderunners",
-    "novablock": "NovaBlock",
-    "ocean": "OCEAN",
-    "okexpool": "OKExPool",
-    "okkong": "OKKONG",
-    "okminer": "OKMINER",
-    "okpooltop": "okpool.top",
-    "ozcoin": "OzCoin",
-    "parasite": "Parasite",
-    "patels": "Patels",
-    "pegapool": "PEGA Pool",
-    "phashio": "PHash.IO",
-    "phoenix": "Phoenix",
-    "polmine": "Polmine",
+    "p2pspbxyz": "p2p-spb.xyz",
     "poolin": "Poolin",
-    "portlandhodl": "Portland.HODL",
-    "publicpool": "Public Pool",
-    "purebtccom": "PureBTC.COM",
-    "rawpool": "Rawpool",
-    "redrockpool": "RedRock Pool",
-    "rigpool": "RigPool",
+    "prohashing": "Prohashing",
     "sbicrypto": "SBI Crypto",
-    "secpool": "SECPOOL",
-    "secretsuperstar": "SecretSuperstar",
-    "shawnp0wers": "shawnp0wers",
     "sigmapoolcom": "Sigmapool.com",
-    "simplecoinus": "simplecoin.us",
-    "solock": "Solo CK",
-    "solopoolcom": "SoloPool.com",
-    "spiderpool": "SpiderPool",
-    "stminingcorp": "ST Mining Corp",
-    "tangpool": "Tangpool",
-    "tatmaspool": "TATMAS Pool",
-    "tbdice": "TBDice",
-    "telco214": "Telco 214",
-    "terrapool": "Terra Pool",
-    "tiger": "tiger",
-    "tigerpoolnet": "tigerpool.net",
-    "titan": "Titan",
-    "transactioncoinmining": "transactioncoinmining",
-    "trickysbtcpool": "Tricky's BTC Pool",
-    "triplemining": "TripleMining",
-    "ultimuspool": "ULTIMUSPOOL",
+    "solopoolorg": "solopool.org",
+    "spiderpool": "Spiderpool",
     "unknown": "Unknown",
-    "unomp": "UNOMP",
     "viabtc": "ViaBTC",
-    "waterhole": "Waterhole",
-    "wayicn": "WAYI.CN",
-    "whitepool": "WhitePool",
-    "wiz": "wiz",
-    "wk057": "wk057",
-    "yourbtcnet": "Yourbtc.net",
+    "zergpool": "zergpool",
     "zulupool": "Zulupool"
   });
 
@@ -7737,78 +7339,78 @@ class BitviewClient extends BitviewClientBase {
   AMOUNT_RANGE_NAMES = /** @type {const} */ ({
     "_0Sats": {
       "id": "0_sats",
-      "short": "0 sats",
-      "long": "0 Sats"
+      "short": "0 koinu",
+      "long": "0 Koinu"
     },
     "_1To10Sats": {
       "id": "1_to_10_sats",
-      "short": "1-10 sats",
-      "long": "1-10 Sats"
+      "short": "1-10 koinu",
+      "long": "1-10 Koinu"
     },
     "_10To100Sats": {
       "id": "10_to_100_sats",
-      "short": "10-100 sats",
-      "long": "10-100 Sats"
+      "short": "10-100 koinu",
+      "long": "10-100 Koinu"
     },
     "_100To1kSats": {
       "id": "100_to_1k_sats",
-      "short": "100-1k sats",
-      "long": "100-1K Sats"
+      "short": "100-1k koinu",
+      "long": "100-1K Koinu"
     },
     "_1kTo10kSats": {
       "id": "1k_to_10k_sats",
-      "short": "1k-10k sats",
-      "long": "1K-10K Sats"
+      "short": "1k-10k koinu",
+      "long": "1K-10K Koinu"
     },
     "_10kTo100kSats": {
       "id": "10k_to_100k_sats",
-      "short": "10k-100k sats",
-      "long": "10K-100K Sats"
+      "short": "10k-100k koinu",
+      "long": "10K-100K Koinu"
     },
     "_100kTo1mSats": {
       "id": "100k_to_1m_sats",
-      "short": "100k-1M sats",
-      "long": "100K-1M Sats"
+      "short": "100k-1M koinu",
+      "long": "100K-1M Koinu"
     },
     "_1mTo10mSats": {
       "id": "1m_to_10m_sats",
-      "short": "1M-10M sats",
-      "long": "1M-10M Sats"
+      "short": "1M-10M koinu",
+      "long": "1M-10M Koinu"
     },
     "_10mTo100mSats": {
       "id": "10m_to_100m_sats",
-      "short": "0.1-1 BTC",
-      "long": "0.1-1 BTC"
+      "short": "0.1-1 DOGE",
+      "long": "0.1-1 DOGE"
     },
     "_1To10Btc": {
       "id": "1_to_10_btc",
-      "short": "1-10 BTC",
-      "long": "1-10 BTC"
+      "short": "1-10 DOGE",
+      "long": "1-10 DOGE"
     },
     "_10To100Btc": {
       "id": "10_to_100_btc",
-      "short": "10-100 BTC",
-      "long": "10-100 BTC"
+      "short": "10-100 DOGE",
+      "long": "10-100 DOGE"
     },
     "_100To1kBtc": {
       "id": "100_to_1k_btc",
-      "short": "100-1k BTC",
-      "long": "100-1K BTC"
+      "short": "100-1k DOGE",
+      "long": "100-1K DOGE"
     },
     "_1kTo10kBtc": {
       "id": "1k_to_10k_btc",
-      "short": "1k-10k BTC",
-      "long": "1K-10K BTC"
+      "short": "1k-10k DOGE",
+      "long": "1K-10K DOGE"
     },
     "_10kTo100kBtc": {
       "id": "10k_to_100k_btc",
-      "short": "10k-100k BTC",
-      "long": "10K-100K BTC"
+      "short": "10k-100k DOGE",
+      "long": "10K-100K DOGE"
     },
     "over100kBtc": {
       "id": "over_100k_btc",
-      "short": "100k+ BTC",
-      "long": "100K+ BTC"
+      "short": "100k+ DOGE",
+      "long": "100K+ DOGE"
     }
   });
 
@@ -8029,7 +7631,7 @@ class BitviewClient extends BitviewClientBase {
   /**
    * Health check
    *
-   * Local health and query-readiness check. Returns server identity, uptime, and a coherent local sync snapshot without a bitcoind round-trip. Reads the published prefix during processing; an empty index returns 503 `state_updating` at once. Responses are not cached. For chain-tip catch-up, request `GET /api/server/sync`.
+   * Local health and query-readiness check. Returns server identity, uptime, and a coherent local sync snapshot without a dogecoind round-trip. Reads the published prefix during processing; an empty index returns 503 `state_updating` at once. Responses are not cached. For chain-tip catch-up, request `GET /api/server/sync`.
    *
    * Endpoint: `GET /health`
    * @param {{ signal?: AbortSignal, onValue?: (value: Health) => void, cache?: boolean, memCache?: boolean }} [options]
@@ -8055,7 +7657,7 @@ class BitviewClient extends BitviewClientBase {
   /**
    * Sync status
    *
-   * Returns a coherent local index snapshot and a separately observed Bitcoin Core tip height. The two heights can differ during indexing or a reorg. Conditional requests refresh these observations before validation.
+   * Returns a coherent local index snapshot and a separately observed Dogecoin Core tip height. The two heights can differ during indexing or a reorg. Conditional requests refresh these observations before validation.
    *
    * Endpoint: `GET /api/server/sync`
    * @param {{ signal?: AbortSignal, onValue?: (value: SyncStatus) => void, cache?: boolean, memCache?: boolean }} [options]
@@ -8088,7 +7690,7 @@ class BitviewClient extends BitviewClientBase {
   /**
    * Disk usage
    *
-   * Returns allocated file bytes (file lengths on non-Unix platforms) for BRK and Bitcoin data. Each request scans both trees; these are independent observations, not an atomic filesystem snapshot. Conditional requests validate the newly observed totals. Directory-link cycles and excessive nesting fail without returning partial totals.
+   * Returns allocated file bytes (file lengths on non-Unix platforms) for BRK and Dogecoin data. Each request scans both trees; these are independent observations, not an atomic filesystem snapshot. Conditional requests validate the newly observed totals. Directory-link cycles and excessive nesting fail without returning partial totals.
    *
    * Endpoint: `GET /api/server/disk`
    * @param {{ signal?: AbortSignal, onValue?: (value: DiskUsage) => void, cache?: boolean, memCache?: boolean }} [options]
@@ -8373,7 +7975,7 @@ class BitviewClient extends BitviewClientBase {
   /**
    * URPD at block height or date
    *
-   * URPD for a cohort at a block height or the last block of a UTC day. Returns `{ height, hash, date, cohort, weight, aggregation, close, supply, buckets }` where `buckets` is columns, `{ price, supply, realized_cap, unrealized_pnl }`, one entry per bucket in ascending price: the same block header and columnar layout as `GET /api/utxo-set/{point}`. `close`, `price`, `realized_cap`, and `unrealized_pnl` are USD; `supply` is BTC. `unrealized_pnl` can be negative. Bucket `realized_cap` and `unrealized_pnl` value each coin at its creation price on the price grid (four significant digits of the price in cents, within 0.05% of the exact price), rounded to the cent per bucket, so the buckets need not sum to the realized cap series. With a `wakefulness` or `mobility` `weight`, `supply` is the weighted supply (whole satoshis) and the bucket values follow it.
+   * URPD for a cohort at a block height or the last block of a UTC day. Returns `{ height, hash, date, cohort, weight, aggregation, close, supply, buckets }` where `buckets` is columns, `{ price, supply, realized_cap, unrealized_pnl }`, one entry per bucket in ascending price: the same block header and columnar layout as `GET /api/utxo-set/{point}`. `close`, `price`, `realized_cap`, and `unrealized_pnl` are USD; `supply` is DOGE. `unrealized_pnl` can be negative. Bucket `realized_cap` and `unrealized_pnl` value each coin at its creation price on the price grid (four significant digits of the price in cents, within 0.05% of the exact price), rounded to the cent per bucket, so the buckets need not sum to the realized cap series. With a `wakefulness` or `mobility` `weight`, `supply` is the weighted supply (whole koinu) and the bucket values follow it.
    *
    * Endpoint: `GET /api/urpd/{cohort}/{point}`
    *
@@ -8410,9 +8012,9 @@ class BitviewClient extends BitviewClientBase {
   }
 
   /**
-   * Current BTC price
+   * Current DOGE price
    *
-   * Returns bitcoin latest price (on-chain derived, USD only).
+   * Returns dogecoin latest price (on-chain derived, USD only).
    *
    * *[Mempool.space docs](https://mempool.space/docs/api/rest#get-price)*
    *
@@ -8428,7 +8030,7 @@ class BitviewClient extends BitviewClientBase {
   /**
    * Historical price
    *
-   * Completed four-hour BTC/USD closes, newest first as mempool.space lists them, labeled by interval end, from the first priced interval (2010-08-16). With a UNIX timestamp, returns the latest nonempty completed close at or before it; before the first close returns an empty list. The current partial interval is excluded. USD only (`currency` accepts `USD`); exchangeRates is empty.
+   * Completed four-hour DOGE/USD closes, newest first as mempool.space lists them, labeled by interval end, from the first priced interval (2013-12-06). With a UNIX timestamp, returns the latest nonempty completed close at or before it; before the first close returns an empty list. The current partial interval is excluded. USD only (`currency` accepts `USD`); exchangeRates is empty.
    *
    * *[Mempool.space docs](https://mempool.space/docs/api/rest#get-historical-price)*
    *
@@ -8597,13 +8199,13 @@ cursor skips the mempool). One that is neither answers 422.
   /**
    * Validate address
    *
-   * Validate a Bitcoin address and get information about its type and scriptPubKey. Returns `isvalid: false` with an error message for invalid addresses; a string that isn't 2 to 130 letters and digits answers 400.
+   * Validate a Dogecoin address and get information about its type and scriptPubKey. Returns `isvalid: false` with an error message for invalid addresses; a string that isn't 2 to 130 letters and digits answers 400.
    *
    * *[Mempool.space docs](https://mempool.space/docs/api/rest#get-address-validate)*
    *
    * Endpoint: `GET /api/v1/validate-address/{address}`
    *
-   * @param {string} address - Bitcoin address to validate: 2 to 130 letters and digits (a P2PK public key in hex is 130);
+   * @param {string} address - Dogecoin address to validate: 2 to 130 letters and digits (a P2PK public key in hex is 130);
 anything else answers 400, as mempool.space does
    * @param {{ signal?: AbortSignal, onValue?: (value: AddressValidation) => void, cache?: boolean, memCache?: boolean }} [options]
    * @returns {Promise<AddressValidation>}
@@ -9169,7 +8771,7 @@ anything else answers 400, as mempool.space does
   /**
    * Block fee rates
    *
-   * Get block fee rate percentiles (min, 10th, 25th, median, 75th, 90th, max) for a time period, each a whole sat/vB (`/precise` for 3 decimals).
+   * Get block fee rate percentiles (min, 10th, 25th, median, 75th, 90th, max) for a time period, each a whole koinu/vB (`/precise` for 3 decimals).
    *
    * *[Mempool.space docs](https://mempool.space/docs/api/rest#get-block-feerates)*
    *
@@ -9187,7 +8789,7 @@ anything else answers 400, as mempool.space does
   /**
    * Block fee rates (precise)
    *
-   * Get block fee rate percentiles (min, 10th, 25th, median, 75th, 90th, max) for a time period, each in sat/vB to 3 decimals.
+   * Get block fee rate percentiles (min, 10th, 25th, median, 75th, 90th, max) for a time period, each in koinu/vB to 3 decimals.
    *
    * *[Mempool.space docs](https://mempool.space/docs/api/rest#get-block-feerates)*
    *
@@ -9223,7 +8825,7 @@ anything else answers 400, as mempool.space does
   /**
    * Projected mempool blocks
    *
-   * Projected blocks for fee estimation. Block 0 reflects Bitcoin Core's actual next-block selection; blocks 1+ are a fee-tier approximation.
+   * Projected blocks for fee estimation. Block 0 reflects Dogecoin Core's actual next-block selection; blocks 1+ are a fee-tier approximation.
    *
    * *[Mempool.space docs](https://mempool.space/docs/api/rest#get-mempool-blocks-fees)*
    *
@@ -9239,7 +8841,7 @@ anything else answers 400, as mempool.space does
   /**
    * Recommended fees
    *
-   * Recommended fee rates by confirmation target, in whole sat/vB.
+   * Recommended fee rates by confirmation target, in whole koinu/vB.
    *
    * *[Mempool.space docs](https://mempool.space/docs/api/rest#get-recommended-fees)*
    *
@@ -9255,7 +8857,7 @@ anything else answers 400, as mempool.space does
   /**
    * Recommended fee rates (precise)
    *
-   * Recommended fee rates by confirmation target, with up to three decimal places and support for sub-sat/vB rates.
+   * Recommended fee rates by confirmation target, with up to three decimal places and support for sub-koinu/vB rates.
    *
    * *[Mempool.space docs](https://mempool.space/docs/api/rest#get-recommended-fees-precise)*
    *
@@ -9349,7 +8951,7 @@ anything else answers 400, as mempool.space does
   /**
    * Projected mempool block
    *
-   * A projected mempool block with its transactions in order and its stats, by position as `GET /api/v1/fees/mempool-blocks` lists them: 0 is the next block, Bitcoin Core's `getblocktemplate` selection, and the only one served for now (others answer 404). The returned `hash` is an opaque content token: poll `GET /api/mempool-blocks/{index}/diff/{hash}` to follow changes instead of refetching the block.
+   * A projected mempool block with its transactions in order and its stats, by position as `GET /api/v1/fees/mempool-blocks` lists them: 0 is the next block, Dogecoin Core's `getblocktemplate` selection, and the only one served for now (others answer 404). The returned `hash` is an opaque content token: poll `GET /api/mempool-blocks/{index}/diff/{hash}` to follow changes instead of refetching the block.
    *
    * Endpoint: `GET /api/mempool-blocks/{index}`
    *
@@ -9628,7 +9230,7 @@ anything else answers 400, as mempool.space does
   /**
    * UTXO set at block height or date
    *
-   * The UTXO set after a block (`840000`) or after the last published block of a UTC day (`YYYY-MM-DD`), by creation height. Returns `{ height, hash, date, count, supply, origins }`; entry `i` of `origins.count` and `origins.supply` (BTC) is what remains unspent of block `i`'s outputs.
+   * The UTXO set after a block (`840000`) or after the last published block of a UTC day (`YYYY-MM-DD`), by creation height. Returns `{ height, hash, date, count, supply, origins }`; entry `i` of `origins.count` and `origins.supply` (DOGE) is what remains unspent of block `i`'s outputs.
    *
    * Endpoint: `GET /api/utxo-set/{point}`
    *
@@ -9644,7 +9246,7 @@ anything else answers 400, as mempool.space does
   /**
    * UTXO set changes of a block or date
    *
-   * What a block (`840000`) or a UTC day's published blocks (`YYYY-MM-DD`) changed in the UTXO set. Returns `{ first, last, hash, date, created, spent }`: `created` has one row per block, `spent` one row per creation height, each as columnar `height`, `count` and `supply` (BTC). The set after block `first - 1` plus `created` minus `spent` is the set after block `last`.
+   * What a block (`840000`) or a UTC day's published blocks (`YYYY-MM-DD`) changed in the UTXO set. Returns `{ first, last, hash, date, created, spent }`: `created` has one row per block, `spent` one row per creation height, each as columnar `height`, `count` and `supply` (DOGE). The set after block `first - 1` plus `created` minus `spent` is the set after block `last`.
    *
    * Endpoint: `GET /api/utxo-set/{point}/diff`
    *
@@ -9658,9 +9260,9 @@ anything else answers 400, as mempool.space does
   }
 
   /**
-   * Live BTC/USD price
+   * Live DOGE/USD price
    *
-   * Current BTC/USD price in dollars, derived from on-chain round-dollar output patterns in the oracle's recent-block window, with the mempool's outputs blended in when available, to the cent: `price` of `GET /api/oracle/live`. Confirmed per-height history is available at `GET /api/series/price/height`. Not found before the oracle's first prices.
+   * Current DOGE/USD price in dollars, derived from on-chain round-dollar output patterns in the oracle's recent-block window, with the mempool's outputs blended in when available, to the cent: `price` of `GET /api/oracle/live`. Confirmed per-height history is available at `GET /api/series/price/height`. Not found before the oracle's first prices.
    *
    * Endpoint: `GET /api/oracle/price`
    * @param {{ signal?: AbortSignal, onValue?: (value: Dollars) => void, cache?: boolean, memCache?: boolean }} [options]
@@ -9704,7 +9306,7 @@ anything else answers 400, as mempool.space does
   /**
    * The oracle's payments, 144 blocks at a time
    *
-   * For each of the 144 blocks from `start` (a multiple of 144, else a bad request; from 508,032, earlier ones out of range): its payments as the oracle filters them, each read as each of its 19 round-dollar amounts ($1 to $10,000) at its exact amount in sats, counted by the price each reading implies, in buckets a tenth of a bin wide (0.115% of price) over the block's search window: finer than the oracle's bins, the evidence behind its prices. The chunk at the tip holds its blocks so far, `hash` its last block's; a whole, settled chunk never changes.
+   * For each of the 144 blocks from `start` (a multiple of 144, else a bad request; from 508,032, earlier ones out of range): its payments as the oracle filters them, each read as each of its 19 round-dollar amounts ($1 to $10,000) at its exact amount in koinu, counted by the price each reading implies, in buckets a tenth of a bin wide (0.115% of price) over the block's search window: finer than the oracle's bins, the evidence behind its prices. The chunk at the tip holds its blocks so far, `hash` its last block's; a whole, settled chunk never changes.
    *
    * Endpoint: `GET /api/oracle/payments/{start}`
    *

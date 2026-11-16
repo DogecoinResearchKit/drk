@@ -15,7 +15,7 @@
     }
   ],
   "repository": {
-    "url": "https://github.com/bitcoinresearchkit/mono",
+    "url": "https://github.com/IndigoNakamoto/drk",
     "source": "github",
     "id": "824866280",
     "subfolder": "crates/bitview_mcp"
