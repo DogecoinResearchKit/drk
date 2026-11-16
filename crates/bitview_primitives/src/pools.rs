@@ -161,9 +161,15 @@ mod tests {
     #[test]
     fn dogecoin_pools_resolve() {
         let pools = pools();
-        assert_eq!(pools.get(PoolSlug::Litecoinpoolorg).name, "Litecoinpool.org");
         assert_eq!(
-            pools.find_from_coinbase_tag("Mined by /F2Pool/ for DOGE").unwrap().slug,
+            pools.get(PoolSlug::Litecoinpoolorg).name,
+            "Litecoinpool.org"
+        );
+        assert_eq!(
+            pools
+                .find_from_coinbase_tag("Mined by /F2Pool/ for DOGE")
+                .unwrap()
+                .slug,
             PoolSlug::F2Pool
         );
         assert_eq!(

@@ -44,7 +44,10 @@ impl Vecs {
         if committed >= total_heights {
             return Ok(());
         }
-        let timestamps = vecs.blocks.timestamp.collect_range_at(committed, total_heights);
+        let timestamps = vecs
+            .blocks
+            .timestamp
+            .collect_range_at(committed, total_heights);
         let mut closes = crate::exchange::closes();
         closes.ensure(Date::from(*timestamps.last().data()?))?;
         for timestamp in timestamps {

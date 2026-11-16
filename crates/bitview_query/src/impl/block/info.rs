@@ -12,8 +12,8 @@ use bitcoin::{
 use bitview_primitives::{Bytes32, Difficulty, Lengths, PoolSlug, pools};
 use bitview_types::{BlockExtras, BlockHeader, BlockInfo, BlockInfoV1, BlockPool};
 use brk_types::{
-    Address, BlkPosition, BlockHash, ChainAddress, MAINNET, CheckedSub, Dollars, FeeRate, Height, Hex, Sats, Timestamp,
-    TxIndex, Weight, Weight32,
+    Address, BlkPosition, BlockHash, ChainAddress, CheckedSub, Dollars, FeeRate, Height, Hex,
+    MAINNET, Sats, Timestamp, TxIndex, Weight, Weight32,
 };
 use vecdb::{ReadableVec, VecIndex};
 
@@ -156,7 +156,14 @@ impl Query {
     }
 
     /// Whether the coinbase follows BIP54: its lock time is the height minus one and its input's
-    /// sequence isn't final. Null before the first block that did (mempool.space's cutoff).
+    /// sequence isn't final. Null before the first block that did (mempool.space's cutoff), and
+    /// always null on Dogecoin, which has no BIP54.
+    #[cfg(feature = "dogecoin")]
+    fn bip54_coinbase(_: Height, _: Timestamp, _: u32, _: u32) -> Option<bool> {
+        None
+    }
+
+    #[cfg(not(feature = "dogecoin"))]
     fn bip54_coinbase(
         height: Height,
         timestamp: Timestamp,
@@ -438,8 +445,7 @@ impl Query {
                 let pool = all_pools.get(pool_slug);
                 let block_number = pool_block_numbers[i];
 
-                let non_coinbase_size =
-                    (size as usize)
+                let non_coinbase_size = (size as usize)
                     .saturating_sub(HEADER_SIZE + aux_pow_len + varint_len + coinbase_total_size);
 
                 let miner_names = if pool_slug == PoolSlug::Ocean {

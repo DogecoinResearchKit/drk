@@ -7,10 +7,13 @@ use vecdb::ReadableVec;
 
 use crate::{OptionData, Query, Result};
 
-/// Target block time in seconds (10 minutes)
-const TARGET_BLOCK_TIME: u64 = 600;
+const TARGET_BLOCK_TIME: u64 = brk_types::TARGET_BLOCK_SECONDS;
 /// The early-epoch projection window, in blocks (mempool.space's quarter epoch).
+#[cfg(not(feature = "dogecoin"))]
 const QUARTER_EPOCH: u32 = 503;
+/// A quarter of Dogecoin's 240-block window, counted the same way.
+#[cfg(feature = "dogecoin")]
+const QUARTER_EPOCH: u32 = 59;
 
 impl Query {
     /// The current epoch's difficulty-adjustment snapshot, as mempool.space computes it on

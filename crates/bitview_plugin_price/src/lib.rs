@@ -66,7 +66,9 @@ pub struct Vecs<M: StorageMode = Rw> {
     /// the first exchange price (block 74,641, August 2010), this price and USD
     /// amounts valued with it are zero. At time-period indexes, the value is taken
     /// at the period's final block; null when the period has no block.
-    #[traversable(lead = "Bitcoin's price in US dollars, block by block: from exchanges' history at first, then estimated from the chain itself.")]
+    #[traversable(
+        lead = "Bitcoin's price in US dollars, block by block: from exchanges' history at first, then estimated from the chain itself."
+    )]
     pub spot: Price<PerBlock<Cents, M>>,
     /// Whole satoshis one US dollar buys at the spot price, rounded down: 100,000,000 divided
     /// by the price in USD per BTC. 0 while the spot price is zero.

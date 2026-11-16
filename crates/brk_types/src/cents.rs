@@ -301,7 +301,10 @@ mod tests {
     fn dollars_round_trip_at_chain_scale() {
         for dollars in [0.07, 1.0, 64_000.12] {
             let cents = Cents::from(Dollars::from(dollars));
-            assert_eq!(cents.inner(), (dollars * CENTS_PER_DOLLAR_F64).round() as u64);
+            assert_eq!(
+                cents.inner(),
+                (dollars * CENTS_PER_DOLLAR_F64).round() as u64
+            );
             assert!((f64::from(cents.to_dollars()) - dollars).abs() < 1e-6);
         }
         assert_eq!(
@@ -315,6 +318,9 @@ mod tests {
     fn sub_cent_prices_survive() {
         let cents = Cents::from(Dollars::from(0.000_123));
         assert_eq!(cents.inner(), 123);
-        assert_eq!(cents.sats_per_dollar(), Sats::new(8_130 * Sats::ONE_BTC_U64 + 8_130_081));
+        assert_eq!(
+            cents.sats_per_dollar(),
+            Sats::new(8_130 * Sats::ONE_BTC_U64 + 8_130_081)
+        );
     }
 }

@@ -47,6 +47,8 @@ mod sats_fract;
 mod scalar;
 mod series_name;
 mod supply_state;
+#[cfg(test)]
+mod tests;
 mod tx_version;
 mod txin_index;
 mod txout_index;
@@ -57,8 +59,6 @@ mod vec_index;
 mod week1;
 mod year1;
 mod year10;
-#[cfg(test)]
-mod tests;
 
 pub use addr_hash::*;
 pub use addr_index_outpoint::*;

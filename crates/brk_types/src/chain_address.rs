@@ -24,7 +24,10 @@ mod tests {
         let p2sh = ScriptBuf::new_p2sh(&ScriptHash::from_byte_array([7; 20]));
         for (script, prefixes) in [(p2pkh, ['D', 'D']), (p2sh, ['9', 'A'])] {
             let address = Address::try_from(&script).unwrap();
-            assert!(prefixes.iter().any(|&p| address.starts_with(p)), "{address:?}");
+            assert!(
+                prefixes.iter().any(|&p| address.starts_with(p)),
+                "{address:?}"
+            );
             assert_eq!(AddressBytes::addr_to_script(&address).unwrap(), script);
         }
     }
