@@ -145,7 +145,13 @@ impl Client {
         let live_txids = TxidArrayParser::parse(txids_raw.get())?;
         let template: GetBlockTemplate = from_str(template_raw.get())?;
         let tip_hash = Self::parse_block_hash(&template.previous_block_hash, "previousblockhash")?;
-        let block_template = ClientInner::build_gbt(template.transactions)?;
+        #[cfg_attr(not(feature = "dogecoin"), allow(unused_mut))]
+        let mut transactions = template.transactions;
+        #[cfg(feature = "dogecoin")]
+        transactions
+            .iter_mut()
+            .for_each(|tx| tx.fill_pre_segwit());
+        let block_template = ClientInner::build_gbt(transactions)?;
         let info: GetMempoolInfo = from_str(info_raw.get())?;
         let min_fee = Self::build_min_fee(info.mempool_min_fee)?;
 

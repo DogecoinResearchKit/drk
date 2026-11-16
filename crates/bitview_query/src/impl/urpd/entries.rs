@@ -1,4 +1,3 @@
-use bitcoin::Amount;
 use bitview_primitives::{CentsCompact, Date};
 use bitview_types::{Urpd, UrpdAggregation, UrpdBuckets, UrpdCohort, UrpdWeight};
 use brk_types::{Bitcoin, BlockHash, Cents, CentsSats, CentsSigned, Dollars, Height, Sats};
@@ -23,7 +22,7 @@ impl UrpdHeader {
         debug_assert!(!close.is_nan(), "URPD close is priced");
         // Every bucket's market value, at most all money's, must fit the signed cents range.
         debug_assert!(
-            u128::from(close.inner()) * u128::from(Amount::MAX_MONEY.to_sat()) / Sats::ONE_BTC_U128
+            u128::from(close.inner()) * u128::from(brk_types::MAX_SUPPLY_SATS) / Sats::ONE_BTC_U128
                 <= i64::MAX as u128,
             "URPD market value exceeds signed price range"
         );
@@ -50,7 +49,7 @@ impl UrpdHeader {
             debug_assert!(!supply.is_max(), "URPD entry below the sats sentinel");
             total += u64::from(supply);
             debug_assert!(
-                total <= Amount::MAX_MONEY.to_sat(),
+                total <= brk_types::MAX_SUPPLY_SATS,
                 "URPD supply within all money"
             );
             let price = Cents::from(price);

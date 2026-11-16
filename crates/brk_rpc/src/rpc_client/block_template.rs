@@ -95,7 +95,11 @@ impl ClientInner {
                 return Err("duplicate transaction");
             }
         }
+        #[cfg(not(feature = "dogecoin"))]
         let max_money = Amount::MAX_MONEY.to_sat();
+        // Dogecoin Core's MAX_MONEY: 10 billion DOGE.
+        #[cfg(feature = "dogecoin")]
+        let max_money = 10_000_000_000 * Amount::ONE_BTC.to_sat();
         let mut total_fee = 0u64;
         for (index, row) in rows.iter().enumerate() {
             let tx = &row.data;
@@ -144,5 +148,24 @@ impl ClientInner {
             }
         }
         Ok(())
+    }
+}
+
+#[cfg(all(test, feature = "dogecoin"))]
+mod tests {
+    use super::{super::responses::BlockTemplateTransaction, ClientInner};
+
+    // The spend in Dogecoin block 100,000, as Dogecoin Core 1.14 lists a template transaction:
+    // no `hash`, `sigops` or `weight`.
+    const ROW: &str = r#"{"data":"01000000015f48fabf4425324df2b5e58f4e9c771297f76f5fa37db7556f6fc1d22742da1f010000006a473044022062d29d2d26f7d826e7b72257486e294d284832743c7803a2901eb07e326b25a002207efc391b0f4e724c9d518075c0e056cc425540f845b0fd419ba8a9d49d69288301210297a2568525760a98454d84f5e5adba9fd0a41726a6fb774ddc407279e41e2061ffffffff0240bab598200000001976a91401348a2b83aeb6b1ba2a174a1a40b7c75fbeb12088ac0040be40250000001976a914025407d928ef333979d064ae233353d80e29d58c88ac00000000","txid":"6eb68ce1a390eedf0103a045af97128ab780fc08bf6b30e40b8147525600fbc9","depends":[],"fee":100000000}"#;
+
+    #[test]
+    fn fills_pre_segwit_template_fields() {
+        let mut row: BlockTemplateTransaction = serde_json::from_str(ROW).unwrap();
+        row.fill_pre_segwit();
+        assert_eq!(row.hash, row.txid);
+        assert_eq!(row.weight, 4 * 225);
+        let built = ClientInner::build_gbt(vec![row]).unwrap();
+        assert_eq!(u64::from(built[0].weight), 4 * 225);
     }
 }
