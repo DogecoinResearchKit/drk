@@ -65,7 +65,7 @@ mod state;
 mod tests;
 mod unacceptable_encoding;
 
-pub use api::ApiRoutes;
+pub use api::{ApiRoutes, openapi_json};
 
 pub use bitview_website::Website;
 pub use cache::CdnCacheMode;
@@ -106,20 +106,24 @@ fn installed_commit() -> Option<String> {
 /// not a commit, a record not cargo's).
 fn commit_installed(record: &[u8], name: &str) -> Option<String> {
     let record: serde_json::Value = serde_json::from_slice(record).ok()?;
-    record.get("installs")?.as_object()?.iter().find_map(|(id, install)| {
-        let bins = install.get("bins")?.as_array()?;
-        if !bins.iter().any(|bin| bin.as_str() == Some(name)) {
-            return None;
-        }
-        // (`name version (source)`, this release's, a git source's commit in hex digits.)
-        let (package, source) = id.strip_suffix(')')?.split_once(" (")?;
-        if package.split_once(' ')?.1 != env!("CARGO_PKG_VERSION") {
-            return None;
-        }
-        let (_, commit) = source.strip_prefix("git+")?.rsplit_once('#')?;
-        (commit.len() >= 7 && commit.bytes().all(|byte| byte.is_ascii_hexdigit()))
-            .then(|| commit[..7].to_string())
-    })
+    record
+        .get("installs")?
+        .as_object()?
+        .iter()
+        .find_map(|(id, install)| {
+            let bins = install.get("bins")?.as_array()?;
+            if !bins.iter().any(|bin| bin.as_str() == Some(name)) {
+                return None;
+            }
+            // (`name version (source)`, this release's, a git source's commit in hex digits.)
+            let (package, source) = id.strip_suffix(')')?.split_once(" (")?;
+            if package.split_once(' ')?.1 != env!("CARGO_PKG_VERSION") {
+                return None;
+            }
+            let (_, commit) = source.strip_prefix("git+")?.rsplit_once('#')?;
+            (commit.len() >= 7 && commit.bytes().all(|byte| byte.is_ascii_hexdigit()))
+                .then(|| commit[..7].to_string())
+        })
 }
 
 /// Per-request timeout. Hits return 504 Gateway Timeout.

@@ -17,10 +17,60 @@ pub struct OpenApiBodies {
 impl OpenApiBodies {
     pub fn new(openapi: &OpenApi) -> Self {
         let json = |bytes: Vec<u8>| PreparedJson::from_bytes(Bytes::from(bytes));
+        #[cfg(not(feature = "dogecoin"))]
+        let full = to_vec(openapi).unwrap();
+        #[cfg(feature = "dogecoin")]
+        let full = to_vec(&openapi_json(openapi)).unwrap();
         Self {
-            full: json(to_vec(openapi).unwrap()),
-            compact: json(compact::compact_json(to_value(openapi).unwrap())),
+            full: json(full),
+            compact: json(compact::compact_json(openapi_json(openapi))),
         }
+    }
+}
+
+/// The spec as served: under dogecoin, with Dogeview's names and units in its prose (titles,
+/// summaries, descriptions, the contact and the license), leaving the identifiers it documents alone.
+pub fn openapi_json(openapi: &OpenApi) -> serde_json::Value {
+    #[cfg_attr(not(feature = "dogecoin"), allow(unused_mut))]
+    let mut value = to_value(openapi).unwrap();
+    #[cfg(feature = "dogecoin")]
+    relabel(&mut value);
+    value
+}
+
+#[cfg(feature = "dogecoin")]
+fn relabel(value: &mut serde_json::Value) {
+    relabel_text(value);
+    for pointer in ["/info/contact", "/info/license"] {
+        let Some(fields) = value.pointer_mut(pointer).and_then(|c| c.as_object_mut()) else {
+            continue;
+        };
+        for value in fields.values_mut() {
+            if let Some(text) = value.as_str() {
+                *value = brk_relabel::relabel(text).into();
+            }
+        }
+    }
+}
+
+#[cfg(feature = "dogecoin")]
+fn relabel_text(value: &mut serde_json::Value) {
+    use serde_json::Value;
+    match value {
+        Value::Object(map) => {
+            for (key, value) in map.iter_mut() {
+                match value {
+                    Value::String(text)
+                        if matches!(key.as_str(), "title" | "summary" | "description") =>
+                    {
+                        *text = brk_relabel::relabel(text);
+                    }
+                    _ => relabel_text(value),
+                }
+            }
+        }
+        Value::Array(items) => items.iter_mut().for_each(relabel_text),
+        _ => {}
     }
 }
 

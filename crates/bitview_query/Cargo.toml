@@ -8,7 +8,7 @@ homepage.workspace = true
 repository.workspace = true
 
 [features]
-dogecoin = ["bitcoin/dogecoin", "bitview_catalog?/dogecoin", "bitview_cohort?/dogecoin", "bitview_plugin/dogecoin", "bitview_plugin_addresses?/dogecoin", "bitview_plugin_age?/dogecoin", "bitview_plugin_blocks?/dogecoin", "bitview_plugin_coinflow?/dogecoin", "bitview_plugin_cointime?/dogecoin", "bitview_plugin_indexer/dogecoin", "bitview_plugin_inputs?/dogecoin", "bitview_plugin_mappings?/dogecoin", "bitview_plugin_mining?/dogecoin", "bitview_plugin_outputs?/dogecoin", "bitview_plugin_pools?/dogecoin", "bitview_plugin_price?/dogecoin", "bitview_plugin_transactions?/dogecoin", "bitview_plugin_utxo_set?/dogecoin", "bitview_primitives/dogecoin", "bitview_traversable/dogecoin", "bitview_types/dogecoin", "bitview_urpd?/dogecoin", "bitview_vecs?/dogecoin", "brk_cpfp?/dogecoin", "brk_error/dogecoin", "brk_mempool/dogecoin", "brk_oracle?/dogecoin", "brk_reader/dogecoin", "brk_rpc/dogecoin", "brk_types/dogecoin"]
+dogecoin = ["dep:brk_relabel", "bitcoin/dogecoin", "bitview_catalog?/dogecoin", "bitview_cohort?/dogecoin", "bitview_plugin/dogecoin", "bitview_plugin_addresses?/dogecoin", "bitview_plugin_age?/dogecoin", "bitview_plugin_blocks?/dogecoin", "bitview_plugin_coinflow?/dogecoin", "bitview_plugin_cointime?/dogecoin", "bitview_plugin_indexer/dogecoin", "bitview_plugin_inputs?/dogecoin", "bitview_plugin_mappings?/dogecoin", "bitview_plugin_mining?/dogecoin", "bitview_plugin_outputs?/dogecoin", "bitview_plugin_pools?/dogecoin", "bitview_plugin_price?/dogecoin", "bitview_plugin_transactions?/dogecoin", "bitview_plugin_utxo_set?/dogecoin", "bitview_primitives/dogecoin", "bitview_traversable/dogecoin", "bitview_types/dogecoin", "bitview_urpd?/dogecoin", "bitview_vecs?/dogecoin", "brk_cpfp?/dogecoin", "brk_error/dogecoin", "brk_mempool/dogecoin", "brk_oracle?/dogecoin", "brk_reader/dogecoin", "brk_rpc/dogecoin", "brk_types/dogecoin"]
 default = ["full-api"]
 full-api = ["chain", "series", "urpd"]
 chain = [
@@ -44,6 +44,7 @@ price = [
 ]
 
 [dependencies]
+brk_relabel = { workspace = true, optional = true }
 arc-swap = { workspace = true, optional = true }
 bitcoin = { workspace = true }
 bitview_cohort = { workspace = true, features = ["storage"], optional = true }

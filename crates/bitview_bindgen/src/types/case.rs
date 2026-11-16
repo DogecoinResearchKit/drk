@@ -4,7 +4,9 @@ pub(crate) fn to_pascal_case(s: &str) -> String {
     let mut result = String::with_capacity(s.len());
     for word in s.split(['-', '_']) {
         // An underscore between two digits is a decimal point (`p99_9`, the 99.9th percentile): kept.
-        if result.ends_with(|c: char| c.is_ascii_digit()) && word.starts_with(|c: char| c.is_ascii_digit()) {
+        if result.ends_with(|c: char| c.is_ascii_digit())
+            && word.starts_with(|c: char| c.is_ascii_digit())
+        {
             result.push('_');
         }
         let mut chars = word.chars();

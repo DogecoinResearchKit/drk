@@ -91,7 +91,9 @@ fn clean(value: &mut Value) {
 
 /// An object of the spec, unless it is a `$ref`, which the generators skip.
 fn object(value: &Value) -> Option<&Map<String, Value>> {
-    value.as_object().filter(|object| !object.contains_key("$ref"))
+    value
+        .as_object()
+        .filter(|object| !object.contains_key("$ref"))
 }
 
 fn text(object: &Map<String, Value>, key: &str) -> Option<String> {

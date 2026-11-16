@@ -89,6 +89,7 @@ brk_logger = { version = "0.13.0", path = "crates/brk_logger" }
 brk_mempool = { version = "0.13.0", path = "crates/brk_mempool" }
 brk_oracle = { version = "0.13.0", path = "crates/brk_oracle" }
 brk_reader = { version = "0.13.0", path = "crates/brk_reader" }
+brk_relabel = { version = "0.13.0", path = "crates/brk_relabel" }
 brk_rpc = { version = "0.13.0", path = "crates/brk_rpc" }
 brk_store = { version = "0.13.0", path = "crates/brk_store" }
 brk_types = { version = "0.13.0", path = "crates/brk_types" }

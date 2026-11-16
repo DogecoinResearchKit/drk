@@ -1,0 +1,10 @@
+[package]
+name = "brk_relabel"
+description = "Dogeview's display text over Bitview's, for the dogecoin build"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+
+[dependencies]

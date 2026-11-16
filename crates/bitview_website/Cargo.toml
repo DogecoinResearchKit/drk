@@ -6,7 +6,11 @@ edition.workspace = true
 license.workspace = true
 homepage.workspace = true
 repository.workspace = true
-include = ["src/**/*", "showcases/**/*", "Cargo.toml", "README.md"]
+include = ["src/**/*", "showcases/**/*", "dogecoin/**/*", "build.rs", "Cargo.toml", "README.md"]
+
+[features]
+default = []
+dogecoin = []
 
 [dependencies]
 axum = { workspace = true }
@@ -16,6 +20,9 @@ rapidhash = { workspace = true }
 serde = { workspace = true }
 tokio = { workspace = true, features = ["sync"] }
 tracing = { workspace = true }
+
+[build-dependencies]
+brk_relabel = { workspace = true }
 
 [dev-dependencies]
 brk_logger = { workspace = true }

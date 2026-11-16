@@ -37,6 +37,14 @@ pub struct SharedSeries {
     pub also: Vec<(String, bool)>,
 }
 
+/// Text as shown: Dogeview's names, units and chain facts under dogecoin.
+fn display(text: String) -> String {
+    #[cfg(feature = "dogecoin")]
+    return brk_relabel::relabel(&text);
+    #[cfg(not(feature = "dogecoin"))]
+    text
+}
+
 pub struct Vecs<'a> {
     by_series: FxHashMap<&'a str, Series<'a>>,
     shared: Vec<SharedSeries>,
@@ -128,7 +136,9 @@ impl<'a> Vecs<'a> {
             );
             let description = interned_descriptions
                 .entry(fragments)
-                .or_insert_with_key(|fragments| Arc::from(bitview_traversable::describe(fragments)))
+                .or_insert_with_key(|fragments| {
+                    Arc::from(display(bitview_traversable::describe(fragments)))
+                })
                 .clone();
             descriptions.insert(series, description);
         }
@@ -178,7 +188,7 @@ impl<'a> Vecs<'a> {
         let units: BTreeMap<String, Arc<str>> = catalog
             .units()
             .into_iter()
-            .map(|(kind, unit)| (kind.to_string(), unit))
+            .map(|(kind, unit)| (kind.to_string(), Arc::from(display(unit.to_string()))))
             .collect();
         debug_assert!(
             by_series.values().all(|series| series

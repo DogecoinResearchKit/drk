@@ -119,12 +119,12 @@ impl BitviewMcp {
                     ])
                     .with_website_url(&self.state.public_url),
             )
-            .with_instructions(
+            .with_instructions(crate::label(
                 "Read-only Bitcoin analytics tools backed by the Bitview REST API's GET endpoints; \
                  calls never mutate upstream state. Use the list, search, and info tools to discover \
                  identifiers before querying dynamic datasets. Binary responses are returned as \
                  embedded MCP resources.",
-            )
+            ))
     }
 }
 

@@ -334,6 +334,7 @@ dependencies = [
  "bitview_catalog",
  "bitview_cohort",
  "bitview_primitives",
+ "brk_relabel",
  "brk_types",
  "serde",
  "serde_json",
@@ -507,6 +508,7 @@ dependencies = [
  "base64",
  "bitview_http",
  "brk_logger",
+ "brk_relabel",
  "http-body-util",
  "percent-encoding",
  "rmcp",
@@ -1094,6 +1096,7 @@ dependencies = [
  "brk_mempool",
  "brk_oracle",
  "brk_reader",
+ "brk_relabel",
  "brk_rpc",
  "brk_types",
  "itoa",
@@ -1125,6 +1128,7 @@ dependencies = [
  "brk_error",
  "brk_logger",
  "brk_oracle",
+ "brk_relabel",
  "brk_rpc",
  "brk_types",
  "derive_more",
@@ -1226,6 +1230,7 @@ dependencies = [
  "axum",
  "bitview_http",
  "brk_logger",
+ "brk_relabel",
  "include_dir",
  "rapidhash",
  "serde",
@@ -1452,6 +1457,10 @@ dependencies = [
  "rustc-hash",
  "tracing",
 ]
+
+[[package]]
+name = "brk_relabel"
+version = "0.13.0"
 
 [[package]]
 name = "brk_rpc"

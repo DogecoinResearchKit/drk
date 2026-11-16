@@ -8,7 +8,7 @@ homepage.workspace = true
 repository.workspace = true
 
 [features]
-dogecoin = ["bitcoin/dogecoin", "bitview_catalog/dogecoin", "bitview_primitives/dogecoin", "bitview_query/dogecoin", "bitview_types/dogecoin", "brk_error/dogecoin", "brk_oracle/dogecoin", "brk_rpc/dogecoin", "brk_types/dogecoin"]
+dogecoin = ["bitcoin/dogecoin", "bitview_catalog/dogecoin", "bitview_primitives/dogecoin", "bitview_query/dogecoin", "bitview_types/dogecoin", "bitview_website/dogecoin", "brk_error/dogecoin", "brk_oracle/dogecoin", "brk_rpc/dogecoin", "brk_types/dogecoin", "dep:brk_relabel"]
 default = ["full-api"]
 full-api = ["chain", "series", "urpd", "bitview_query/full-api"]
 chain = ["price", "bitview_query/chain"]
@@ -17,6 +17,7 @@ urpd = ["price", "bitview_query/urpd"]
 price = ["bitview_query/price"]
 
 [dependencies]
+brk_relabel = { workspace = true, optional = true }
 bitcoin = { workspace = true }
 bitview_primitives = { workspace = true, features = ["storage"] }
 brk_rpc = { workspace = true, features = ["async"] }
