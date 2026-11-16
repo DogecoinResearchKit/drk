@@ -1,8 +1,10 @@
 use std::io::Read;
 
 use crate::{ReadPin, check_bound};
-use bitcoin::{Block as BitcoinBlock, Weight, consensus::deserialize, p2p::Magic};
-use brk_reader::BlkRead;
+#[cfg(not(feature = "dogecoin"))]
+use bitcoin::Block as BitcoinBlock;
+use bitcoin::{Weight, consensus::deserialize};
+use brk_reader::{BlkRead, MAGIC_BYTES};
 use brk_types::{BlkPosition, BlockHash, Height};
 use vecdb::ReadableVec;
 
@@ -60,11 +62,11 @@ impl Query {
         if !(81..=MAX_BLOCK_BYTES).contains(&size) {
             return Err(Error::Internal("Invalid indexed block size"));
         }
-        // This reader indexes Bitcoin-mainnet blk records (same magic as scan).
+        // This reader indexes mainnet blk records (same magic as scan).
         // Read framing and header together, before allocating the payload.
         let mut prefix = [0u8; 88];
         reader.read_exact(&mut prefix)?;
-        if prefix[..4] != Magic::BITCOIN.to_bytes()
+        if prefix[..4] != MAGIC_BYTES
             || u64::from(u32::from_le_bytes(prefix[4..8].try_into().unwrap())) != size
         {
             return Err(Error::Internal("Block frame differs from index"));
@@ -73,6 +75,7 @@ impl Query {
         Ok(prefix[8..].try_into().unwrap())
     }
 
+    #[cfg(not(feature = "dogecoin"))]
     fn verify_raw_payload(bytes: &[u8], weight: u64, count: u32) -> Result<()> {
         // Check the indexed count before a decoder allocates its transaction list.
         Self::read_block_tx_count(&bytes[80..], count)?;
@@ -82,6 +85,25 @@ impl Query {
             || !block.check_merkle_root()
             || !block.check_witness_commitment()
         {
+            return Err(Error::Internal("Raw block commitments differ from index"));
+        }
+        Ok(())
+    }
+
+    /// Dogecoin has no witness data, so a block weighs four times its size. The transaction count
+    /// follows the AuxPoW of a merge-mined block, not the header.
+    #[cfg(feature = "dogecoin")]
+    fn verify_raw_payload(bytes: &[u8], weight: u64, count: u32) -> Result<()> {
+        use bitcoin::{block::Header, consensus::Decodable};
+        let mut cursor = std::io::Cursor::new(bytes);
+        let header = Header::consensus_decode_from_finite_reader(&mut cursor)
+            .map_err(|_| Error::Internal("Invalid raw block payload"))?;
+        brk_types::dogecoin::skip_auxpow(&header, &mut cursor)
+            .map_err(|_| Error::Internal("Invalid raw block payload"))?;
+        Self::read_block_tx_count(&bytes[cursor.position() as usize..], count)?;
+        let block: bitcoin::dogecoin::Block =
+            deserialize(bytes).map_err(|_| Error::Internal("Invalid raw block payload"))?;
+        if 4 * bytes.len() as u64 != weight || !block.check_merkle_root() {
             return Err(Error::Internal("Raw block commitments differ from index"));
         }
         Ok(())
@@ -110,5 +132,42 @@ impl Query {
         let mut record = self.open_raw_record(height, guard)?;
         Self::read_raw_prefix(&mut record.reader, record.size, hash)?;
         Ok(record.size)
+    }
+}
+
+#[cfg(all(test, feature = "dogecoin"))]
+mod dogecoin_tests {
+    use super::*;
+
+    fn block(hex: &str) -> Vec<u8> {
+        let hex = hex.trim();
+        (0..hex.len())
+            .step_by(2)
+            .map(|i| u8::from_str_radix(&hex[i..i + 2], 16).unwrap())
+            .collect()
+    }
+
+    fn tx_count(bytes: &[u8]) -> u32 {
+        deserialize::<bitcoin::dogecoin::Block>(bytes).unwrap().txdata.len() as u32
+    }
+
+    fn verify(hex: &str) -> Result<()> {
+        let bytes = block(hex);
+        Query::verify_raw_payload(&bytes, 4 * bytes.len() as u64, tx_count(&bytes))
+    }
+
+    #[test]
+    fn verifies_legacy_and_merge_mined_blocks() {
+        verify(include_str!("../../../../brk_reader/fixtures/dogecoin_100000.hex")).unwrap();
+        verify(include_str!("../../../../brk_reader/fixtures/dogecoin_371337.hex")).unwrap();
+    }
+
+    #[test]
+    fn rejects_a_wrong_count_or_weight() {
+        let hex = include_str!("../../../../brk_reader/fixtures/dogecoin_371337.hex");
+        let bytes = block(hex);
+        let (weight, count) = (4 * bytes.len() as u64, tx_count(&bytes));
+        assert!(Query::verify_raw_payload(&bytes, weight, count + 1).is_err());
+        assert!(Query::verify_raw_payload(&bytes, weight / 4, count).is_err());
     }
 }

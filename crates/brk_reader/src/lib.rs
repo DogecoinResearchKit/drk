@@ -28,6 +28,7 @@ mod xor_index;
 
 pub(crate) use blk_index_to_blk_path::BlkIndexToBlkPath;
 pub use blk_read::BlkRead;
+pub use scan::MAGIC_BYTES;
 
 pub use xor_bytes::*;
 
