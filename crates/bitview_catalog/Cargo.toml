@@ -7,6 +7,9 @@ license.workspace = true
 homepage.workspace = true
 repository.workspace = true
 
+[features]
+dogecoin = ["bitview_primitives/dogecoin"]
+
 [dependencies]
 bitview_primitives = { workspace = true }
 derive_more = { workspace = true, features = ["from", "into_iterator"] }

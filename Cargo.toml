@@ -1,12 +1,12 @@
 [workspace]
 resolver = "3"
 members = ["crates/*", "examples/custom_plugin"]
-package.description = "The Bitcoin Research Kit is a suite of tools designed to extract, compute and display data stored on a Bitcoin Core node"
+package.description = "The Dogecoin Research Kit is a suite of tools designed to extract, compute and display data stored on a Dogecoin Core node"
 package.license = "MIT"
 package.edition = "2024"
 package.version = "0.13.0"
-package.homepage = "https://bitcoinresearchkit.org"
-package.repository = "https://github.com/bitcoinresearchkit/mono"
+package.homepage = "https://github.com/IndigoNakamoto/drk"
+package.repository = "https://github.com/IndigoNakamoto/drk"
 package.readme = "README.md"
 
 [profile.dev]
@@ -38,7 +38,7 @@ debug = true
 arc-swap = "1.9.3"
 aide = { version = "0.16.0-alpha.4", features = ["axum-json", "axum-query"] }
 axum = { version = "0.8.9", default-features = false, features = ["http1", "json", "query", "tokio", "tracing"] }
-bitcoin = { version = "0.32.102", features = ["serde"] }
+bitcoin = { version = "0.13.0", package = "brk_chain", path = "crates/brk_chain" }
 bitview = { version = "0.13.0", path = "crates/bitview", default-features = false }
 bitview_bindgen = { version = "0.13.0", path = "crates/bitview_bindgen" }
 bitview_catalog = { version = "0.13.0", path = "crates/bitview_catalog" }

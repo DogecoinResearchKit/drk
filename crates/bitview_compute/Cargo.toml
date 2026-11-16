@@ -7,6 +7,9 @@ license.workspace = true
 homepage = "https://bitview.dev"
 repository.workspace = true
 
+[features]
+dogecoin = ["bitview_cohort/dogecoin", "bitview_primitives/dogecoin", "bitview_traversable/dogecoin", "brk_error/dogecoin", "brk_types/dogecoin"]
+
 [dependencies]
 bitview_primitives = { workspace = true, features = ["storage"] }
 rayon = { workspace = true }

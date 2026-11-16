@@ -8,6 +8,7 @@ homepage.workspace = true
 repository.workspace = true
 
 [features]
+dogecoin = ["bitcoin/dogecoin", "brk_error/dogecoin", "brk_types/dogecoin"]
 default = []
 storage = ["dep:rayon", "dep:vecdb", "brk_types/storage"]
 

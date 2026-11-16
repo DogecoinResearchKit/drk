@@ -8,6 +8,7 @@ homepage.workspace = true
 repository.workspace = true
 
 [features]
+dogecoin = ["bitcoin?/dogecoin"]
 bitcoin = ["dep:bitcoin"]
 corepc = ["dep:corepc-jsonrpc"]
 fjall = ["dep:fjall"]

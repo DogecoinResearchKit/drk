@@ -1,0 +1,16 @@
+[package]
+name = "brk_chain"
+description = "Chain primitives for Bitview: the bitcoin crate, or bitcoin-dogecoin under the `dogecoin` feature"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+
+[features]
+default = []
+dogecoin = ["dep:dogecoin"]
+
+[dependencies]
+bitcoin_crate = { package = "bitcoin", version = "0.32.102", features = ["serde"] }
+dogecoin = { package = "bitcoin-dogecoin", version = "0.32.7-doge.0", features = ["serde"], optional = true }

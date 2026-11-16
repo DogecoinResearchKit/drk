@@ -8,6 +8,7 @@ homepage.workspace = true
 repository.workspace = true
 
 [features]
+dogecoin = ["bitcoin/dogecoin", "bitview_catalog/dogecoin", "bitview_primitives/dogecoin", "bitview_query/dogecoin", "bitview_types/dogecoin", "brk_error/dogecoin", "brk_oracle/dogecoin", "brk_rpc/dogecoin", "brk_types/dogecoin"]
 default = ["full-api"]
 full-api = ["chain", "series", "urpd", "bitview_query/full-api"]
 chain = ["price", "bitview_query/chain"]

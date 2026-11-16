@@ -9,6 +9,9 @@ repository.workspace = true
 keywords = ["bitcoin", "blockchain", "analytics", "on-chain"]
 categories = ["api-bindings", "cryptography::cryptocurrencies"]
 
+[features]
+dogecoin = ["bitview_catalog/dogecoin", "bitview_cohort/dogecoin", "bitview_primitives/dogecoin", "bitview_types/dogecoin", "brk_types/dogecoin"]
+
 [dependencies]
 bitview_cohort = { workspace = true }
 bitview_primitives = { workspace = true }

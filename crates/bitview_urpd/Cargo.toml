@@ -7,6 +7,9 @@ license.workspace = true
 homepage.workspace = true
 repository.workspace = true
 
+[features]
+dogecoin = ["bitview_cohort/dogecoin", "bitview_compute/dogecoin", "bitview_primitives/dogecoin", "bitview_traversable/dogecoin", "bitview_vecs/dogecoin", "brk_error/dogecoin", "brk_types/dogecoin"]
+
 [dependencies]
 bitview_primitives = { workspace = true, features = ["storage"] }
 statedb = { workspace = true }

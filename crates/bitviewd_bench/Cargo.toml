@@ -7,6 +7,9 @@ license.workspace = true
 homepage.workspace = true
 repository.workspace = true
 
+[features]
+dogecoin = ["bitview/dogecoin", "bitview_default/dogecoin", "brk_error/dogecoin", "brk_reader/dogecoin", "brk_types/dogecoin"]
+
 [dependencies]
 brk_alloc = { workspace = true }
 vecdb = { workspace = true }

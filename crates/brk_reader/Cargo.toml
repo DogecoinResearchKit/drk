@@ -9,6 +9,9 @@ license.workspace = true
 homepage.workspace = true
 repository.workspace = true
 
+[features]
+dogecoin = ["bitcoin/dogecoin", "brk_error/dogecoin", "brk_rpc/dogecoin", "brk_types/dogecoin"]
+
 [dependencies]
 arc-swap = { workspace = true }
 bitcoin = { workspace = true }

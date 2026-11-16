@@ -7,5 +7,8 @@ license.workspace = true
 homepage.workspace = true
 repository.workspace = true
 
+[features]
+dogecoin = ["brk_types/dogecoin"]
+
 [dependencies]
 brk_types = { workspace = true }

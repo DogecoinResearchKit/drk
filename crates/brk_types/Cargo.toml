@@ -8,6 +8,7 @@ homepage.workspace = true
 repository.workspace = true
 
 [features]
+dogecoin = ["bitcoin/dogecoin", "brk_error/dogecoin"]
 default = []
 schemars = ["dep:schemars", "dep:serde_json", "vecdb?/schemars"]
 storage = ["dep:vecdb", "brk_error/vecdb"]

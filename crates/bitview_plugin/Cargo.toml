@@ -9,6 +9,7 @@ repository.workspace = true
 readme = "README.md"
 
 [features]
+dogecoin = ["bitview_traversable/dogecoin", "brk_error/dogecoin"]
 derive = ["bitview_plugin_derive"]
 
 [dependencies]

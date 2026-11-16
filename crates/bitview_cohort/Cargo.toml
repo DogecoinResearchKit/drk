@@ -8,6 +8,7 @@ homepage.workspace = true
 repository.workspace = true
 
 [features]
+dogecoin = ["bitview_primitives/dogecoin", "bitview_traversable?/dogecoin", "brk_types/dogecoin"]
 default = []
 storage = ["dep:bitview_traversable", "dep:rayon", "brk_types/storage", "bitview_primitives/storage"]
 

@@ -8,6 +8,7 @@ homepage.workspace = true
 repository.workspace = true
 
 [features]
+dogecoin = ["bitview_catalog/dogecoin", "bitview_primitives/dogecoin"]
 derive = ["bitview_traversable_derive"]
 pco = ["vecdb/pco"]
 zerocopy = ["vecdb/zerocopy"]

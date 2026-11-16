@@ -5,6 +5,9 @@ edition = "2024"
 license = "MIT"
 publish = false
 
+[features]
+dogecoin = ["bitview/dogecoin", "bitview_default/dogecoin", "bitview_plugin/dogecoin", "bitview_plugin_indexer/dogecoin", "bitview_primitives/dogecoin", "bitview_traversable/dogecoin", "brk_error/dogecoin", "brk_reader/dogecoin", "brk_types/dogecoin"]
+
 [dependencies]
 bitview = { version = "0.13.0", path = "../../crates/bitview", default-features = false, features = ["full-api"] }
 bitview_default = { version = "0.13.0", path = "../../crates/bitview_default" }

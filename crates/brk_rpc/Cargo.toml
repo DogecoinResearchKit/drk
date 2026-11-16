@@ -8,6 +8,7 @@ homepage.workspace = true
 repository.workspace = true
 
 [features]
+dogecoin = ["bitcoin/dogecoin", "brk_error/dogecoin", "brk_types/dogecoin"]
 async = ["dep:http-body-util", "dep:hyper", "dep:hyper-util", "dep:tokio"]
 
 [dependencies]

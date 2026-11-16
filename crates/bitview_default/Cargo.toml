@@ -8,6 +8,9 @@ homepage = "https://bitview.dev"
 repository.workspace = true
 readme = "README.md"
 
+[features]
+dogecoin = ["bitview_distribution/dogecoin", "bitview_plugin/dogecoin", "bitview_plugin_addresses/dogecoin", "bitview_plugin_age/dogecoin", "bitview_plugin_bedrock/dogecoin", "bitview_plugin_blocks/dogecoin", "bitview_plugin_coinflow/dogecoin", "bitview_plugin_cointime/dogecoin", "bitview_plugin_entry/dogecoin", "bitview_plugin_holders/dogecoin", "bitview_plugin_indexer/dogecoin", "bitview_plugin_inputs/dogecoin", "bitview_plugin_mappings/dogecoin", "bitview_plugin_market/dogecoin", "bitview_plugin_mining/dogecoin", "bitview_plugin_op_return/dogecoin", "bitview_plugin_outputs/dogecoin", "bitview_plugin_pools/dogecoin", "bitview_plugin_price/dogecoin", "bitview_plugin_profitability/dogecoin", "bitview_plugin_rarity_meter/dogecoin", "bitview_plugin_supply/dogecoin", "bitview_plugin_transactions/dogecoin", "bitview_plugin_utxo_set/dogecoin", "bitview_plugin_utxos/dogecoin", "bitview_traversable/dogecoin", "bitview_urpd/dogecoin", "bitview_vecs/dogecoin", "brk_error/dogecoin", "brk_reader/dogecoin"]
+
 [dependencies]
 bitview_vecs = { workspace = true }
 bitview_distribution = { workspace = true }

@@ -10,6 +10,7 @@ readme = "README.md"
 keywords = ["bitcoin", "analytics", "blockchain", "data", "self-hosted"]
 
 [features]
+dogecoin = ["bitview_plugin/dogecoin", "bitview_query/dogecoin", "bitview_server/dogecoin", "brk_error/dogecoin", "brk_mempool?/dogecoin", "brk_reader/dogecoin", "brk_rpc/dogecoin"]
 default = []
 full-api = ["chain", "series", "urpd", "bitview_server/full-api"]
 chain = ["price", "bitview_server/chain"]
