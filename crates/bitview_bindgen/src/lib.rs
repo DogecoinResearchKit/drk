@@ -185,6 +185,8 @@ pub fn generate_clients(
     for schema in &schema_values {
         collect_schema_definitions(schema, &mut schemas);
     }
+    #[cfg(feature = "dogecoin")]
+    schemas.values_mut().for_each(constants::relabel_prose);
 
     // Every client renders the series tree from one model, with the same shape names.
     let accessors = detect_index_patterns(catalog);

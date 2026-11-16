@@ -165,6 +165,32 @@ const FACTS: &[(&str, &str)] = &[
         "the first priced interval (2010-08-16)",
         "the first priced interval (2013-12-06)",
     ),
+    // The oracle's endpoints: only its price answers, from the tip's exchange close.
+    (
+        "On-chain BTC/USD price derived purely from round-dollar payment patterns in transaction outputs, with no external price feed. Payment activity is binned on a log scale, and a smoothed EMA over recent blocks locates the price.",
+        "Dogeview has no on-chain oracle: each block is priced at its day's DOGE/USD exchange close (CryptoCompare, Bitfinex and Coinbase).",
+    ),
+    (
+        "The live price is at `/api/oracle/price`, confirmed per-height price history at `/api/series/price/height`. How it read each block (what it counted, where it looked, what it found) is at `/api/oracle/blocks/{height}`, and now at `/api/oracle/live`; the payments behind its prices, 144 blocks at a time, at `/api/oracle/payments/{start}`.",
+        "The latest close is at `/api/oracle/price`, per-height prices at `/api/series/price/height`; the oracle's readings (`/api/oracle/blocks/{height}`, `/api/oracle/live`, `/api/oracle/payments/{start}`) are not found.",
+    ),
+    (
+        "Current BTC/USD price in dollars, derived from on-chain round-dollar output patterns in the oracle's recent-block window, with the mempool's outputs blended in when available, to the cent: `price` of `GET /api/oracle/live`. Confirmed per-height history is available at `GET /api/series/price/height`. Not found before the oracle's first prices.",
+        "Current DOGE/USD price in dollars: the exchange close of the tip block's day. Per-height history is at `GET /api/series/price/height`.",
+    ),
+    (
+        "The oracle's reading now, as `GET /api/oracle/blocks/{height}` reads a block: with the mempool's outputs blended in as the next block (`mempool` true, `height` the next block's, `outputs` the mempool's), its search from the tip's answer, `price` the live price; without a mempool at the tip, the tip block's own. One snapshot: its parts never from two moments, `hash` the confirmed tip it was read at. Not found before the oracle's first prices, nor before height 508,000.",
+        "Not found on Dogeview, which has no on-chain oracle: each block is priced at its day's DOGE/USD exchange close.",
+    ),
+    (
+        "How the oracle read a confirmed block, after height 508,000: what it counted (the smoothed histogram of the payments of the block and the 11 before it, by amount on its log scale; the block's outputs as its filter judged them, each skipped one under the first rule that skips it), where it looked (every candidate bin in its window, 12 below the block before's answer to 11 above, with its score) and what it found (the bin it picked and its price). Bins: 200 a decade, a bin `round(log10(sats) * 200)`; as where $100 lands, a bin is the price `10^(10 - bin / 200)` dollars. A settled block's never changes.",
+        "Not found on Dogeview, which has no on-chain oracle: each block is priced at its day's DOGE/USD exchange close.",
+    ),
+    ("The oracle's payments, 144 blocks at a time", "The oracle's payments"),
+    (
+        "For each of the 144 blocks from `start` (a multiple of 144, else a bad request; from 508,032, earlier ones out of range): its payments as the oracle filters them, each read as each of its 19 round-dollar amounts ($1 to $10,000) at its exact amount in sats, counted by the price each reading implies, in buckets a tenth of a bin wide (0.115% of price) over the block's search window: finer than the oracle's bins, the evidence behind its prices. The chunk at the tip holds its blocks so far, `hash` its last block's; a whole, settled chunk never changes.",
+        "Not found on Dogeview, which has no on-chain oracle: each block is priced at its day's DOGE/USD exchange close.",
+    ),
     // Block timing: a minute a block, 1,440 a day.
     (
         "the 144 blocks expected at Bitcoin's ten-minute target",

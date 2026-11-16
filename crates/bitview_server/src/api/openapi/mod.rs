@@ -272,3 +272,35 @@ Errors use `application/problem+json`:
         ..OpenApi::default()
     }
 }
+
+#[cfg(all(test, feature = "dogecoin"))]
+mod dogecoin_tests {
+    use aide::axum::ApiRouter;
+
+    use crate::{AppState, ApiRoutes, finish_openapi};
+
+    use super::openapi_json;
+
+    /// Facts keyed on upstream's wording stop matching silently when it changes: the served spec
+    /// keeps none of Bitcoin's oracle or block timing, outside the oracle's own response schemas
+    /// (never sent on Dogecoin).
+    #[test]
+    fn served_spec_states_dogecoin() {
+        let (_, openapi) = finish_openapi(ApiRouter::<AppState>::new().add_api_routes());
+        let mut spec = openapi_json(&openapi);
+        spec.pointer_mut("/components/schemas")
+            .and_then(|schemas| schemas.as_object_mut())
+            .unwrap()
+            .retain(|name, _| !name.starts_with("Oracle"));
+        let spec = spec.to_string();
+        let stale = ["144 blocks", "round-dollar", "508,0", "BTC", "ten-minute", "ten minutes", "2,016"]
+            .into_iter()
+            .filter(|text| spec.contains(text))
+            .map(|text| {
+                let at = spec.find(text).unwrap();
+                spec[at.saturating_sub(120)..(at + 80).min(spec.len())].to_owned()
+            })
+            .collect::<Vec<_>>();
+        assert!(stale.is_empty(), "{stale:#?}");
+    }
+}

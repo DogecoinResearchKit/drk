@@ -13,7 +13,7 @@ pub struct Vecs {
     #[traversable(lead = "Blocks until the next halving.")]
     pub blocks_to_halving: LazyPerBlock<Count>,
     /// Nominal days to the next subsidy halving, calculated as
-    /// `blocks_to_halving / 144`; this does not use observed mining pace.
+    /// `blocks_to_halving / TARGET_BLOCKS_PER_DAY`; this does not use observed mining pace.
     #[traversable(lead = "Days until the next halving, at ten minutes a block.")]
     pub days_to_halving: LazyPerBlock<Days, Count>,
 }

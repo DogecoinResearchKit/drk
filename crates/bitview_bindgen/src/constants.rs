@@ -126,3 +126,19 @@ pub fn camel_case_keys(value: Value) -> Value {
 pub fn format_json<T: Serialize>(value: &T) -> String {
     to_string_pretty(value).unwrap()
 }
+
+/// Dogeview's names in a schema's prose (its titles and descriptions); the series catalog's type
+/// schemas reach the clients without passing through the served spec's relabeling.
+#[cfg(feature = "dogecoin")]
+pub(crate) fn relabel_prose(value: &mut Value) {
+    match value {
+        Value::Object(map) => map.iter_mut().for_each(|(key, value)| match value {
+            Value::String(text) if matches!(key.as_str(), "title" | "description") => {
+                *text = brk_relabel::relabel(text)
+            }
+            _ => relabel_prose(value),
+        }),
+        Value::Array(items) => items.iter_mut().for_each(relabel_prose),
+        _ => {}
+    }
+}

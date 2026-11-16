@@ -342,12 +342,12 @@ sequence isn't final), from timestamp 1,771,507,776 on; null before
  * @typedef {number} BytesFract
  */
 /**
- * Bitcoin multiplied by the blocks it was held.
+ * Dogecoin multiplied by the blocks it was held.
  *
  * @typedef {number} CoinBlocks
  */
 /**
- * Bitcoin multiplied by the days it was held.
+ * Dogecoin multiplied by the days it was held.
  *
  * @typedef {number} CoinDays
  */
@@ -362,7 +362,7 @@ sequence isn't final), from timestamp 1,771,507,776 on; null before
  * Uses `[u8; 101]` internally so that `size_of::<CoinbaseTag>()` matches
  * the serialized `Bytes::Array` size (vecdb requires this for alignment).
  *
- * Bitcoin consensus limits coinbase scriptSig to 2-100 bytes.
+ * Dogecoin consensus limits coinbase scriptSig to 2-100 bytes.
  *
  * @typedef {string} CoinbaseTag
  */
@@ -534,7 +534,7 @@ mainnet, as mempool.space
  * @property {number} adjustment - Adjustment ratio (new/previous, e.g. 1.068 = +6.8%)
  */
 /**
- * Index of a difficulty epoch (2,016 blocks).
+ * Index of a difficulty epoch (240 blocks).
  *
  * @typedef {number} DifficultyEpoch
  */
@@ -553,7 +553,7 @@ mainnet, as mempool.space
  */
 /**
  * US dollars multiplied by days, per bitcoin: coin days valued at the spot price, per
- * bitcoin of supply.
+ * dogecoin of supply.
  *
  * @typedef {number} DollarDaysPerCoin
  */
@@ -621,7 +621,7 @@ mainnet, as mempool.space
  * @typedef {number} HashPrice
  */
 /**
- * Satoshis per PH/s of hash rate per day.
+ * Koinu per PH/s of hash rate per day.
  *
  * @typedef {number} HashValue
  */
@@ -1505,7 +1505,7 @@ asking the node
  */
 /**
  * Compact indexed transaction-version category. Values 1, 2, and 3 preserve
- * those exact signed 32-bit Bitcoin transaction versions; 255 represents every
+ * those exact signed 32-bit Dogecoin transaction versions; 255 represents every
  * other version.
  *
  * @typedef {number} TxVersion
@@ -9262,7 +9262,7 @@ anything else answers 400, as mempool.space does
   /**
    * Live DOGE/USD price
    *
-   * Current DOGE/USD price in dollars, derived from on-chain round-dollar output patterns in the oracle's recent-block window, with the mempool's outputs blended in when available, to the cent: `price` of `GET /api/oracle/live`. Confirmed per-height history is available at `GET /api/series/price/height`. Not found before the oracle's first prices.
+   * Current DOGE/USD price in dollars: the exchange close of the tip block's day. Per-height history is at `GET /api/series/price/height`.
    *
    * Endpoint: `GET /api/oracle/price`
    * @param {{ signal?: AbortSignal, onValue?: (value: Dollars) => void, cache?: boolean, memCache?: boolean }} [options]
@@ -9276,7 +9276,7 @@ anything else answers 400, as mempool.space does
   /**
    * The oracle now
    *
-   * The oracle's reading now, as `GET /api/oracle/blocks/{height}` reads a block: with the mempool's outputs blended in as the next block (`mempool` true, `height` the next block's, `outputs` the mempool's), its search from the tip's answer, `price` the live price; without a mempool at the tip, the tip block's own. One snapshot: its parts never from two moments, `hash` the confirmed tip it was read at. Not found before the oracle's first prices, nor before height 508,000.
+   * Not found on Dogeview, which has no on-chain oracle: each block is priced at its day's DOGE/USD exchange close.
    *
    * Endpoint: `GET /api/oracle/live`
    * @param {{ signal?: AbortSignal, onValue?: (value: OracleBlock) => void, cache?: boolean, memCache?: boolean }} [options]
@@ -9290,7 +9290,7 @@ anything else answers 400, as mempool.space does
   /**
    * The oracle at a block
    *
-   * How the oracle read a confirmed block, after height 508,000: what it counted (the smoothed histogram of the payments of the block and the 11 before it, by amount on its log scale; the block's outputs as its filter judged them, each skipped one under the first rule that skips it), where it looked (every candidate bin in its window, 12 below the block before's answer to 11 above, with its score) and what it found (the bin it picked and its price). Bins: 200 a decade, a bin `round(log10(sats) * 200)`; as where $100 lands, a bin is the price `10^(10 - bin / 200)` dollars. A settled block's never changes.
+   * Not found on Dogeview, which has no on-chain oracle: each block is priced at its day's DOGE/USD exchange close.
    *
    * Endpoint: `GET /api/oracle/blocks/{height}`
    *
@@ -9304,9 +9304,9 @@ anything else answers 400, as mempool.space does
   }
 
   /**
-   * The oracle's payments, 144 blocks at a time
+   * The oracle's payments
    *
-   * For each of the 144 blocks from `start` (a multiple of 144, else a bad request; from 508,032, earlier ones out of range): its payments as the oracle filters them, each read as each of its 19 round-dollar amounts ($1 to $10,000) at its exact amount in koinu, counted by the price each reading implies, in buckets a tenth of a bin wide (0.115% of price) over the block's search window: finer than the oracle's bins, the evidence behind its prices. The chunk at the tip holds its blocks so far, `hash` its last block's; a whole, settled chunk never changes.
+   * Not found on Dogeview, which has no on-chain oracle: each block is priced at its day's DOGE/USD exchange close.
    *
    * Endpoint: `GET /api/oracle/payments/{start}`
    *

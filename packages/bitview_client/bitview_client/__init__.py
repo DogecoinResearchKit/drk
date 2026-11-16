@@ -81,7 +81,7 @@ Txid = str
 # used in coinbase txs for miner signaling/branding.
 TxVersionRaw = int
 # Compact indexed transaction-version category. Values 1, 2, and 3 preserve
-# those exact signed 32-bit Bitcoin transaction versions; 255 represents every
+# those exact signed 32-bit Dogecoin transaction versions; 255 represents every
 # other version.
 TxVersion = int
 # Index of a transaction output.
@@ -204,7 +204,7 @@ DifficultyAdjustmentEntry = List[Union[Timestamp, Height, float]]
 HealthStatus = Literal["healthy"]
 # Hashes per second.
 Hashrate = float
-# Satoshis per PH/s of hash rate per day.
+# Koinu per PH/s of hash rate per day.
 HashValue = float
 # US dollars per PH/s of hash rate per day.
 HashPrice = float
@@ -227,11 +227,11 @@ Dollars = float
 # Open, high, low and close prices in US dollars: [open, high, low, close].
 OHLCDollars = List[Dollars]
 # US dollars multiplied by days, per bitcoin: coin days valued at the spot price, per
-# bitcoin of supply.
+# dogecoin of supply.
 DollarDaysPerCoin = float
 # US dollars multiplied by blocks: coinblocks valued at the spot price.
 DollarBlocks = float
-# Index of a difficulty epoch (2,016 blocks).
+# Index of a difficulty epoch (240 blocks).
 DifficultyEpoch = int
 # Proof-of-work difficulty.
 Difficulty = float
@@ -271,11 +271,11 @@ Count = int
 # Uses `[u8; 101]` internally so that `size_of::<CoinbaseTag>()` matches
 # the serialized `Bytes::Array` size (vecdb requires this for alignment).
 #
-# Bitcoin consensus limits coinbase scriptSig to 2-100 bytes.
+# Dogecoin consensus limits coinbase scriptSig to 2-100 bytes.
 CoinbaseTag = str
-# Bitcoin multiplied by the days it was held.
+# Dogecoin multiplied by the days it was held.
 CoinDays = float
-# Bitcoin multiplied by the blocks it was held.
+# Dogecoin multiplied by the blocks it was held.
 CoinBlocks = float
 # A mean size in bytes.
 BytesFract = float
@@ -6572,7 +6572,7 @@ class BitviewClient(BitviewClientBase):
     def get_live_price(self) -> Dollars:
         """Live DOGE/USD price.
 
-        Current DOGE/USD price in dollars, derived from on-chain round-dollar output patterns in the oracle's recent-block window, with the mempool's outputs blended in when available, to the cent: `price` of `GET /api/oracle/live`. Confirmed per-height history is available at `GET /api/series/price/height`. Not found before the oracle's first prices.
+        Current DOGE/USD price in dollars: the exchange close of the tip block's day. Per-height history is at `GET /api/series/price/height`.
 
         Endpoint: `GET /api/oracle/price`"""
         return self.get_json('/api/oracle/price')
@@ -6580,7 +6580,7 @@ class BitviewClient(BitviewClientBase):
     def get_oracle_live(self) -> OracleBlock:
         """The oracle now.
 
-        The oracle's reading now, as `GET /api/oracle/blocks/{height}` reads a block: with the mempool's outputs blended in as the next block (`mempool` true, `height` the next block's, `outputs` the mempool's), its search from the tip's answer, `price` the live price; without a mempool at the tip, the tip block's own. One snapshot: its parts never from two moments, `hash` the confirmed tip it was read at. Not found before the oracle's first prices, nor before height 508,000.
+        Not found on Dogeview, which has no on-chain oracle: each block is priced at its day's DOGE/USD exchange close.
 
         Endpoint: `GET /api/oracle/live`"""
         return self.get_json('/api/oracle/live')
@@ -6588,15 +6588,15 @@ class BitviewClient(BitviewClientBase):
     def get_oracle_block(self, height: Height) -> OracleBlock:
         """The oracle at a block.
 
-        How the oracle read a confirmed block, after height 508,000: what it counted (the smoothed histogram of the payments of the block and the 11 before it, by amount on its log scale; the block's outputs as its filter judged them, each skipped one under the first rule that skips it), where it looked (every candidate bin in its window, 12 below the block before's answer to 11 above, with its score) and what it found (the bin it picked and its price). Bins: 200 a decade, a bin `round(log10(sats) * 200)`; as where $100 lands, a bin is the price `10^(10 - bin / 200)` dollars. A settled block's never changes.
+        Not found on Dogeview, which has no on-chain oracle: each block is priced at its day's DOGE/USD exchange close.
 
         Endpoint: `GET /api/oracle/blocks/{height}`"""
         return self.get_json(f'/api/oracle/blocks/{_segment(height)}')
 
     def get_oracle_payments(self, start: Height) -> OraclePayments:
-        """The oracle's payments, 144 blocks at a time.
+        """The oracle's payments.
 
-        For each of the 144 blocks from `start` (a multiple of 144, else a bad request; from 508,032, earlier ones out of range): its payments as the oracle filters them, each read as each of its 19 round-dollar amounts ($1 to $10,000) at its exact amount in koinu, counted by the price each reading implies, in buckets a tenth of a bin wide (0.115% of price) over the block's search window: finer than the oracle's bins, the evidence behind its prices. The chunk at the tip holds its blocks so far, `hash` its last block's; a whole, settled chunk never changes.
+        Not found on Dogeview, which has no on-chain oracle: each block is priced at its day's DOGE/USD exchange close.
 
         Endpoint: `GET /api/oracle/payments/{start}`"""
         return self.get_json(f'/api/oracle/payments/{_segment(start)}')
