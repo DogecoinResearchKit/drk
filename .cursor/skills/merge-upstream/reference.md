@@ -92,3 +92,26 @@ goes through it), and what differs:
 
 Answers are JSON-RPC 1.0 (`"error": null`, no `jsonrpc`), which both clients accept; errors come
 with HTTP 500. The reader needs no `xor.dat` (1.14 doesn't write one).
+
+## u64 overflow (audit, Nov 2026)
+
+`Sats` is a `u64` of koinu: about 184.5B DOGE. Release builds wrap on overflow (`overflow-checks =
+false`); dev builds panic. Peaks at the current tip:
+
+- **Already past the limit:** all-time transfer-volume cumulatives and their 1w/1m/1y windows.
+  Dogecoin moves billions of DOGE a day, so these passed 184.5B DOGE within weeks of genesis.
+  Affected: `bitview_plugin_transactions` `transfer_volume`, holders `activity.transfer_volume` (and
+  in profit / loss), age `aged_out` and transfer volume in profit / loss, address balance bands,
+  UTXO cohorts and creation cohorts (`bitview_distribution` `CumulativeValue`), and supply
+  velocity, which reads the 1y sum. Per-block values and 24h windows are deltas of the stored total.
+  They come out exact in release, which wraps, as long as the true value is under 184.5B DOGE.
+- **Around 2031 (supply-bounded, ~162B DOGE now, +5.26B a year):** supply snapshots (holders,
+  utxo set, address types and bands, bedrock, profit / loss supply), mining `coinbase` / `subsidy`
+  cumulatives, pools' per-pool coinbase totals (`pool_heights` `Rewards`).
+- **Safe:** fees, OP_RETURN and other burns, per-block values, supply deltas.
+- **Cents:** a cents value is a `u64` of micro-dollars, capped near $18.4T. All-time USD transfer
+  volume, change included, could reach that within years.
+
+The cumulative machinery (`bitview_vecs` `ValuePerBlockCumulative`, `CumulativeSource`, the
+`LazyRollingSumFromHeight<Sats>` windows, and `bitview_distribution` `CumulativeValue`) is fixed to
+`Sats`, and vecdb's Pco storage has no `u128`.
