@@ -22,8 +22,28 @@ use std::fs;
 #[cfg(feature = "storage")]
 use vecdb::{Bytes, Pco, PrintableIndex, Stamp, VecIndex};
 
+#[cfg(not(feature = "dogecoin"))]
 pub const BLOCKS_PER_DIFF_EPOCH: u32 = 2016;
+/// Dogecoin retargeted every 240 blocks until Digishield (145,000) and every block since; the
+/// pre-Digishield interval keeps difficulty epochs a usable (and `u16`-sized) index.
+#[cfg(feature = "dogecoin")]
+pub const BLOCKS_PER_DIFF_EPOCH: u32 = 240;
+
+#[cfg(not(feature = "dogecoin"))]
 pub const BLOCKS_PER_HALVING: u32 = 210_000;
+/// Dogecoin's reward halved every 100,000 blocks until 600,000, then stayed at 10,000 DOGE.
+#[cfg(feature = "dogecoin")]
+pub const BLOCKS_PER_HALVING: u32 = 100_000;
+
+/// About four years of blocks: the span windows sized "one Bitcoin halving" stand for.
+#[cfg(not(feature = "dogecoin"))]
+pub const HALVING_CYCLE_BLOCKS: u32 = BLOCKS_PER_HALVING;
+#[cfg(feature = "dogecoin")]
+pub const HALVING_CYCLE_BLOCKS: u32 = 4 * crate::TARGET_BLOCKS_PER_YEAR as u32;
+
+/// The first height with a deterministic Dogecoin subsidy; earlier rewards were random.
+#[cfg(feature = "dogecoin")]
+pub const DOGECOIN_SIMPLIFIED_REWARDS_HEIGHT: u32 = 145_000;
 
 /// A block height: how many blocks came before it.
 #[derive(
@@ -84,12 +104,29 @@ impl Height {
     }
 
     /// Bitcoin Core's `GetBlockSubsidy`: 50 BTC shifted right once per halving.
+    #[cfg(not(feature = "dogecoin"))]
     pub fn subsidy(self) -> Sats {
         Sats::from(
             u64::from(Sats::FIFTY_BTC)
                 .checked_shr(self.0 / BLOCKS_PER_HALVING)
                 .unwrap_or(0),
         )
+    }
+
+    /// Dogecoin Core's `GetDogecoinBlockSubsidy`. Before 145,000 the reward was drawn at random
+    /// up to `(1,000,000 >> halvings) - 1` DOGE; that cap is returned there. Then
+    /// `500,000 >> halvings` DOGE until 600,000, and 10,000 DOGE from then on.
+    #[cfg(feature = "dogecoin")]
+    pub fn subsidy(self) -> Sats {
+        let halvings = self.0 / BLOCKS_PER_HALVING;
+        let doge = if self.0 < DOGECOIN_SIMPLIFIED_REWARDS_HEIGHT {
+            (1_000_000_u64 >> halvings) - 1
+        } else if halvings < 6 {
+            500_000_u64 >> halvings
+        } else {
+            10_000
+        };
+        Sats::from(doge * Sats::ONE_BTC_U64)
     }
 
     pub fn index_name() -> &'static str {

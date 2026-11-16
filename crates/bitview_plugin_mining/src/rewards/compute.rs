@@ -15,8 +15,21 @@ fn claimed_subsidy(_: Height, coinbase: Sats, fees: Sats) -> Sats {
 }
 
 /// Consensus caps the coinbase at the scheduled subsidy plus fees.
+#[cfg(not(feature = "dogecoin"))]
 fn unclaimed_rewards(height: Height, coinbase: Sats, fees: Sats) -> Sats {
     height.subsidy() + fees - coinbase
+}
+
+/// Zero before 145,000, where the reward was random and only its cap is known. Clamped after:
+/// some Dogecoin coinbases claim less than the block's fees.
+#[cfg(feature = "dogecoin")]
+fn unclaimed_rewards(height: Height, coinbase: Sats, fees: Sats) -> Sats {
+    if u32::from(height) < brk_types::DOGECOIN_SIMPLIFIED_REWARDS_HEIGHT {
+        return Sats::ZERO;
+    }
+    (height.subsidy() + fees)
+        .checked_sub(coinbase)
+        .unwrap_or(Sats::ZERO)
 }
 
 impl Vecs {

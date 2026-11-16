@@ -6,6 +6,16 @@ use vecdb::VecIndex;
 
 use crate::{Dependencies, Vecs};
 
+/// The genesis coinbase is unspendable, so its reward is burned.
+#[cfg(not(feature = "dogecoin"))]
+fn genesis_reward() -> Sats {
+    Sats::FIFTY_BTC
+}
+#[cfg(feature = "dogecoin")]
+fn genesis_reward() -> Sats {
+    Sats::new(88 * Sats::ONE_BTC_U64)
+}
+
 impl ComputePlugin for Vecs {
     compute_items!(Dependencies, db);
 
@@ -28,7 +38,7 @@ impl ComputePlugin for Vecs {
             &mining.rewards.unclaimed.block.sats,
             |height, op_return, unclaimed| {
                 let genesis = if height.to_usize() == 0 {
-                    Sats::FIFTY_BTC
+                    genesis_reward()
                 } else {
                     Sats::ZERO
                 };

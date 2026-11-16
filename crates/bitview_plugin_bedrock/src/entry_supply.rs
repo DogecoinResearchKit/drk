@@ -5,7 +5,7 @@ use bitview_traversable::Traversable;
 use bitview_urpd::ReplayInputs;
 use brk_error::Result;
 use brk_exit::Exit;
-use brk_types::{BLOCKS_PER_HALVING, Cents, CentsSats, Sats};
+use brk_types::{Cents, CentsSats, Sats};
 use rayon::{current_num_threads, prelude::*};
 use statedb::Reader;
 use vecdb::ReadableVec;
@@ -14,7 +14,11 @@ use super::{FloorBandId, FloorBands, ModeId, ModeVecs, Modes, Percentiles};
 
 /// The first block whose outputs count toward a floor band: the second halving's, by which
 /// Bedrock's calibration has left its early years behind.
-pub const FLOOR_SUPPLY_START: usize = 2 * BLOCKS_PER_HALVING as usize;
+#[cfg(not(feature = "dogecoin"))]
+pub const FLOOR_SUPPLY_START: usize = 2 * brk_types::BLOCKS_PER_HALVING as usize;
+/// Dogecoin's halvings came months apart; about two years in (early 2016) instead.
+#[cfg(feature = "dogecoin")]
+pub const FLOOR_SUPPLY_START: usize = 1_050_000;
 
 // The pass's write chunks never straddle it.
 const _: () = assert!(FLOOR_SUPPLY_START.is_multiple_of(WRITE_INTERVAL));

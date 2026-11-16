@@ -4,7 +4,10 @@ use brk_types::BlkPosition;
 
 use crate::{XORBytes, XORIndex, xor_bytes::XOR_LEN};
 
+#[cfg(not(feature = "dogecoin"))]
 const MAGIC_BYTES: [u8; 4] = [0xF9, 0xBE, 0xB4, 0xD9];
+#[cfg(feature = "dogecoin")]
+const MAGIC_BYTES: [u8; 4] = [0xC0, 0xC0, 0xC0, 0xC0];
 
 /// Returns the position immediately after the matched magic, or
 /// `None` if no match. Advances `xor_i` by the bytes consumed either

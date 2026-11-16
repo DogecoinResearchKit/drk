@@ -16,7 +16,7 @@ use vecdb::{
     WritableVec,
 };
 
-const MIN_HISTORY_BLOCKS: usize = 210_000;
+const MIN_HISTORY_BLOCKS: usize = brk_types::HALVING_CYCLE_BLOCKS as usize;
 /// Above this many missing outputs, coordinate compression is faster than
 /// applying exact live updates one at a time.
 const BULK_BACKFILL_THRESHOLD: usize = 10_000;

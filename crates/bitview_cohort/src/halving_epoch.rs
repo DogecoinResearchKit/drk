@@ -20,22 +20,28 @@ pub const HALVING_EPOCH_NAMES: ByHalvingEpoch<CohortName> = ByHalvingEpoch {
 #[cfg_attr(feature = "storage", derive(Traversable))]
 pub struct ByHalvingEpoch<T> {
     /// Uses UTXOs created during subsidy-halving epoch 0.
-    #[cfg_attr(feature = "storage", traversable(lead = "Coins last moved before the first halving (2009 to November 2012)."))]
+    #[cfg_attr(all(feature = "storage", not(feature = "dogecoin")), traversable(lead = "Coins last moved before the first halving (2009 to November 2012)."))]
+    #[cfg_attr(all(feature = "storage", feature = "dogecoin"), traversable(lead = "Coins last moved in Dogecoin's first reward era (blocks 0 to 99,999, random rewards up to 1,000,000 DOGE)."))]
     _0: T,
     /// Uses UTXOs created during subsidy-halving epoch 1.
-    #[cfg_attr(feature = "storage", traversable(lead = "Coins last moved between the first and second halvings (November 2012 to July 2016)."))]
+    #[cfg_attr(all(feature = "storage", not(feature = "dogecoin")), traversable(lead = "Coins last moved between the first and second halvings (November 2012 to July 2016)."))]
+    #[cfg_attr(all(feature = "storage", feature = "dogecoin"), traversable(lead = "Coins last moved in Dogecoin's second reward era (blocks 100,000 to 199,999)."))]
     _1: T,
     /// Uses UTXOs created during subsidy-halving epoch 2.
-    #[cfg_attr(feature = "storage", traversable(lead = "Coins last moved between the second and third halvings (July 2016 to May 2020)."))]
+    #[cfg_attr(all(feature = "storage", not(feature = "dogecoin")), traversable(lead = "Coins last moved between the second and third halvings (July 2016 to May 2020)."))]
+    #[cfg_attr(all(feature = "storage", feature = "dogecoin"), traversable(lead = "Coins last moved in Dogecoin's third reward era (blocks 200,000 to 299,999, 125,000 DOGE per block)."))]
     _2: T,
     /// Uses UTXOs created during subsidy-halving epoch 3.
-    #[cfg_attr(feature = "storage", traversable(lead = "Coins last moved between the third and fourth halvings (May 2020 to April 2024)."))]
+    #[cfg_attr(all(feature = "storage", not(feature = "dogecoin")), traversable(lead = "Coins last moved between the third and fourth halvings (May 2020 to April 2024)."))]
+    #[cfg_attr(all(feature = "storage", feature = "dogecoin"), traversable(lead = "Coins last moved in Dogecoin's fourth reward era (blocks 300,000 to 399,999, 62,500 DOGE per block)."))]
     _3: T,
     /// Uses UTXOs created during subsidy-halving epoch 4.
-    #[cfg_attr(feature = "storage", traversable(lead = "Coins last moved between the fourth and fifth halvings (from April 2024)."))]
+    #[cfg_attr(all(feature = "storage", not(feature = "dogecoin")), traversable(lead = "Coins last moved between the fourth and fifth halvings (from April 2024)."))]
+    #[cfg_attr(all(feature = "storage", feature = "dogecoin"), traversable(lead = "Coins last moved in Dogecoin's fifth reward era (blocks 400,000 to 499,999, 31,250 DOGE per block)."))]
     _4: T,
     /// Uses UTXOs created during subsidy-halving epoch 5.
-    #[cfg_attr(feature = "storage", traversable(lead = "Coins last moved between the fifth and sixth halvings."))]
+    #[cfg_attr(all(feature = "storage", not(feature = "dogecoin")), traversable(lead = "Coins last moved between the fifth and sixth halvings."))]
+    #[cfg_attr(all(feature = "storage", feature = "dogecoin"), traversable(lead = "Coins last moved in Dogecoin's sixth reward era (blocks 500,000 to 599,999, 15,625 DOGE per block)."))]
     _5: T,
 }
 

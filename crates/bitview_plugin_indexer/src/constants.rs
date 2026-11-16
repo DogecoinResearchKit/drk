@@ -3,7 +3,12 @@ use brk_types::{Height, Sats, TxIndex, Version};
 
 // One schema version for every data source: bump it when stored data changes or a source is
 // added.
+#[cfg(not(feature = "dogecoin"))]
 pub const VERSION: Version = Version::new(45);
+/// Upstream's version plus a Dogecoin offset, so a store written by either build never passes as
+/// the other's. Bump the offset for Dogecoin-only changes.
+#[cfg(feature = "dogecoin")]
+pub const VERSION: Version = Version::new(45 + 2_000);
 
 /// The newest blocks the first resume after a start reads back at their stored positions, about a
 /// day of them: back from a crash, Core writes what it fetched since its last block-index write
@@ -20,7 +25,12 @@ struct DuplicateCoinbase {
     overwritten_tx_index: TxIndex,
 }
 
+/// Dogecoin enforced BIP30 from genesis: no duplicate coinbases.
+#[cfg(feature = "dogecoin")]
+const DUPLICATE_COINBASES: [DuplicateCoinbase; 0] = [];
+
 /// The two duplicate coinbases, both in 2010.
+#[cfg(not(feature = "dogecoin"))]
 const DUPLICATE_COINBASES: [DuplicateCoinbase; 2] = [
     // txid d5d27987d2a3dfc724e359870c6644b40e497bdc0589a033220fe15429d88599
     DuplicateCoinbase {
