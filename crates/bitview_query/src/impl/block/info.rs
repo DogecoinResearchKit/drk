@@ -2,7 +2,7 @@ use std::io::Read;
 
 use crate::{ReadPin, check_bound};
 use bitcoin::{
-    Address as BitcoinAddress, BlockHash as BitcoinBlockHash, Network, Transaction,
+    BlockHash as BitcoinBlockHash, Transaction,
     block::Header as BitcoinHeader,
     consensus::{Decodable, encode::VarInt},
     hashes::Hash,
@@ -12,7 +12,7 @@ use bitcoin::{
 use bitview_primitives::{Bytes32, Difficulty, Lengths, PoolSlug, pools};
 use bitview_types::{BlockExtras, BlockHeader, BlockInfo, BlockInfoV1, BlockPool};
 use brk_types::{
-    Address, BlkPosition, BlockHash, CheckedSub, Dollars, FeeRate, Height, Hex, Sats, Timestamp,
+    Address, BlkPosition, BlockHash, ChainAddress, MAINNET, CheckedSub, Dollars, FeeRate, Height, Hex, Sats, Timestamp,
     TxIndex, Weight, Weight32,
 };
 use vecdb::{ReadableVec, VecIndex};
@@ -193,7 +193,7 @@ impl Query {
             .output
             .iter()
             .filter_map(|output| {
-                BitcoinAddress::from_script(&output.script_pubkey, Network::Bitcoin)
+                ChainAddress::from_script(&output.script_pubkey, MAINNET)
                     .ok()
                     .map(|a| Address::from(a.to_string()))
             })

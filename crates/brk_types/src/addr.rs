@@ -1,6 +1,6 @@
 use std::{fmt, str::FromStr};
 
-use bitcoin::{Address as BitcoinAddress, Network, ScriptBuf};
+use bitcoin::ScriptBuf;
 use brk_error::Error;
 use derive_more::{Deref, From};
 #[cfg(feature = "schemars")]
@@ -8,7 +8,7 @@ use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
 use super::OutputType;
-use crate::AddressBytes;
+use crate::{AddressBytes, ChainAddress, MAINNET};
 
 #[cfg(feature = "storage")]
 use vecdb::Formattable;
@@ -41,7 +41,7 @@ impl TryFrom<(&ScriptBuf, OutputType)> for Address {
                 Ok(Self(bytes_to_hex(bytes.as_slice())))
             }
             _ if output_type.is_addr() => {
-                let addr = BitcoinAddress::from_script(script, Network::Bitcoin)
+                let addr = ChainAddress::from_script(script, MAINNET)
                     .map_err(|_| Error::InvalidAddress)?;
                 Ok(Self(addr.to_string()))
             }

@@ -1,10 +1,10 @@
 use std::str::FromStr;
 
-use bitcoin::{Address, Network, ScriptBuf, opcodes, script::Builder};
+use bitcoin::{ScriptBuf, opcodes, script::Builder};
 use brk_error::Error;
 use derive_more::From;
 
-use crate::bytes::parse_hex;
+use crate::{ChainAddress, MAINNET, bytes::parse_hex};
 
 use super::{
     OutputType, P2ABytes, P2PK33Bytes, P2PK65Bytes, P2PKHBytes, P2SHBytes, P2TRBytes, P2WPKHBytes,
@@ -99,8 +99,8 @@ impl AddressBytes {
     /// Parse an address string to a ScriptBuf. A P2PK "address" is its 33- or 65-byte key field
     /// in hex, as the index keeps it: P2PK-shaped, not necessarily a valid public key.
     pub fn addr_to_script(addr: &str) -> Result<ScriptBuf, Error> {
-        if let Ok(addr) = Address::from_str(addr) {
-            if !addr.is_valid_for_network(Network::Bitcoin) {
+        if let Ok(addr) = ChainAddress::from_str(addr) {
+            if !addr.is_valid_for_network(MAINNET) {
                 return Err(Error::InvalidNetwork);
             }
             let addr = addr.assume_checked();

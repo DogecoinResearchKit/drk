@@ -1,7 +1,9 @@
 use std::{cell::OnceCell, ops::Deref};
 
+#[cfg(not(feature = "dogecoin"))]
+use bitcoin::Address;
 use bitcoin::{
-    Address, Block, Network, Transaction, TxIn, TxOut, Txid, consensus::encode::serialize_hex,
+    Block, Network, Transaction, TxIn, TxOut, Txid, consensus::encode::serialize_hex,
     hex::DisplayHex,
 };
 use brk_error::{Error, Result};
@@ -110,8 +112,14 @@ pub const VOUT: Fields<fn(&TxOut, Network) -> Value> = &[
     ("type", |vout, _| {
         json!(OutputType::from(&vout.script_pubkey))
     }),
+    #[cfg(not(feature = "dogecoin"))]
     ("address", |vout, network| {
         Address::from_script(&vout.script_pubkey, network)
+            .map_or(Value::Null, |a| Value::String(a.to_string()))
+    }),
+    #[cfg(feature = "dogecoin")]
+    ("address", |vout, _| {
+        brk_types::ChainAddress::from_script(&vout.script_pubkey, brk_types::MAINNET)
             .map_or(Value::Null, |a| Value::String(a.to_string()))
     }),
 ];
