@@ -310,6 +310,20 @@ const FACTS: &[(&str, &str, &str)] = &[
         r#"(n < 10 ? `$${Number(n.toPrecision(3))}` : `$${grouped(n)}`)"#,
     ),
     (
+        "_chain/index.html",
+        "        const cents = Math.round(Math.abs(dollars) * 100);\n",
+        r#"        const abs = Math.abs(dollars);
+        if (abs > 0 && abs < 1) {
+          const digits = Math.min(20, Math.max(2, 2 - Math.floor(Math.log10(abs))));
+          if (dollars < 0) pushPart(parts, "-", false);
+          pushPart(parts, "$", true);
+          pushPart(parts, abs.toFixed(digits).replace(/(\.\d\d\d*?)0+$/, "$1"), false);
+          return parts;
+        }
+        const cents = Math.round(abs * 100);
+"#,
+    ),
+    (
         "studio/index.html",
         r#"const toTheCent = new Intl.NumberFormat("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });"#,
         r#"const toTheCent = new Intl.NumberFormat("en-US", { minimumSignificantDigits: 2, maximumSignificantDigits: 4 });"#,

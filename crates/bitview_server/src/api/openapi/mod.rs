@@ -293,7 +293,7 @@ mod dogecoin_tests {
             .unwrap()
             .retain(|name, _| !name.starts_with("Oracle"));
         let spec = spec.to_string();
-        let stale = ["144 blocks", "round-dollar", "508,0", "BTC", "ten-minute", "ten minutes", "2,016"]
+        let stale = ["144 blocks", "round-dollar", "508,0", "BTC", "ten-minute", "ten minutes", "2,016", "in cents", "to the cent", "a cent"]
             .into_iter()
             .filter(|text| spec.contains(text))
             .map(|text| {

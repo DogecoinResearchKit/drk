@@ -165,6 +165,10 @@ const FACTS: &[(&str, &str)] = &[
         "the first priced interval (2010-08-16)",
         "the first priced interval (2013-12-06)",
     ),
+    // A price's unit is the micro-dollar (`CENTS_PER_DOLLAR` is 1,000,000), not the cent.
+    ("of the price in cents", "of the price in micro-dollars"),
+    ("rounded to the cent", "rounded to the micro-dollar"),
+    ("half a cent", "half a micro-dollar"),
     // The oracle's endpoints: only its price answers, from the tip's exchange close.
     (
         "On-chain BTC/USD price derived purely from round-dollar payment patterns in transaction outputs, with no external price feed. Payment activity is binned on a log scale, and a smoothed EMA over recent blocks locates the price.",
