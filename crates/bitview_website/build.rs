@@ -87,6 +87,23 @@ const FACTS: &[(&str, &str, &str)] = &[
     ),
     (
         "studio/index.html",
+        "The halvings: each block a multiple of 210,000 cut the reward in half; these, as they were mined (210,000 to
+       * 840,000). The next, a block every ten minutes from the tip's: an estimate, drawn as one.",
+        "The halvings: each block a multiple of 100,000 through 600,000 cut the reward in half; these, as they were
+       * mined. None come after: the reward has been a fixed 10,000 DOGE since.",
+    ),
+    (
+        "studio/index.html",
+        "halving: (210_000 * 600) / 86400",
+        "halving: 4 * 365.25",
+    ),
+    (
+        "studio/index.html",
+        "not at the next block,\n        // ten minutes on;",
+        "not at the next block,\n        // a minute on;",
+    ),
+    (
+        "studio/index.html",
         "Math.floor(facts.height / 210_000)",
         "Math.floor(facts.height / 100_000)",
     ),
