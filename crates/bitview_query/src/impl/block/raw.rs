@@ -158,13 +158,13 @@ mod dogecoin_tests {
 
     #[test]
     fn verifies_legacy_and_merge_mined_blocks() {
-        verify(include_str!("../../../../brk_reader/fixtures/dogecoin_100000.hex")).unwrap();
-        verify(include_str!("../../../../brk_reader/fixtures/dogecoin_371337.hex")).unwrap();
+        verify(include_str!("../../../../brk_reader/fixtures/dogecoin_28092.hex")).unwrap();
+        verify(include_str!("../../../../brk_reader/fixtures/dogecoin_372992.hex")).unwrap();
     }
 
     #[test]
     fn rejects_a_wrong_count_or_weight() {
-        let hex = include_str!("../../../../brk_reader/fixtures/dogecoin_371337.hex");
+        let hex = include_str!("../../../../brk_reader/fixtures/dogecoin_372992.hex");
         let bytes = block(hex);
         let (weight, count) = (4 * bytes.len() as u64, tx_count(&bytes));
         assert!(Query::verify_raw_payload(&bytes, weight, count + 1).is_err());

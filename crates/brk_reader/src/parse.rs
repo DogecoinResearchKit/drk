@@ -91,7 +91,7 @@ mod dogecoin_tests {
 
     /// Parses `hex` the way the pipeline does (80-byte header peek, then the body) and checks the
     /// result against the AuxPoW-aware `dogecoin::Block` decoder.
-    fn assert_parses(hex: &str, height: u32, expect_auxpow: bool) {
+    fn assert_parses(hex: &str, height: u32, expect_auxpow: bool) -> ReadBlock {
         let bytes = decode_hex(hex);
         let reference = DogecoinBlock::consensus_decode(&mut &bytes[..]).expect("reference decode");
         assert_eq!(reference.header.aux_pow.is_some(), expect_auxpow);
@@ -110,21 +110,31 @@ mod dogecoin_tests {
 
         assert_eq!(block.txdata.len(), reference.txdata.len());
         assert_eq!(block.hash(), &BlockHash::from(reference.block_hash()));
+        block
     }
 
-    /// Version 1, no AuxPoW: the transaction count follows the 80-byte header.
+    /// Block 28,092, version 1, no AuxPoW: the transaction count follows the 80-byte header.
     #[test]
     fn parses_legacy_block() {
-        assert_parses(LEGACY_100_000, 100_000, false);
+        let block = assert_parses(LEGACY_28_092, 28_092, false);
+        assert_eq!(
+            block.hash().to_string(),
+            "5794c80b80d9c33e0737a5353cd52b1f097f61d8d2b9f471e1702345080e0002"
+        );
     }
 
-    /// The first merge-mined block: an AuxPoW proof sits between the header and the count.
+    /// Block 372,992, merge-mined (AuxPoW from 371,337): its proof sits between the header and
+    /// the count.
     #[test]
     fn parses_merge_mined_block() {
-        assert_parses(AUXPOW_371_337, 371_337, true);
+        let block = assert_parses(AUXPOW_372_992, 372_992, true);
+        assert_eq!(
+            block.hash().to_string(),
+            "d3ea48350b102b90acf9eac6629072d5f697c02faf360b26d365e7b2bfb98070"
+        );
     }
 
-    const LEGACY_100_000: &str = include_str!("../fixtures/dogecoin_100000.hex");
+    const LEGACY_28_092: &str = include_str!("../fixtures/dogecoin_28092.hex");
 
-    const AUXPOW_371_337: &str = include_str!("../fixtures/dogecoin_371337.hex");
+    const AUXPOW_372_992: &str = include_str!("../fixtures/dogecoin_372992.hex");
 }

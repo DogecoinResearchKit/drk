@@ -113,14 +113,14 @@ impl Height {
         )
     }
 
-    /// Dogecoin Core's `GetDogecoinBlockSubsidy`. Before 145,000 the reward was drawn at random
-    /// up to `(1,000,000 >> halvings) - 1` DOGE; that cap is returned there. Then
-    /// `500,000 >> halvings` DOGE until 600,000, and 10,000 DOGE from then on.
+    /// Dogecoin Core's `GetDogecoinBlockSubsidy`. Before 145,000 the reward was `1 + rand` DOGE,
+    /// `rand` drawn from 1 to `(1,000,000 >> halvings) - 1`; its cap, `1,000,000 >> halvings`, is
+    /// returned there. Then `500,000 >> halvings` DOGE until 600,000, and 10,000 DOGE from then on.
     #[cfg(feature = "dogecoin")]
     pub fn subsidy(self) -> Sats {
         let halvings = self.0 / BLOCKS_PER_HALVING;
         let doge = if self.0 < DOGECOIN_SIMPLIFIED_REWARDS_HEIGHT {
-            (1_000_000_u64 >> halvings) - 1
+            1_000_000_u64 >> halvings
         } else if halvings < 6 {
             500_000_u64 >> halvings
         } else {
@@ -282,3 +282,34 @@ impl VecIndex for Height {
 }
 
 crate::impl_int_format!(Height);
+
+#[cfg(all(test, feature = "dogecoin"))]
+mod dogecoin_tests {
+    use super::*;
+
+    fn doge(height: u32) -> u64 {
+        u64::from(Height::new(height).subsidy()) / Sats::ONE_BTC_U64
+    }
+
+    #[test]
+    fn subsidy_follows_dogecoin_core() {
+        for (height, reward) in [
+            (0, 1_000_000),
+            (99_999, 1_000_000),
+            (100_000, 500_000),
+            (144_999, 500_000),
+            (145_000, 250_000),
+            (199_999, 250_000),
+            (200_000, 125_000),
+            (300_000, 62_500),
+            (400_000, 31_250),
+            (500_000, 15_625),
+            (599_999, 15_625),
+            (600_000, 10_000),
+            (5_000_000, 10_000),
+            (u32::MAX, 10_000),
+        ] {
+            assert_eq!(doge(height), reward, "height {height}");
+        }
+    }
+}

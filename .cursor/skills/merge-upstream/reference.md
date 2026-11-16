@@ -11,7 +11,7 @@ re-ported onto Bitview on `rebuild/bitview`.
   (macOS `~/Library/Application Support/Dogecoin`).
 - 60-second blocks (1,440 a day). Genesis 2013-12-06 (unix 1386325540), 88 DOGE.
 - Rewards: random before 145,000 (Dogeview reports the cap,
-  `(1,000,000 >> halvings) - 1` DOGE, and no unclaimed reward); then
+  `1,000,000 >> halvings` DOGE, and no unclaimed reward); then
   `500,000 >> halvings`; halving every 100,000 blocks through 600,000
   (2015-02-25); a fixed 10,000 DOGE since. No supply cap.
 - Difficulty: DigiShield, per block, since 145,000. Dogeview's
