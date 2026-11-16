@@ -402,6 +402,10 @@ impl Query {
                     .map_err(|_| Error::Internal("Failed to read block header"))?;
                 let id = blockhashes[i];
                 let header = Self::decode_header(&raw_header, &id)?;
+                #[cfg(not(feature = "dogecoin"))]
+                let aux_pow_len = 0;
+                #[cfg(feature = "dogecoin")]
+                let aux_pow_len = Self::skip_auxpow(&raw_header, &mut blk)?;
                 let varint_len = Self::read_block_tx_count(&mut blk, tx_count)?;
                 let Coinbase {
                     raw_hex: coinbase_raw,
@@ -426,7 +430,7 @@ impl Query {
                 // Bitcoin Core's average fee rate (`getblockstats`): fees over the fee-paying
                 // transactions' weight, without the header, the transaction count and the coinbase.
                 let fee_paying_weight = u64::from(weight)
-                    .saturating_sub(4 * (HEADER_SIZE + varint_len) as u64)
+                    .saturating_sub(4 * (HEADER_SIZE + aux_pow_len + varint_len) as u64)
                     .saturating_sub(u64::from(coinbase_weight));
                 let non_coinbase = u64::from(tx_count - 1);
 
@@ -435,7 +439,8 @@ impl Query {
                 let block_number = pool_block_numbers[i];
 
                 let non_coinbase_size =
-                    (size as usize).saturating_sub(HEADER_SIZE + varint_len + coinbase_total_size);
+                    (size as usize)
+                    .saturating_sub(HEADER_SIZE + aux_pow_len + varint_len + coinbase_total_size);
 
                 let miner_names = if pool_slug == PoolSlug::Ocean {
                     Self::parse_datum_miner_names(&scriptsig_bytes)
@@ -552,6 +557,14 @@ impl Query {
             return Err(Error::Internal("Block header differs from index"));
         }
         Ok(())
+    }
+    /// Reads past a merge-mined block's AuxPoW, which sits between the header and the count.
+    #[cfg(feature = "dogecoin")]
+    fn skip_auxpow(raw_header: &[u8], reader: impl Read) -> Result<usize> {
+        let header = BitcoinHeader::consensus_decode(&mut &raw_header[..])
+            .map_err(|_| Error::Internal("Failed to decode block header"))?;
+        brk_types::dogecoin::skip_auxpow(&header, &mut FromStd::new(reader))
+            .map_err(|_| Error::Internal("Failed to decode block AuxPoW"))
     }
     /// Validate the on-disk count before interpreting the following coinbase.
     pub(crate) fn read_block_tx_count(reader: impl Read, expected: u32) -> Result<usize> {

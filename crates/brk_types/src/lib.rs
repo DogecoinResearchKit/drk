@@ -20,6 +20,8 @@ mod cents_signed;
 mod checked_sub;
 mod coinbase_tag;
 mod cpfp;
+#[cfg(feature = "dogecoin")]
+pub mod dogecoin;
 mod dollars;
 mod feerate;
 mod height;

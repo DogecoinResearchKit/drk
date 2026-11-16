@@ -1,4 +1,6 @@
-use bitcoin::{VarInt, Weight, block::Header};
+use bitcoin::Weight;
+#[cfg(not(feature = "dogecoin"))]
+use bitcoin::{VarInt, block::Header};
 use bitview_primitives::BlockHashPrefix;
 use brk_error::{Error, Result};
 use brk_types::Timestamp;
@@ -51,7 +53,10 @@ impl BlockProcessor<'_> {
     /// Pushes the block's size, weight and SegWit totals from the per-transaction sizes
     /// [`ComputedTx`] already holds, without serializing the transactions again.
     pub fn push_block_size_and_weight(&mut self, txs: &[ComputedTx]) {
+        #[cfg(not(feature = "dogecoin"))]
         let overhead = Header::SIZE + VarInt::from(txs.len()).size();
+        #[cfg(feature = "dogecoin")]
+        let overhead = self.block.pre_tx_len();
         let mut total_size = overhead;
         let mut weight = Weight::from_non_witness_data_size(overhead as u64);
         let mut sw_txs = 0u16;

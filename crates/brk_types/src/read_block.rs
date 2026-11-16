@@ -51,6 +51,13 @@ impl ReadBlock {
         self.position
     }
 
+    /// The bytes before the first transaction: the header, its AuxPoW if merge-mined, and the
+    /// transaction count.
+    #[cfg(feature = "dogecoin")]
+    pub fn pre_tx_len(&self) -> usize {
+        self.tx_offsets[0] as usize
+    }
+
     pub fn tx_positions(&self) -> impl Iterator<Item = BlkPosition> {
         self.tx_offsets.iter().map(|&offset| self.position + offset)
     }
