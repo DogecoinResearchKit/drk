@@ -14,7 +14,13 @@ use vecdb::Version;
 #[cfg(feature = "storage")]
 pub const POOL_ATTRIBUTION_VERSION: Version = Version::new(3);
 
+#[cfg(not(feature = "dogecoin"))]
 const JSON_DATA: &str = include_str!("../pools-v2.json");
+/// litecoinspace.org's list, since Litecoin's merged miners mine Dogecoin: shared pools keep
+/// upstream's ids, the rest use slots 172-190. Its Litecoin payout addresses are dropped, so
+/// Dogecoin blocks match on coinbase tags.
+#[cfg(feature = "dogecoin")]
+const JSON_DATA: &str = include_str!("../pools-doge-v2.json");
 const TESTNET_IDS: &[u16] = &[145, 146, 149, 150, 156, 163];
 
 #[derive(Deserialize)]
@@ -86,7 +92,7 @@ pub fn pools() -> &'static Pools {
     static POOLS: OnceLock<Pools> = OnceLock::new();
     POOLS.get_or_init(|| {
         let entries: Vec<JsonPoolEntry> =
-            from_str(JSON_DATA).expect("Failed to parse pools-v2.json");
+            from_str(JSON_DATA).expect("Failed to parse the pools JSON");
 
         let max_id = entries.iter().map(|entry| entry.id).max().unwrap_or(0);
         debug_assert!(
@@ -146,4 +152,23 @@ pub fn pools() -> &'static Pools {
 
         Pools { pools, by_addr }
     })
+}
+
+#[cfg(all(test, feature = "dogecoin"))]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn dogecoin_pools_resolve() {
+        let pools = pools();
+        assert_eq!(pools.get(PoolSlug::Litecoinpoolorg).name, "Litecoinpool.org");
+        assert_eq!(
+            pools.find_from_coinbase_tag("Mined by /F2Pool/ for DOGE").unwrap().slug,
+            PoolSlug::F2Pool
+        );
+        assert_eq!(
+            pools.find_from_coinbase_tag("/LP/").unwrap().slug,
+            PoolSlug::Litecoinpoolorg
+        );
+    }
 }
