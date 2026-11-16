@@ -41,7 +41,8 @@ re-ported onto Bitview on `rebuild/bitview`.
 
 - AuxPoW: `brk_reader/src/parse.rs` (after `HEADER_LEN`), `brk_types/src/read_block.rs`
   `pre_tx_len`, `bitview_plugin_indexer/src/processor/block/mod.rs` overhead,
-  `bitview_query/src/impl/block/info.rs` `aux_pow_len`.
+  `bitview_query/src/impl/block/info.rs` `aux_pow_len`, `bitview_query/src/impl/block/raw.rs`
+  (Dogecoin `verify_raw_payload`, `brk_reader::MAGIC_BYTES`; fixtures in `brk_reader/fixtures`).
 - Indexer: `bitview_plugin_indexer/src/constants.rs` (`VERSION + 2_000`,
   empty `DUPLICATE_COINBASES`).
 - Supply and mining: `bitview_plugin_supply/src/{compute,import}.rs`
@@ -58,13 +59,36 @@ re-ported onto Bitview on `rebuild/bitview`.
   `live_price` = tip close).
 - Difficulty API: `bitview_query/src/impl/mining/difficulty.rs`
   (`TARGET_BLOCK_SECONDS`, `QUARTER_EPOCH = 59`).
+- RPC: `brk_rpc/src/rpc_client/{responses,mempool_entry}.rs` (see "Dogecoin Core 1.14 RPC").
 - Display: `brk_relabel` hooked in `bitview_query/src/vecs.rs`,
   `bitview_server/src/api/openapi/mod.rs`, `bitview_bindgen/src/constants.rs`,
   `bitview_devtools/src/bin/bindgen.rs`, `bitview_mcp/src/{main,page,server,logo}.rs`,
-  `bitview_website/{build.rs,src/website.rs}`.
+  `bitview_website/{build.rs,src/website.rs}`, and bindgen's `relabel_prose` over the catalog's
+  type schemas. `bitview_server`'s `served_spec_states_dogecoin` test fails when a relabel fact
+  stops matching upstream's API text.
 
 ## Runtime
 
 - `CRYPTOCOMPARE_API_KEY` gives price history from 2014; without it, prices
   before Bitfinex / Coinbase listings (2021) carry their earliest close.
 - Public site name `dogeview.space`; repository `IndigoNakamoto/drk`.
+
+## Dogecoin Core 1.14 RPC
+
+Dogecoin Core 1.14 answers as Bitcoin Core 0.14 did. Every call Dogeview makes (`brk_rpc`; `brk_mempool`
+goes through it), and what differs:
+
+| Call | Fields read | 1.14 |
+|---|---|---|
+| `getblockchaininfo` | `chain`, `blocks`, `headers` | same; `chain` is `main`, read as mainnet |
+| `getblockcount`, `getbestblockhash`, `getblockhash` (batched) | the result | same |
+| `getblockheader` (verbose) | `confirmations`, `height` | same (no `nTx`, not read) |
+| `getrawtransaction txid false` | hex | same (0.14 takes a bool); mempool only without `-txindex` |
+| `getblocktemplate {"rules":["segwit"]}` | `previousblockhash`, tx `data`, `txid`, `hash`, `depends`, `fee`, `sigops`, `weight` | no `hash`, `weight` (and maybe `sigops`): `fill_pre_segwit` sets wtxid = txid, weight = 4 x size; no `weightlimit` (not read) |
+| `getrawmempool false` | txids | same |
+| `getmempoolinfo` | `mempoolminfee` (DOGE/kB) | same |
+| `getmempoolentry` | `vsize`, `weight`, `time`, `fees.base` | `size`, `fee` instead: read by `mempool_entry.rs`'s Dogecoin `Entry` |
+| `sendrawtransaction hex` | txid | same |
+
+Answers are JSON-RPC 1.0 (`"error": null`, no `jsonrpc`), which both clients accept; errors come
+with HTTP 500. The reader needs no `xor.dat` (1.14 doesn't write one).
