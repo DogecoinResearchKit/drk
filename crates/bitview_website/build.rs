@@ -29,6 +29,75 @@ const FAVICON: (&str, &str) = ("favicon/favicon.svg\"", "favicon/favicon.svg?v=d
 /// upstream rewrite fails the build rather than ship Bitcoin's numbers.
 const FACTS: &[(&str, &str, &str)] = &[
     (
+        "explorer/index.html",
+        r#"      const COIN = "BTC";
+      const ATOMS = "sats";
+      const RATE_UNIT = "sat/vB";
+      const BLOCK_SECONDS = 600;
+      const HALVING_BLOCKS = 210_000;
+      // The blocks "within" a short and a longer wait: 30 minutes and an hour at 600 seconds a block.
+      const SOON = [3, 6];"#,
+        r#"      const COIN = "DOGE";
+      const ATOMS = "koinu";
+      const RATE_UNIT = "koinu/vB";
+      const BLOCK_SECONDS = 60;
+      // The blocks "within" a short and a longer wait: 10 and 20 minutes at 60 seconds a block.
+      const SOON = [10, 20];"#,
+    ),
+    (
+        "explorer/index.html",
+        "      // A simple payment's size: one input and two outputs, all native SegWit.
+      const PAYMENT = 141;",
+        "      // A simple payment's size: one input and two outputs, all P2PKH (Dogecoin has no SegWit).
+      const PAYMENT = 226;",
+    ),
+    // Dogecoin pays about a thousand times Bitcoin's rates: Core's floor is 100 koinu/vB (0.001 DOGE/kB),
+    // wallets commonly pay 1,000 to 100,000. The ramp spans the same 3.3 decades, moved up.
+    (
+        "explorer/index.html",
+        "      const LOW = 0.1;\n      const HIGH = 200;",
+        "      const LOW = 100;\n      const HIGH = 200_000;",
+    ),
+    (
+        "explorer/index.html",
+        "<span>200+ ${RATE_UNIT}</span>",
+        "<span>200,000+ ${RATE_UNIT}</span>",
+    ),
+    // The strip's cells fit Bitcoin's "0.131 sat/vB": thousands of koinu/vB go in thousands.
+    (
+        "explorer/index.html",
+        r#"<span class="cf">${rateU(c.fee)}</span>"#,
+        r#"<span class="cf">${c.fee >= 1e3 ? `${nf(c.fee < 1e4 ? 1 : 0).format(c.fee / 1e3)}k${unit(RATE_UNIT)}` : rateU(c.fee)}</span>"#,
+    ),
+    // A dogecoin is worth cents, not thousands of dollars: its prices to the hundredth of a cent.
+    (
+        "explorer/index.html",
+        "const dollars = (n) => (n < 100 ?",
+        "const dollars = (n) => (n < 1 ? `$${nf(4).format(n)}` : n < 100 ?",
+    ),
+    (
+        "explorer/index.html",
+        r#"$("price").textContent = `$${int(state.price)}`;"#,
+        r#"$("price").textContent = dollars(state.price);"#,
+    ),
+    // DigiShield retargets every block, and the reward has been a fixed 10,000 DOGE since block
+    // 600,000: neither a difficulty epoch nor a halving to count down to.
+    (
+        "explorer/index.html",
+        r#"        // Where the chain stands: its next difficulty adjustment and halving.
+        const d = state.difficulty;
+        const halving = (Math.floor(state.tip / HALVING_BLOCKS) + 1) * HALVING_BLOCKS;
+        $("chainsay").innerHTML = [
+          d &&
+            `Difficulty <b class="${tone(d.difficultyChange)}">${d.difficultyChange >= 0 ? "+" : "−"}${nf(2).format(Math.abs(d.difficultyChange))}%</b> in ${plural(d.remainingBlocks, "block")}, around ${new Date(d.estimatedRetargetDate).toLocaleDateString("en-US", { month: "short", day: "numeric" })}`,
+          `the halving in ${plural(halving - state.tip, "block")}`,
+        ]
+          .filter(Boolean)
+          .join(" · ");"#,
+        r#"        // Where the chain stands: difficulty retargets each block, the reward is fixed.
+        $("chainsay").innerHTML = `Difficulty retargets every block · the reward a fixed 10,000 ${COIN} since block 600,000`;"#,
+    ),
+    (
         "_chain/index.html",
         "const HALVING_EPOCH_BLOCKS = 210_000;",
         "const HALVING_EPOCH_BLOCKS = 100_000;",
