@@ -58,6 +58,12 @@ impl ReadBlock {
         self.tx_offsets[0] as usize
     }
 
+    /// The block as stored, AuxPoW included: re-serializing the parsed `Block` drops it.
+    #[cfg(feature = "dogecoin")]
+    pub fn bytes(&self) -> &[u8] {
+        &self.bytes
+    }
+
     pub fn tx_positions(&self) -> impl Iterator<Item = BlkPosition> {
         self.tx_offsets.iter().map(|&offset| self.position + offset)
     }

@@ -1,10 +1,9 @@
 use std::{cell::OnceCell, ops::Deref};
 
 #[cfg(not(feature = "dogecoin"))]
-use bitcoin::Address;
+use bitcoin::{Address, Block};
 use bitcoin::{
-    Block, Network, Transaction, TxIn, TxOut, Txid, consensus::encode::serialize_hex,
-    hex::DisplayHex,
+    Network, Transaction, TxIn, TxOut, Txid, consensus::encode::serialize_hex, hex::DisplayHex,
 };
 use brk_error::{Error, Result};
 use brk_types::{OutputType, ReadBlock};
@@ -59,7 +58,10 @@ pub const BLOCK: Fields<fn(&Ctx) -> Value> = &[
         json!(c.txdata[0].input[0].script_sig.to_hex_string())
     }),
     ("header_hex", |c| json!(serialize_hex(&c.header))),
+    #[cfg(not(feature = "dogecoin"))]
     ("hex", |c| json!(serialize_hex::<Block>(c))),
+    #[cfg(feature = "dogecoin")]
+    ("hex", |c| json!(c.bytes().to_lower_hex_string())),
 ];
 
 pub const TX: Fields<fn(&Tx) -> Value> = &[
@@ -166,12 +168,23 @@ impl<'a> Ctx<'a> {
         Value::Object(block)
     }
 
+    #[cfg(not(feature = "dogecoin"))]
     fn size_and_weight(&self) -> (usize, usize) {
         *self.size_weight.get_or_init(|| {
             (
                 self.block.total_size(),
                 self.block.weight().to_wu() as usize,
             )
+        })
+    }
+
+    /// From the stored bytes, which keep the AuxPoW the parsed `Block` drops; Dogecoin has no
+    /// witness data, so weight is four times size.
+    #[cfg(feature = "dogecoin")]
+    fn size_and_weight(&self) -> (usize, usize) {
+        *self.size_weight.get_or_init(|| {
+            let size = self.block.bytes().len();
+            (size, 4 * size)
         })
     }
 

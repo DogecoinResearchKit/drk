@@ -195,6 +195,16 @@ const FACTS: &[(&str, &str)] = &[
         "For each of the 144 blocks from `start` (a multiple of 144, else a bad request; from 508,032, earlier ones out of range): its payments as the oracle filters them, each read as each of its 19 round-dollar amounts ($1 to $10,000) at its exact amount in sats, counted by the price each reading implies, in buckets a tenth of a bin wide (0.115% of price) over the block's search window: finer than the oracle's bins, the evidence behind its prices. The chunk at the tip holds its blocks so far, `hash` its last block's; a whole, settled chunk never changes.",
         "Not found on Dogeview, which has no on-chain oracle: each block is priced at its day's DOGE/USD exchange close.",
     ),
+    // Merge-mined blocks (from 371,337) carry an AuxPoW proof after the header; none has witness
+    // data.
+    (
+        "including witness data: its 80-byte header, transaction-count CompactSize, and every serialized transaction.",
+        "as stored: its 80-byte header, the AuxPoW proof of a merge-mined block (from 371,337), the transaction-count CompactSize, and every serialized transaction.",
+    ),
+    (
+        "the bytes each block takes, witness data included.",
+        "the bytes each block takes, AuxPoW proof included.",
+    ),
     // Block timing: a minute a block, 1,440 a day.
     (
         "the 144 blocks expected at Bitcoin's ten-minute target",
@@ -450,6 +460,14 @@ mod tests {
             (
                 "Halving epoch: which subsidy era each block is in, one every 210,000 blocks.",
                 "Halving epoch: which subsidy era each block is in, one every 100,000 blocks through 600,000, a fixed reward since.",
+            ),
+            (
+                "Serialized block size in bytes, including witness data: its 80-byte header,\ntransaction-count CompactSize, and every serialized transaction.",
+                "Serialized block size in bytes, as stored: its 80-byte header, the AuxPoW proof of a merge-mined block (from 371,337), the transaction-count CompactSize, and every serialized transaction.",
+            ),
+            (
+                "Block size: the bytes each block takes, witness data included.",
+                "Block size: the bytes each block takes, AuxPoW proof included.",
             ),
             (
                 "Days until the next halving, at ten minutes a block.",
