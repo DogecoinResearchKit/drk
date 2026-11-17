@@ -44,7 +44,15 @@ re-ported onto Bitview on `rebuild/bitview`.
   `bitview_query/src/impl/block/info.rs` `aux_pow_len`, `bitview_query/src/impl/block/raw.rs`
   (Dogecoin `verify_raw_payload`, `brk_reader::MAGIC_BYTES`; fixtures in `brk_reader/fixtures`).
 - Indexer: `bitview_plugin_indexer/src/constants.rs` (`VERSION + 2_000`,
-  empty `DUPLICATE_COINBASES`).
+  empty `DUPLICATE_COINBASES`, `RECHECKED_BLOCKS` = `TARGET_BLOCKS_PER_DAY`: 1,440 blocks, a day
+  at one-minute blocks, where upstream's 144 is a day at ten).
+- Totals: `brk_types/src/totals.rs` (`SatsTotal`, `CentsTotal`, `Total`, `TOTAL_VERSION`); see
+  "u64 overflow".
+- Pools: `bitview_primitives/pools-doge-v2.json`, matched against each block's own (Dogecoin)
+  coinbase tag and payout addresses; a merge-mined block's AuxPoW parent coinbase is not read.
+  A block matching no pool stays `Unknown`: there is no guessing from the parent chain.
+- `blk` CLI: `blk/src/fields.rs` takes `size`, `weight` and `hex` from `ReadBlock::bytes`
+  (AuxPoW included); the re-serialized `bitcoin::Block` drops it.
 - Supply and mining: `bitview_plugin_supply/src/{compute,import}.rs`
   (`genesis_reward`), `bitview_plugin_mining/src/rewards/compute.rs`
   (clamped `unclaimed_rewards`), `bitview_plugin_bedrock` (`FLOOR_SUPPLY_START`
@@ -71,6 +79,11 @@ re-ported onto Bitview on `rebuild/bitview`.
 
 - `CRYPTOCOMPARE_API_KEY` gives price history from 2014; without it, prices
   before Bitfinex / Coinbase listings (2021) carry their earliest close.
+- Dogecoin Core 1.14.9 at `~/dogecoin-1.14.9` (`dogecoind`, `dogecoin-cli` on `PATH`), datadir
+  `~/Library/Application Support/Dogecoin`, `txindex=1`. The local resolver hides Dogecoin's DNS
+  seeds (`seed.multidoge.org` and the rest answer nothing), so a fresh node finds no peers:
+  resolve the seeds through public DNS (`dig @1.1.1.1 seed.multidoge.org +short`) and
+  `dogecoin-cli addnode <ip>:22556 onetry` each address. Once connected it learns peers itself.
 - Public site name `dogeview.space`; repository `IndigoNakamoto/drk`.
 
 ## Dogecoin Core 1.14 RPC
@@ -98,21 +111,52 @@ with HTTP 500. The reader needs no `xor.dat` (1.14 doesn't write one).
 `Sats` is a `u64` of koinu: about 184.5B DOGE. Release builds wrap on overflow (`overflow-checks =
 false`); dev builds panic. Peaks at the current tip:
 
-- **Already past the limit:** all-time transfer-volume cumulatives and their 1w/1m/1y windows.
-  Dogecoin moves billions of DOGE a day, so these passed 184.5B DOGE within weeks of genesis.
-  Affected: `bitview_plugin_transactions` `transfer_volume`, holders `activity.transfer_volume` (and
-  in profit / loss), age `aged_out` and transfer volume in profit / loss, address balance bands,
-  UTXO cohorts and creation cohorts (`bitview_distribution` `CumulativeValue`), and supply
-  velocity, which reads the 1y sum. Per-block values and windows are deltas of the stored total
-  (`checked_sub(..).unwrap_or_default()`), so the block where the total wraps reads 0, and so does
-  any window spanning it. At today's volume that happens every week or two.
+- **Past the limit (fixed by the totals seam below):** all-time transfer-volume cumulatives and
+  their 1w/1m/1y windows. Dogecoin moves billions of DOGE a day, so these passed 184.5B DOGE
+  within weeks of genesis: `bitview_plugin_transactions` `transfer_volume`, holders
+  `activity.transfer_volume` (and in profit / loss), age `aged_out` and transfer volume in
+  profit / loss, address balance bands, UTXO and creation cohorts (`bitview_distribution`
+  `CumulativeValue`), and supply velocity, which reads the 1y sum. Unfixed, per-block values and
+  windows (deltas of the stored total) read 0 at the block where the total wraps.
+- **Sat-days destroyed (fixed):** `Age::satdays_destroyed` and the cohort accumulator are `u128`;
+  one whale output passed `u64::MAX` sat-days in a few years.
 - **Around 2031 (supply-bounded, ~162B DOGE now, +5.26B a year):** supply snapshots (holders,
-  utxo set, address types and bands, bedrock, profit / loss supply), mining `coinbase` / `subsidy`
-  cumulatives, pools' per-pool coinbase totals (`pool_heights` `Rewards`).
+  utxo set, address types and bands, bedrock, profit / loss supply) and pools' per-pool reward
+  totals (`pool_heights` `Rewards`). Guarded, not widened: under `dogecoin`, `Sats` `+`, `+=` and
+  `Sum` are checked and panic with "Dogecoin supply exceeded u64 koinu; widen stock series";
+  pools' totals panic with "widen pool totals". **Deadline: widen these stock series before
+  2030.** The mining `coinbase` / `subsidy` cumulatives already go through the totals seam.
 - **Safe:** fees, OP_RETURN and other burns, per-block values, supply deltas.
-- **Cents:** a cents value is a `u64` of micro-dollars, capped near $18.4T. All-time USD transfer
-  volume, change included, could reach that within years.
+- **Cents:** a cents value is a `u64` of micro-dollars, capped near $18.4T; `Cents` addition
+  already panics on overflow. USD flow cumulatives (transfer volume, coinbase, subsidy: thermo
+  cap) go through `CentsTotal`; realized profit / loss / value destroyed cumulatives stay `Cents`.
 
-The cumulative machinery (`bitview_vecs` `ValuePerBlockCumulative`, `CumulativeSource`, the
-`LazyRollingSumFromHeight<Sats>` windows, and `bitview_distribution` `CumulativeValue`) is fixed to
-`Sats`, and vecdb's Pco storage has no `u128`.
+### The totals seam
+
+vecdb's `Pco` storage stops at 64-bit values (`u64`, `f64`): there is no `u128` column. So every
+multi-block sum of an amount (cumulatives and rolling windows) has the type `SatsTotal` /
+`CentsTotal` (`brk_types/src/totals.rs`):
+
+- Bitcoin: plain aliases of `Sats` / `Cents`. Upstream's code and data are unchanged.
+- Dogecoin: `f64` newtypes holding koinu / micro-dollars (the `_sats` / `_cents` names keep their
+  unit; the `btc` / `usd` views divide). The sum runs exactly in a `u128` (`Total::Acc`) and is
+  rounded once per stored row; on reopen it resumes from the stored row, one rounding off at
+  most (`total_source.rs` test).
+
+Enforced at:
+
+- `bitview_vecs`: `TotalSource` (beside `CumulativeSource`), `CumulativeState::add_total_at`,
+  `ValuePerBlockCumulative` (`cumulative: ValueTotalPerBlock`), the lazy value views
+  (`LazyValueBlock` takes the delta on the total and converts it back to `Sats` / `Cents`,
+  `LazyPreviousDeltaVec<I, S, T>`), the rolling sum / average views, and `FiatType for CentsTotal`.
+- Writers that sum by hand: `bitview_plugin_outputs/src/value/compute.rs`,
+  `bitview_plugin_transactions/src/{fees,inscription}/compute.rs` (`collect_last().map(Total::acc)`,
+  `SatsTotal::add`, `from_acc`).
+- Readers: `bitview_distribution` `CumulativeValue`, `bitview_plugin_age` `aged_out_sources`,
+  holders `Columns` / `AccountingTotals` / aSOPR, mining hash value and reward ratios, op_return fee
+  share, coinflow, supply velocity, cointime thermo cap, pools coinbase, query reward stats.
+- Versions: every retyped column adds `TOTAL_VERSION` (`ZERO` on Bitcoin, `ONE` on Dogecoin).
+
+On a merge, a new upstream cumulative or window of `Sats` / `Cents` should take the total type;
+the Dogecoin build fails to compile where a total meets a `Sats` reader. Bindgen's clients don't
+change: the catalog serves the `btc` / `usd` views, still `Bitcoin` / `Dollars`.
