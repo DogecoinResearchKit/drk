@@ -1,6 +1,6 @@
 use bitview_cohort::Age;
 use bitview_primitives::{CoinDays, CostBasisSnapshot, Count, SupplyState};
-use brk_types::{Bitcoin, Cents, CentsSats, CentsSigned, Sats};
+use brk_types::{Cents, CentsSats, CentsSigned, Sats};
 
 use super::{
     SendPrecomputed, UnrealizedState,
@@ -17,7 +17,7 @@ pub struct CohortState<R: RealizedOps, C: CostBasisOps> {
     pub realized: R,
     pub sent: Sats,
     spent_utxo_count: u64,
-    satdays_destroyed: Sats,
+    satdays_destroyed: u128,
     cost_basis: C,
 }
 
@@ -32,7 +32,7 @@ impl<R: RealizedOps, C: CostBasisOps> CohortState<R, C> {
 
     #[inline(always)]
     pub(crate) fn coindays_destroyed(&self) -> CoinDays {
-        CoinDays::new(f64::from(Bitcoin::from(self.satdays_destroyed)))
+        CoinDays::new(self.satdays_destroyed as f64 / Sats::ONE_BTC_U128 as f64)
     }
 
     #[inline(always)]
@@ -58,7 +58,7 @@ impl<R: RealizedOps, C: CostBasisOps> CohortState<R, C> {
         self.sent = Sats::ZERO;
         self.spent_utxo_count = 0;
         if R::TRACK_ACTIVITY {
-            self.satdays_destroyed = Sats::ZERO;
+            self.satdays_destroyed = 0;
         }
         self.realized.reset_block();
     }

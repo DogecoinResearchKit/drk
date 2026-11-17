@@ -24,9 +24,27 @@ impl Age {
         self.hours
     }
 
-    /// Supply in satoshis times fractional age in days, rounded down.
+    /// Supply in satoshis times fractional age in days, rounded down. Wider than `u64`: a
+    /// Dogecoin whale output passes `u64::MAX` sat-days in a few years.
     #[inline]
-    pub fn satdays_destroyed(&self, supply: Sats) -> Sats {
-        Sats::from((u64::from(supply) as f64 * self.days).floor() as u64)
+    pub fn satdays_destroyed(&self, supply: Sats) -> u128 {
+        (u64::from(supply) as f64 * self.days).floor() as u128
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn satdays_destroyed_does_not_wrap_past_u64() {
+        let age = Age {
+            hours: 24_000,
+            days: 1_000.0,
+        };
+        let supply = Sats::from(1_000_000_000 * Sats::ONE_BTC_U64);
+        let satdays = age.satdays_destroyed(supply);
+        assert!(satdays > u128::from(u64::MAX));
+        assert_eq!(satdays, 100_000_000_000_000_000_000);
     }
 }
