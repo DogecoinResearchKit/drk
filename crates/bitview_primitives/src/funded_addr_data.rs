@@ -116,9 +116,10 @@ impl<'de> Deserialize<'de> for CentsSats96 {
 #[derive(Debug, Default, Clone, Serialize, Deserialize, JsonSchema)]
 #[repr(C)]
 pub struct FundedAddressData {
-    /// Satoshis received by this address
+    /// Satoshis received by this address, modulo 2^64: a Dogecoin exchange address receives more
+    /// than `u64::MAX` koinu over its life. The balance, their difference, is always exact.
     pub received: Sats,
-    /// Satoshis sent by this address
+    /// Satoshis sent by this address, modulo 2^64 like `received`.
     pub sent: Sats,
     /// The realized capitalization: Σ(price × sats)
     realized_cap_raw: CentsSats96,
@@ -129,7 +130,9 @@ pub struct FundedAddressData {
 
 impl FundedAddressData {
     pub fn balance(&self) -> Sats {
-        (u64::from(self.received) - u64::from(self.sent)).into()
+        u64::from(self.received)
+            .wrapping_sub(u64::from(self.sent))
+            .into()
     }
 
     pub fn realized_price(&self) -> Cents {
@@ -210,7 +213,7 @@ impl FundedAddressData {
 
     /// Applies received outputs and returns their exact realized-cap delta.
     pub fn receive_outputs(&mut self, amount: Sats, price: Cents, output_count: u32) -> CentsSats {
-        self.received += amount;
+        self.received = wrapping_add(self.received, amount);
         self.funded_txo_count += output_count;
         let ps = CentsSats::from_price_sats(price, amount);
         self.realized_cap_raw.add(ps);
@@ -221,7 +224,7 @@ impl FundedAddressData {
     /// coinbase): the address holds as if it never received it.
     pub fn forget_output(&mut self, amount: Sats, price: Cents) {
         debug_assert!(self.utxo_count() > 0 && self.balance() >= amount);
-        self.received -= amount;
+        self.received = Sats::new(u64::from(self.received).wrapping_sub(u64::from(amount)));
         self.funded_txo_count -= 1;
         self.realized_cap_raw
             .subtract(CentsSats::from_price_sats(price, amount));
@@ -230,12 +233,17 @@ impl FundedAddressData {
     /// Applies a spent output and returns its exact realized-cap delta.
     pub fn send(&mut self, amount: Sats, previous_price: Cents) -> CentsSats {
         debug_assert!(self.balance() >= amount, "sent more than the balance");
-        self.sent += amount;
+        self.sent = wrapping_add(self.sent, amount);
         self.spent_txo_count += 1;
         let ps = CentsSats::from_price_sats(previous_price, amount);
         self.realized_cap_raw.subtract(ps);
         ps
     }
+}
+
+#[inline(always)]
+fn wrapping_add(total: Sats, amount: Sats) -> Sats {
+    Sats::new(u64::from(total).wrapping_add(u64::from(amount)))
 }
 
 impl From<EmptyAddressData> for FundedAddressData {
@@ -363,5 +371,22 @@ impl OverflowVecValue for FundedAddressData {
     #[inline(always)]
     fn from_overflow_index(index: usize) -> Self::Compact {
         FundedAddressDataCompact::from_overflow_index(index)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn balance_stays_exact_past_u64_lifetime_receipts() {
+        let mut data = FundedAddressData::default();
+        let half = Sats::new(u64::MAX / 2);
+        for _ in 0..5 {
+            data.receive_outputs(half, Cents::ZERO, 1);
+            data.send(half, Cents::ZERO);
+        }
+        data.receive_outputs(Sats::new(7), Cents::ZERO, 1);
+        assert_eq!(data.balance(), Sats::new(7));
     }
 }
