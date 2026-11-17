@@ -66,6 +66,27 @@ impl Total for Sats {
     }
 }
 
+/// Signed flows (net realized P&L) net out, so they stay within `i64`.
+impl Total for crate::CentsSigned {
+    type Part = Self;
+    type Acc = Self;
+
+    #[inline]
+    fn acc(self) -> Self {
+        self
+    }
+
+    #[inline]
+    fn add(acc: &mut Self, part: Self) {
+        *acc += part;
+    }
+
+    #[inline]
+    fn from_acc(acc: &Self) -> Self {
+        *acc
+    }
+}
+
 #[cfg(not(feature = "dogecoin"))]
 impl Total for Cents {
     type Part = Cents;

@@ -9,7 +9,7 @@ use bitview_vecs::{
 };
 use brk_error::Result;
 use brk_exit::Exit;
-use brk_types::{Cents, CentsTotal, Height, Version};
+use brk_types::{CentsTotal, Height, Version};
 use vecdb::{ComputeVec, Rw, StorageMode};
 
 use crate::{
@@ -59,7 +59,7 @@ pub struct AdjustedSopr<M: StorageMode = Rw> {
     /// Spend-time value of the outputs it keeps (spent an hour or more after creation).
     pub value_created: LazyFiatPerBlockCumulativeWithSums<CentsTotal>,
     /// Creation-time value of the outputs it keeps (spent an hour or more after creation).
-    pub value_destroyed: LazyFiatPerBlockCumulativeWithSums<Cents>,
+    pub value_destroyed: LazyFiatPerBlockCumulativeWithSums<CentsTotal>,
 }
 impl AdjustedSopr {
     fn import(id: AgeAggregateId, cx: &Imports) -> Result<Self> {

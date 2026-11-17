@@ -3,7 +3,7 @@ use bitview_primitives::{CoinDays, Count, PartsPerMillionSigned32};
 use bitview_traversable::Traversable;
 use bitview_vecs::{CachedSeries, CumulativeState, import_cached, ops::Quotient};
 use brk_error::Result;
-use brk_types::{Cents, CentsSigned, CentsTotal, Height, Sats, SatsTotal, TOTAL_VERSION, Version};
+use brk_types::{Cents, CentsSigned, CentsTotal, Height, Sats, SatsTotal, TOTAL_VERSION, Total, Version};
 use vecdb::{AnyVec, BinaryTransform, Database, ReadableVec, Rw, StorageMode, WritableVec};
 
 use crate::accounting::AccountingTotals;
@@ -21,24 +21,24 @@ pub(crate) struct Columns<M: StorageMode = Rw> {
     pub volume_loss_cents: CachedSeries<Height, CentsTotal, M>,
     pub cdd: CachedSeries<Height, CoinDays, M>,
     pub cap: CachedSeries<Height, Cents, M>,
-    pub profit: CachedSeries<Height, Cents, M>,
-    pub loss: CachedSeries<Height, Cents, M>,
+    pub profit: CachedSeries<Height, CentsTotal, M>,
+    pub loss: CachedSeries<Height, CentsTotal, M>,
     pub net_pnl: CachedSeries<Height, CentsSigned, M>,
-    pub value_destroyed: CachedSeries<Height, Cents, M>,
+    pub value_destroyed: CachedSeries<Height, CentsTotal, M>,
     pub unrealized_profit: CachedSeries<Height, Cents, M>,
     pub unrealized_loss: CachedSeries<Height, Cents, M>,
     pub supply_profit: CachedSeries<Height, Sats, M>,
     pub supply_loss: CachedSeries<Height, Sats, M>,
     pub price: CachedSeries<Height, Cents, M>,
     pub capitalized_price: CachedSeries<Height, Cents, M>,
-    pub gross_pnl: CachedSeries<Height, Cents, M>,
-    pub peak_regret: CachedSeries<Height, Cents, M>,
+    pub gross_pnl: CachedSeries<Height, CentsTotal, M>,
+    pub peak_regret: CachedSeries<Height, CentsTotal, M>,
     pub unrealized_net_pnl: CachedSeries<Height, CentsSigned, M>,
     pub nupl: CachedSeries<Height, PartsPerMillionSigned32, M>,
     pub unrealized_gross_pnl: CachedSeries<Height, Cents, M>,
     pub cap_profit: CachedSeries<Height, Cents, M>,
     pub cap_loss: CachedSeries<Height, Cents, M>,
-    peak: M::WriteOnly<CumulativeState<Cents>>,
+    peak: M::WriteOnly<CumulativeState<<CentsTotal as Total>::Acc>>,
 }
 impl Columns {
     pub fn import(db: &Database, id: AgeAggregateId, version: Version) -> Result<Self> {
@@ -89,12 +89,12 @@ impl Columns {
             profit: import_cached(
                 db,
                 &id.metric_name("realized_profit_cumulative_cents"),
-                version,
+                version + TOTAL_VERSION,
             )?,
             loss: import_cached(
                 db,
                 &id.metric_name("realized_loss_cumulative_cents"),
-                version,
+                version + TOTAL_VERSION,
             )?,
             net_pnl: import_cached(
                 db,
@@ -104,7 +104,7 @@ impl Columns {
             value_destroyed: import_cached(
                 db,
                 &id.metric_name("value_destroyed_cumulative_cents"),
-                version,
+                version + TOTAL_VERSION,
             )?,
             unrealized_profit: import_cached(
                 db,
@@ -123,12 +123,12 @@ impl Columns {
             gross_pnl: import_cached(
                 db,
                 &id.metric_name("gross_realized_pnl_cumulative_cents"),
-                version,
+                version + TOTAL_VERSION,
             )?,
             peak_regret: import_cached(
                 db,
                 &id.metric_name("realized_peak_regret_cumulative_cents"),
-                version,
+                version + TOTAL_VERSION,
             )?,
             unrealized_net_pnl: import_cached(
                 db,
@@ -153,8 +153,8 @@ impl Columns {
     pub fn push(&mut self, d: &AccountingTotals, spot: Cents) {
         let peak = self.peak.accumulate(
             self.peak_regret.len(),
-            || self.peak_regret.collect_last(),
-            |v| *v += d.peak_regret_raw.to_cents(),
+            || self.peak_regret.collect_last().map(Total::acc),
+            |acc| CentsTotal::add(acc, d.peak_regret_raw.to_cents()),
         );
         self.supply.push(d.supply);
         self.count.push(d.count);
@@ -180,7 +180,7 @@ impl Columns {
         self.capitalized_price
             .push(d.capitalized_cap_raw.capitalized_price(d.cap_raw));
         self.gross_pnl.push(d.profit + d.loss);
-        self.peak_regret.push(peak);
+        self.peak_regret.push(CentsTotal::from_acc(&peak));
         let net_pnl =
             CentsSigned::new(d.unrealized_profit.inner() as i64 - d.unrealized_loss.inner() as i64);
         self.unrealized_net_pnl.push(net_pnl);

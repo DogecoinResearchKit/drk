@@ -1,23 +1,35 @@
 use bitview_plugin_mappings::Vecs as MappingsVecs;
 use bitview_traversable::Traversable;
 use bitview_vecs::{
-    CumulativeSource, FiatType, LazyFiatPerBlockCumulativeWithSums, LazyWindowStartVec,
-    shapes::Windows,
+    FiatType, LazyFiatPerBlockCumulativeWithSums, LazyWindowStartVec, TotalSource, shapes::Windows,
 };
 use brk_error::Result;
-use brk_types::{Cents, Version};
-use vecdb::{Database, Rw, StorageMode};
+use brk_types::{Cents, CentsSigned, CentsTotal, Total, Version};
+use vecdb::{Database, PcoVecValue, Rw, StorageMode};
+
+/// A per-block fiat amount and the type its running total is stored as.
+pub trait FiatFlow: FiatType {
+    type Total: FiatType + PcoVecValue + Total<Part = Self>;
+}
+
+impl FiatFlow for Cents {
+    type Total = CentsTotal;
+}
+
+impl FiatFlow for CentsSigned {
+    type Total = CentsSigned;
+}
 
 /// One cohort's fiat flow, stored as its running total `{name}_cumulative_cents`.
 #[derive(Traversable)]
-pub struct CumulativeFiat<C: FiatType = Cents, M: StorageMode = Rw> {
+pub struct CumulativeFiat<C: FiatFlow = Cents, M: StorageMode = Rw> {
     #[traversable(flatten)]
-    value: LazyFiatPerBlockCumulativeWithSums<C>,
+    value: LazyFiatPerBlockCumulativeWithSums<C::Total>,
     #[traversable(hidden)]
-    pub stored: CumulativeSource<C, M>,
+    pub stored: TotalSource<C::Total, M>,
 }
 
-impl<C: FiatType> CumulativeFiat<C> {
+impl<C: FiatFlow> CumulativeFiat<C> {
     pub fn import(
         db: &Database,
         name: &str,
@@ -25,7 +37,7 @@ impl<C: FiatType> CumulativeFiat<C> {
         mappings: &MappingsVecs,
         window_starts: &Windows<&LazyWindowStartVec>,
     ) -> Result<Self> {
-        let stored = CumulativeSource::import(
+        let stored = TotalSource::import(
             db,
             &format!("{name}_cumulative_cents"),
             version + Version::TWO,

@@ -5,7 +5,7 @@ use bitview_vecs::{
     LazyFiatPerBlockCumulativeWithSums, RatioRollingWindows, RollingWindows, ops::Quotient,
 };
 use brk_error::Result;
-use brk_types::{Cents, CentsSigned};
+use brk_types::{CentsSigned, CentsTotal};
 use vecdb::{ComputeVec, Rw, StorageMode};
 
 use crate::section::{CohortCompute, Imports, Section};
@@ -15,18 +15,18 @@ pub struct Realized<M: StorageMode = Rw> {
     /// Profit realized by the cohort's outputs: spending value minus
     /// creation-date value, counted only for profitable spends.
     #[traversable(lead = "Realized profit: what sellers gained over what their coins cost.")]
-    pub profit: LazyFiatPerBlockCumulativeWithSums<Cents>,
+    pub profit: LazyFiatPerBlockCumulativeWithSums<CentsTotal>,
     /// Loss realized by the cohort's outputs: creation-date value minus
     /// spending value, counted only for losing spends.
     #[traversable(lead = "Realized loss: what sellers lost against what their coins cost.")]
-    pub loss: LazyFiatPerBlockCumulativeWithSums<Cents>,
+    pub loss: LazyFiatPerBlockCumulativeWithSums<CentsTotal>,
     /// Net realized profit and loss of the cohort's outputs when spent:
     /// realized profit minus realized loss.
     #[traversable(lead = "Net realized profit and loss: realized profit minus realized loss.")]
     pub net_pnl: LazyFiatPerBlockCumulativeWithSums<CentsSigned>,
     /// Gross realized profit and loss: realized profit plus realized loss.
     #[traversable(lead = "Gross realized profit and loss: realized profit plus realized loss.")]
-    pub gross_pnl: LazyFiatPerBlockCumulativeWithSums<Cents>,
+    pub gross_pnl: LazyFiatPerBlockCumulativeWithSums<CentsTotal>,
     /// Realized profit divided by realized loss over the window; undefined (null) when that
     /// realized loss is zero.
     #[traversable(
@@ -35,13 +35,13 @@ pub struct Realized<M: StorageMode = Rw> {
     pub profit_to_loss: RollingWindows<Multiple, M>,
     /// Creation-time value of the outputs spent.
     #[traversable(lead = "Value destroyed: what the coins spent had cost their holders.")]
-    pub value_destroyed: LazyFiatPerBlockCumulativeWithSums<Cents>,
+    pub value_destroyed: LazyFiatPerBlockCumulativeWithSums<CentsTotal>,
     /// Peak regret: the value sellers forgo relative to each spent output's
     /// highest spot price from its creation block through its spending block.
     #[traversable(
         lead = "Peak regret: what sellers gave up against the highest price their coins saw while they held them."
     )]
-    pub peak_regret: LazyFiatPerBlockCumulativeWithSums<Cents>,
+    pub peak_regret: LazyFiatPerBlockCumulativeWithSums<CentsTotal>,
     /// Spent output profit ratio (SOPR): spend-time value in US dollars of the outputs spent
     /// over the window divided by their creation-time value (value destroyed); undefined (null)
     /// when that value is zero.
