@@ -4,7 +4,7 @@ use bitview_vecs::{
     FiatPerBlock, LazyFiatPerBlock, LazyPerBlock, LazyPercentPerBlock, PerBlock, ops::Quotient,
 };
 use brk_error::Result;
-use brk_types::{Cents, CentsSigned, Dollars, Height, Version};
+use brk_types::{Cents, CentsSigned, CentsTotal, Dollars, Height, Version};
 use vecdb::{Convert, Database, Ident, ReadableCloneableVec};
 
 use super::{super::supply, Vecs};
@@ -14,14 +14,14 @@ impl Vecs {
         db: &Database,
         version: Version,
         mappings: &MappingsVecs,
-        subsidy_cents: &PerBlock<Cents>,
+        subsidy_cents: &PerBlock<CentsTotal>,
         supply: &supply::Vecs,
         realized_cap: &impl ReadableCloneableVec<Height, Cents>,
     ) -> Result<Self> {
         let thermo_cents =
             LazyPerBlock::from_resolutions::<Ident>("thermo_cap_cents", version, subsidy_cents);
         let thermo_usd =
-            LazyPerBlock::from_lazy::<Convert, Cents>("thermo_cap", version, &thermo_cents);
+            LazyPerBlock::from_lazy::<Convert, CentsTotal>("thermo_cap", version, &thermo_cents);
         let investor = FiatPerBlock::import(db, "investor_cap", version + Version::ONE, mappings)?;
         let investorness = LazyPercentPerBlock::from_ratio::<
             CentsSigned,
@@ -35,7 +35,7 @@ impl Vecs {
             mappings,
         );
         let producerness =
-            LazyPercentPerBlock::from_ratio::<Cents, Cents, Quotient<PartsPerMillion32>>(
+            LazyPercentPerBlock::from_ratio::<CentsTotal, Cents, Quotient<PartsPerMillion32>>(
                 "producerness",
                 version,
                 &thermo_cents.height,

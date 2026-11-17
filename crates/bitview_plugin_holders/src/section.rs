@@ -3,7 +3,7 @@ use bitview_plugin_mappings::Vecs as Mappings;
 use bitview_vecs::{CachedSeries, LazyWindowStartVec, shapes::Windows};
 use brk_error::Result;
 use brk_exit::Exit;
-use brk_types::{Cents, Height, Sats, Version};
+use brk_types::{Cents, CentsTotal, Height, Sats, Version};
 use vecdb::{Database, ReadableBoxedVec};
 
 use crate::{activity::Activity, columns::Columns, cost_basis::CostBasisVecs};
@@ -18,7 +18,7 @@ pub(crate) struct Imports<'a> {
     pub spot: &'a ReadableBoxedVec<Height, Cents>,
     pub cost_basis: &'a CostBasisVecs,
     /// The under-an-hour band's cumulative transfer volume in cents, which aSOPR leaves out.
-    pub under_1h_volume: &'a CachedSeries<Height, Cents>,
+    pub under_1h_volume: &'a CachedSeries<Height, CentsTotal>,
     /// The under-an-hour band's cumulative value destroyed, which aSOPR leaves out.
     pub under_1h_value_destroyed: &'a CachedSeries<Height, Cents>,
 }

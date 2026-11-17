@@ -3,7 +3,7 @@ use bitview_primitives::{CoinDays, Count, PartsPerMillionSigned32};
 use bitview_traversable::Traversable;
 use bitview_vecs::{CachedSeries, CumulativeState, import_cached, ops::Quotient};
 use brk_error::Result;
-use brk_types::{Cents, CentsSigned, Height, Sats, Version};
+use brk_types::{Cents, CentsSigned, CentsTotal, Height, Sats, SatsTotal, TOTAL_VERSION, Version};
 use vecdb::{AnyVec, BinaryTransform, Database, ReadableVec, Rw, StorageMode, WritableVec};
 
 use crate::accounting::AccountingTotals;
@@ -13,12 +13,12 @@ pub(crate) struct Columns<M: StorageMode = Rw> {
     pub supply: CachedSeries<Height, Sats, M>,
     pub count: CachedSeries<Height, Count, M>,
     pub spent_count: CachedSeries<Height, Count, M>,
-    pub volume_sats: CachedSeries<Height, Sats, M>,
-    pub volume_cents: CachedSeries<Height, Cents, M>,
-    pub volume_profit_sats: CachedSeries<Height, Sats, M>,
-    pub volume_profit_cents: CachedSeries<Height, Cents, M>,
-    pub volume_loss_sats: CachedSeries<Height, Sats, M>,
-    pub volume_loss_cents: CachedSeries<Height, Cents, M>,
+    pub volume_sats: CachedSeries<Height, SatsTotal, M>,
+    pub volume_cents: CachedSeries<Height, CentsTotal, M>,
+    pub volume_profit_sats: CachedSeries<Height, SatsTotal, M>,
+    pub volume_profit_cents: CachedSeries<Height, CentsTotal, M>,
+    pub volume_loss_sats: CachedSeries<Height, SatsTotal, M>,
+    pub volume_loss_cents: CachedSeries<Height, CentsTotal, M>,
     pub cdd: CachedSeries<Height, CoinDays, M>,
     pub cap: CachedSeries<Height, Cents, M>,
     pub profit: CachedSeries<Height, Cents, M>,
@@ -53,32 +53,32 @@ impl Columns {
             volume_sats: import_cached(
                 db,
                 &id.metric_name("transfer_volume_cumulative_sats"),
-                version,
+                version + TOTAL_VERSION,
             )?,
             volume_cents: import_cached(
                 db,
                 &id.metric_name("transfer_volume_cumulative_cents"),
-                version,
+                version + TOTAL_VERSION,
             )?,
             volume_profit_sats: import_cached(
                 db,
                 &id.metric_name("transfer_volume_in_profit_cumulative_sats"),
-                version,
+                version + TOTAL_VERSION,
             )?,
             volume_profit_cents: import_cached(
                 db,
                 &id.metric_name("transfer_volume_in_profit_cumulative_cents"),
-                version,
+                version + TOTAL_VERSION,
             )?,
             volume_loss_sats: import_cached(
                 db,
                 &id.metric_name("transfer_volume_in_loss_cumulative_sats"),
-                version,
+                version + TOTAL_VERSION,
             )?,
             volume_loss_cents: import_cached(
                 db,
                 &id.metric_name("transfer_volume_in_loss_cumulative_cents"),
-                version,
+                version + TOTAL_VERSION,
             )?,
             cdd: import_cached(
                 db,

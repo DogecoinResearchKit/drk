@@ -6,7 +6,7 @@ use bitview_vecs::{
     LazyPercentPerBlock, LazyPercentRollingWindows, LazyRollingSumsAmountFromHeight,
     LazyWindowStartVec, PricedRows, ops::Quotient, priced_starts, shapes::Windows,
 };
-use brk_types::{Bitcoin, Cents, Dollars, Height, Sats};
+use brk_types::{Bitcoin, Cents, CentsTotal, Dollars, Height, Sats, SatsTotal};
 use vecdb::{
     BinaryTransform, DeltaSub, Ident, LazyDeltaVec, LazyVec, ReadableCloneableVec, Version,
 };
@@ -86,13 +86,13 @@ impl PoolVecs {
             Column::Blocks,
             pool_heights.clone(),
         );
-        let coinbase_sats = PoolCumulativeVec::<Sats>::new(
+        let coinbase_sats = PoolCumulativeVec::<SatsTotal>::new(
             &name("coinbase_cumulative_sats_source"),
             slug,
             Column::CoinbaseSats,
             pool_heights.clone(),
         );
-        let coinbase_cents = PoolCumulativeVec::<Cents>::new(
+        let coinbase_cents = PoolCumulativeVec::<CentsTotal>::new(
             &name("coinbase_cumulative_cents_source"),
             slug,
             Column::CoinbaseCents,

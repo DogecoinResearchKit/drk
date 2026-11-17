@@ -1,21 +1,21 @@
-use brk_types::{Bitcoin, Cents, Dollars, Height, Sats, Version};
+use brk_types::{Bitcoin, CentsTotal, Dollars, Height, SatsTotal, Version};
 use vecdb::{Convert, Ident, ReadableCloneableVec};
 
 use crate::{IndexSources, LazyPerBlock, Value};
 
 pub type LazyCumulativeValuePerBlock = Value<
-    LazyPerBlock<Sats>,
-    LazyPerBlock<Cents>,
-    LazyPerBlock<Bitcoin, Sats>,
-    LazyPerBlock<Dollars, Cents>,
+    LazyPerBlock<SatsTotal>,
+    LazyPerBlock<CentsTotal>,
+    LazyPerBlock<Bitcoin, SatsTotal>,
+    LazyPerBlock<Dollars, CentsTotal>,
 >;
 
 impl LazyCumulativeValuePerBlock {
     pub fn from_sources(
         name: &str,
         version: Version,
-        cumulative_sats: &(impl ReadableCloneableVec<Height, Sats> + ?Sized),
-        cumulative_cents: &(impl ReadableCloneableVec<Height, Cents> + ?Sized),
+        cumulative_sats: &(impl ReadableCloneableVec<Height, SatsTotal> + ?Sized),
+        cumulative_cents: &(impl ReadableCloneableVec<Height, CentsTotal> + ?Sized),
         indexes: &IndexSources,
     ) -> Self {
         let sats = LazyPerBlock::from_height_source::<Ident>(
@@ -24,7 +24,7 @@ impl LazyCumulativeValuePerBlock {
             cumulative_sats,
             indexes,
         );
-        let btc = LazyPerBlock::from_lazy::<Convert, Sats>(name, version, &sats);
+        let btc = LazyPerBlock::from_lazy::<Convert, SatsTotal>(name, version, &sats);
         let cents = LazyPerBlock::from_height_source::<Ident>(
             &format!("{name}_cents"),
             version,
@@ -32,7 +32,7 @@ impl LazyCumulativeValuePerBlock {
             indexes,
         );
         let usd =
-            LazyPerBlock::from_lazy::<Convert, Cents>(&format!("{name}_usd"), version, &cents);
+            LazyPerBlock::from_lazy::<Convert, CentsTotal>(&format!("{name}_usd"), version, &cents);
         Self {
             btc,
             sats,

@@ -1,10 +1,12 @@
 use bitview_traversable::Traversable;
 use brk_error::Result;
 use brk_exit::Exit;
-use brk_types::{Cents, Height, Sats, Version};
+use brk_types::{
+    Cents, CentsTotal, Height, Sats, SatsTotal, TOTAL_VERSION, Total, Version,
+};
 use vecdb::{AnyVec, ComputeVec, Database, ReadableVec, Rw, StorageMode, VecValue, WritableVec};
 
-use crate::{CumulativeState, IndexSources, LazyValueBlock, ValuePerBlock};
+use crate::{CumulativeState, IndexSources, LazyValueBlock, ValueTotalPerBlock};
 
 #[derive(Traversable)]
 pub struct ValuePerBlockCumulative<M: StorageMode = Rw> {
@@ -12,9 +14,9 @@ pub struct ValuePerBlockCumulative<M: StorageMode = Rw> {
     pub block: LazyValueBlock,
     /// Cumulative value through the represented block. At time-period indexes,
     /// the value is taken at the period's final block.
-    pub cumulative: ValuePerBlock<M>,
-    last_sats: M::WriteOnly<CumulativeState<Sats>>,
-    last_cents: M::WriteOnly<CumulativeState<Cents>>,
+    pub cumulative: ValueTotalPerBlock<M>,
+    last_sats: M::WriteOnly<CumulativeState<<SatsTotal as Total>::Acc>>,
+    last_cents: M::WriteOnly<CumulativeState<<CentsTotal as Total>::Acc>>,
 }
 
 const VERSION: Version = Version::TWO;
@@ -26,8 +28,9 @@ impl ValuePerBlockCumulative {
         version: Version,
         indexes: &IndexSources,
     ) -> Result<Self> {
-        let v = version + VERSION;
-        let cumulative = ValuePerBlock::import(db, &format!("{name}_cumulative"), v, indexes)?;
+        let v = version + VERSION + TOTAL_VERSION;
+        let cumulative =
+            ValueTotalPerBlock::import(db, &format!("{name}_cumulative"), v, indexes)?;
         let block = LazyValueBlock::from_cumulative_sources(
             name,
             v,
@@ -48,7 +51,7 @@ impl ValuePerBlockCumulative {
         let sats = &mut self.cumulative.sats.height;
         let total = self
             .last_sats
-            .add_at(Height::from(sats.len()), &*sats, |total| *total += value);
+            .add_total_at(Height::from(sats.len()), &*sats, value);
         sats.push(total);
     }
 
@@ -69,7 +72,7 @@ impl ValuePerBlockCumulative {
             source,
             |(height, value, this)| {
                 let value = transform(height, value);
-                last.add_at(height, this, |total| *total += value)
+                last.add_total_at(height, this, value)
             },
             exit,
         )?;
@@ -96,7 +99,7 @@ impl ValuePerBlockCumulative {
             source2,
             |(height, value1, value2, this)| {
                 let value = transform(height, value1, value2);
-                last.add_at(height, this, |total| *total += value)
+                last.add_total_at(height, this, value)
             },
             exit,
         )?;
@@ -114,10 +117,7 @@ impl ValuePerBlockCumulative {
             max_from,
             &self.block.sats,
             price_cents,
-            |(height, sats, price, this)| {
-                let value = sats.value_at(price);
-                last.add_at(height, this, |total| *total += value)
-            },
+            |(height, sats, price, this)| last.add_total_at(height, this, sats.value_at(price)),
             exit,
         )?)
     }

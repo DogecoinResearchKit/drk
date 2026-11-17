@@ -1,8 +1,8 @@
 use bitview_compute::NumericValue;
 use brk_error::Result;
-use brk_types::{Bitcoin, Cents, Dollars, Sats, SatsSigned, Version};
+use brk_types::{Bitcoin, Cents, CentsTotal, Dollars, Sats, SatsSigned, SatsTotal, Version};
 use schemars::JsonSchema;
-use vecdb::{Convert, Database, Rw};
+use vecdb::{Convert, Database, PcoVecValue, Rw};
 
 use crate::{IndexSources, LazyPerBlock, PerBlock, Value};
 
@@ -14,14 +14,21 @@ impl AmountType for Sats {}
 impl AmountType for SatsSigned {}
 
 /// Sats and cents each own one shared source cache.
-pub type ValuePerBlock<M = Rw> = Value<
-    PerBlock<Sats, M>,
-    PerBlock<Cents, M>,
-    LazyPerBlock<Bitcoin, Sats>,
-    LazyPerBlock<Dollars, Cents>,
+pub type ValuePerBlock<M = Rw, S = Sats, C = Cents> = Value<
+    PerBlock<S, M>,
+    PerBlock<C, M>,
+    LazyPerBlock<Bitcoin, S>,
+    LazyPerBlock<Dollars, C>,
 >;
 
-impl ValuePerBlock {
+/// Running totals: [`SatsTotal`] and [`CentsTotal`].
+pub type ValueTotalPerBlock<M = Rw> = ValuePerBlock<M, SatsTotal, CentsTotal>;
+
+impl<S, C> ValuePerBlock<Rw, S, C>
+where
+    S: PcoVecValue + PartialOrd + JsonSchema + Into<Bitcoin> + 'static,
+    C: PcoVecValue + PartialOrd + JsonSchema + Into<Dollars> + 'static,
+{
     pub(crate) fn import(
         db: &Database,
         name: &str,

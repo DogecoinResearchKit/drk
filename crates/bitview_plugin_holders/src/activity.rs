@@ -8,7 +8,7 @@ use bitview_vecs::{
 };
 use brk_error::Result;
 use brk_exit::Exit;
-use brk_types::{Cents, Height, Sats, Version};
+use brk_types::{CentsTotal, Height, SatsTotal, Version};
 use vecdb::{ComputeVec, Database, Rw, StorageMode};
 
 use crate::columns::Columns;
@@ -50,8 +50,8 @@ impl Activity {
         windows: &Windows<&LazyWindowStartVec>,
     ) -> Result<Self> {
         let value = |metric: &str,
-                     sats: &CachedSeries<Height, Sats>,
-                     cents: &CachedSeries<Height, Cents>| {
+                     sats: &CachedSeries<Height, SatsTotal>,
+                     cents: &CachedSeries<Height, CentsTotal>| {
             LazyValuePerBlockCumulativeRolling::from_cumulative_sources(
                 &id.metric_name(metric),
                 v,

@@ -4,7 +4,7 @@ use bitview_plugin_mappings::Vecs as MappingsVecs;
 use bitview_primitives::{Boolean, Count, Count16};
 use brk_error::Result;
 use brk_exit::Exit;
-use brk_types::{Height, Sats, TxIndex};
+use brk_types::{Height, Sats, SatsTotal, Total, TxIndex};
 use vecdb::{AnyStoredVec, AnyVec, PcoVec, ReadableVec, VecIndex, WritableVec};
 
 use super::Vecs;
@@ -71,6 +71,7 @@ impl Vecs {
             .sats
             .height
             .collect_last()
+            .map(Total::acc)
             .unwrap_or_default();
         let mut block_start = first_tx.collect_one_at(start_height).unwrap().to_usize();
         // Only blocks with inscriptions read, in increasing order: the flags keep their decoder.
@@ -94,8 +95,12 @@ impl Vecs {
                     }
                 });
             }
-            cumulative += inscribed;
-            self.fees.cumulative.sats.height.push(cumulative);
+            SatsTotal::add(&mut cumulative, inscribed);
+            self.fees
+                .cumulative
+                .sats
+                .height
+                .push(SatsTotal::from_acc(&cumulative));
             block_start = block_end;
 
             if (height + 1).is_multiple_of(WRITE_INTERVAL) {

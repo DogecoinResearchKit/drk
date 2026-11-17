@@ -1,5 +1,5 @@
 use bitview_primitives::{CentsSquaredSats, CoinDays, Count};
-use brk_types::{Cents, CentsSats, CentsSigned, Sats};
+use brk_types::{Cents, CentsSats, CentsSigned, CentsTotal, Sats, SatsTotal};
 use derive_more::AddAssign;
 
 /// Additive accounting inputs from disjoint age bands at one height.
@@ -8,12 +8,12 @@ pub(crate) struct AccountingTotals {
     pub supply: Sats,
     pub count: Count,
     pub spent_count: Count,
-    pub volume_sats: Sats,
-    pub volume_cents: Cents,
-    pub volume_profit_sats: Sats,
-    pub volume_profit_cents: Cents,
-    pub volume_loss_sats: Sats,
-    pub volume_loss_cents: Cents,
+    pub volume_sats: SatsTotal,
+    pub volume_cents: CentsTotal,
+    pub volume_profit_sats: SatsTotal,
+    pub volume_profit_cents: CentsTotal,
+    pub volume_loss_sats: SatsTotal,
+    pub volume_loss_cents: CentsTotal,
     pub cdd: CoinDays,
     pub cap_raw: CentsSats,
     pub capitalized_cap_raw: CentsSquaredSats,

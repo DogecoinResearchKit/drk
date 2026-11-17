@@ -1,5 +1,5 @@
 use bitview_traversable::Traversable;
-use brk_types::{Cents, Height, Sats, Version};
+use brk_types::{CentsTotal, Height, SatsTotal, Version};
 use vecdb::ReadableCloneableVec;
 
 use crate::{
@@ -22,8 +22,8 @@ impl LazyValuePerBlockCumulativeRolling {
     pub fn from_cumulative_sources(
         name: &str,
         version: Version,
-        cumulative_sats: &(impl ReadableCloneableVec<Height, Sats> + ?Sized),
-        cumulative_cents: &(impl ReadableCloneableVec<Height, Cents> + ?Sized),
+        cumulative_sats: &(impl ReadableCloneableVec<Height, SatsTotal> + ?Sized),
+        cumulative_cents: &(impl ReadableCloneableVec<Height, CentsTotal> + ?Sized),
         indexes: &IndexSources,
         window_starts: &Windows<&impl ReadableCloneableVec<Height, Height>>,
     ) -> Self {

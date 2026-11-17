@@ -1,12 +1,12 @@
-use brk_types::{Bitcoin, Cents, Dollars, Sats};
+use brk_types::{Bitcoin, CentsTotal, Dollars, SatsTotal};
 
 use crate::{
     LazyPerBlock, LazyRollingSumFromHeight, PricedRollingSumFromHeight, PricedSumUsd, Value,
 };
 
 pub type LazyRollingSumAmountFromHeight = Value<
-    LazyRollingSumFromHeight<Sats>,
-    PricedRollingSumFromHeight<Cents>,
-    LazyPerBlock<Bitcoin, Sats>,
-    PricedSumUsd<LazyPerBlock<Dollars, Cents>>,
+    LazyRollingSumFromHeight<SatsTotal>,
+    PricedRollingSumFromHeight<CentsTotal>,
+    LazyPerBlock<Bitcoin, SatsTotal>,
+    PricedSumUsd<LazyPerBlock<Dollars, CentsTotal>>,
 >;

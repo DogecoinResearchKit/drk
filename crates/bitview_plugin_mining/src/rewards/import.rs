@@ -7,7 +7,7 @@ use bitview_vecs::{
     shapes::Windows,
 };
 use brk_error::Result;
-use brk_types::{Sats, Version};
+use brk_types::{SatsTotal, Version};
 use vecdb::{Database, ReverseOperands};
 
 use super::Vecs;
@@ -38,8 +38,8 @@ impl Vecs {
         // Claimed subsidy over coinbase, so an underclaimed coinbase stays within 0..=100%;
         // the coinbase is read first.
         let subsidy_share = LazyPercentCumulativeRolling::from_cumulative_ratio::<
-            Sats,
-            Sats,
+            SatsTotal,
+            SatsTotal,
             ReverseOperands<Quotient<PartsPerMillion32>>,
         >(
             "subsidy_share",

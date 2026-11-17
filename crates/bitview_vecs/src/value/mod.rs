@@ -21,7 +21,7 @@ pub use lazy_rolling_avgs_amount_from_height::LazyRollingAvgsAmountFromHeight;
 pub use lazy_rolling_sum_amount_from_height::LazyRollingSumAmountFromHeight;
 pub use lazy_rolling_sums_amount_from_height::LazyRollingSumsAmountFromHeight;
 pub use lazy_spot_per_block::LazySpotValuePerBlock;
-pub use per_block::{AmountType, ValuePerBlock};
+pub use per_block::{AmountType, ValuePerBlock, ValueTotalPerBlock};
 pub use per_block_cumulative::ValuePerBlockCumulative;
 pub use per_block_cumulative_rolling::ValuePerBlockCumulativeRolling;
 pub use per_block_full::ValuePerBlockFull;

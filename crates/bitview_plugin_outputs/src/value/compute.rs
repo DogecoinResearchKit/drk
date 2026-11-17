@@ -6,7 +6,7 @@ use bitview_primitives::{SupplyState, TxOutIndex};
 use bitview_vecs::CachedSeries;
 use brk_error::{OptionData, Result};
 use brk_exit::Exit;
-use brk_types::{BlockHash, Height, OutputType, Sats};
+use brk_types::{BlockHash, Height, OutputType, Sats, SatsTotal, Total};
 use statedb::{Amount, Creations};
 use vecdb::{
     AnyStoredVec, AnyVec, Bytes, BytesVec, OverflowVec, ReadableVec, VecIndex, WritableVec,
@@ -15,7 +15,7 @@ use vecdb::{
 use crate::STORAGE;
 
 pub(crate) fn compute_sats(
-    target: &mut CachedSeries<Height, Sats>,
+    target: &mut CachedSeries<Height, SatsTotal>,
     created: &mut Creations,
     range: Range<usize>,
     first_txout: &impl ReadableVec<Height, TxOutIndex>,
@@ -52,21 +52,21 @@ pub(crate) fn compute_sats(
         let value_len = values.len();
         let mut values = values.bounded_cursor_at(output_index, value_len);
         let mut output_types = output_types.range_cursor_at(output_index, value_len);
-        let mut cumulative = target.collect_last().unwrap_or_default();
+        let mut cumulative = target.collect_last().map(Total::acc).unwrap_or_default();
         for h in start..end {
             let mut supply = SupplyState::default();
             let next_output = first_txout.next().map_or(value_len, |i| i.to_usize());
             output_types.for_each(next_output - output_index, |output_type| {
                 let value = values.next().expect("aligned output value");
                 if output_type == OutputType::OpReturn {
-                    cumulative += value;
+                    SatsTotal::add(&mut cumulative, value);
                 } else {
                     supply.value += value;
                     supply.utxo_count += 1;
                 }
                 output_index += 1;
             });
-            target.push(cumulative);
+            target.push(SatsTotal::from_acc(&cumulative));
             let supply = if h == 0 {
                 SupplyState::default()
             } else {

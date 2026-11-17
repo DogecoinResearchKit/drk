@@ -1,7 +1,7 @@
 use bitview_primitives::{PartsPerMillion32, PartsPerMillionSigned32};
 use bitview_traversable::Traversable;
 use bitview_vecs::{FiatPerBlock, LazyFiatPerBlock, LazyPerBlock, LazyPercentPerBlock};
-use brk_types::{Cents, CentsSigned, Dollars};
+use brk_types::{Cents, CentsSigned, CentsTotal, Dollars};
 use vecdb::{Rw, StorageMode};
 
 #[derive(Traversable)]
@@ -11,7 +11,7 @@ pub struct Vecs<M: StorageMode = Rw> {
     /// value minus transaction fees, floored at zero. It estimates the historical value assigned
     /// to miners through issuance, rather than valuing subsidies at current spot.
     #[traversable(lead = "Thermo cap: what miners were paid in new coins, each at the price of its day.")]
-    pub thermo: LazyFiatPerBlock<Cents>,
+    pub thermo: LazyFiatPerBlock<CentsTotal>,
     /// Investor capitalization: realized capitalization minus thermo
     /// capitalization. It estimates the creation-date capital attributed to
     /// market investors after removing the issuance-date value assigned to

@@ -2,7 +2,7 @@ use bitview_plugin_holders::Vecs as HoldersVecs;
 use bitview_plugin_indexer::Indexer;
 use brk_error::Result;
 use brk_exit::Exit;
-use brk_types::{CentsSigned, Dollars};
+use brk_types::{Cents, CentsSigned, Dollars};
 use vecdb::ComputeVec;
 
 use super::{
@@ -28,7 +28,7 @@ impl Vecs {
             realized_cap_cents,
             &self.thermo.cents.height,
             |(_, realized, thermo, ..)| {
-                CentsSigned::new(realized.inner() as i64 - thermo.inner() as i64)
+                CentsSigned::new(realized.inner() as i64 - Cents::from(thermo).inner() as i64)
             },
             exit,
         )?;

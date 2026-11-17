@@ -9,10 +9,11 @@ use bitview_primitives::{CentsSquaredSats, CoinDays};
 use bitview_traversable::Traversable;
 use bitview_vecs::{
     LazyValuePerBlockCumulativeRolling, LazyWindowStartVec, PerBlockCumulativeRolling, SatsCents,
+    TotalSource,
     shapes::Windows,
 };
 use brk_error::Result;
-use brk_types::{Cents, CentsSats, Height, Sats, Version};
+use brk_types::{Cents, CentsSats, CentsTotal, Height, Sats, SatsTotal, Version};
 use vecdb::{
     BytesVecValue, Database, ImportableVec, ReadableBoxedVec, Rw, StorageMode, WritableVec, ZstdVec,
 };
@@ -37,7 +38,7 @@ pub struct RangeVecs<M: StorageMode = Rw> {
     aged_out: LazyValuePerBlockCumulativeRolling,
     #[traversable(hidden)]
     aged_out_sources:
-        SatsCents<PerBlockCumulativeRolling<Sats, M>, PerBlockCumulativeRolling<Cents, M>>,
+        SatsCents<TotalSource<SatsTotal, M>, TotalSource<CentsTotal, M>>,
     /// Coin days created in the range: its supply held for the block's
     /// duration, supply crossing into an older range counted in each range for its time there,
     /// one coin day per BTC per day.
@@ -89,26 +90,22 @@ impl RangeVecs {
         let aged_out_version = version + AGED_OUT_VERSION;
         let aged_out_name = format!("{full_name}_aged_out_supply");
         let aged_out_sources = SatsCents {
-            sats: PerBlockCumulativeRolling::import(
+            sats: TotalSource::import(
                 db,
-                &format!("{aged_out_name}_raw_sats"),
+                &format!("{aged_out_name}_raw_sats_cumulative"),
                 aged_out_version + Version::ONE,
-                mappings,
-                window_starts,
             )?,
-            cents: PerBlockCumulativeRolling::import(
+            cents: TotalSource::import(
                 db,
-                &format!("{aged_out_name}_raw_cents"),
+                &format!("{aged_out_name}_raw_cents_cumulative"),
                 aged_out_version + Version::ONE,
-                mappings,
-                window_starts,
             )?,
         };
         let aged_out = LazyValuePerBlockCumulativeRolling::from_cumulative_sources(
             &aged_out_name,
             aged_out_version,
-            &aged_out_sources.sats.cumulative.height,
-            &aged_out_sources.cents.cumulative.height,
+            aged_out_sources.sats.cumulative_source(),
+            aged_out_sources.cents.cumulative_source(),
             mappings,
             window_starts,
         );

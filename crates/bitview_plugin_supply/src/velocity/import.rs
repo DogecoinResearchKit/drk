@@ -3,7 +3,7 @@ use bitview_plugin_mappings::Vecs as MappingsVecs;
 use bitview_plugin_transactions::Vecs as TransactionsVecs;
 use bitview_primitives::Ratio;
 use bitview_vecs::{LazyIndexedVec, LazyPerBlock, ops::Quotient};
-use brk_types::{Cents, Version};
+use brk_types::{CentsTotal, Version};
 use vecdb::{BinaryTransform, Ident};
 
 use super::Vecs;
@@ -28,7 +28,7 @@ impl Vecs {
             version,
             &volume.cents.height,
             &all_chain.market_cap,
-            |_, volume: Cents, market_cap| Quotient::<Ratio>::apply(volume, market_cap),
+            |_, volume: CentsTotal, market_cap| Quotient::<Ratio>::apply(volume, market_cap),
         );
 
         Self {

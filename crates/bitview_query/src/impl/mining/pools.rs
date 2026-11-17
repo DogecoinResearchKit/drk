@@ -164,7 +164,8 @@ impl Query {
             .sats
             .height
             .collect_one(tip)
-            .data()?;
+            .data()?
+            .into();
 
         Ok(PoolDetail {
             pool: PoolDetailInfo::from(pool),

@@ -1,4 +1,4 @@
-use brk_types::Height;
+use brk_types::{Height, Total};
 use vecdb::{ReadableVec, VecValue};
 
 /// Writer-only running totals, reloaded from the source when the requested length differs from
@@ -49,5 +49,30 @@ impl<R: Clone + Default> CumulativeState<R> {
             },
             add,
         )
+    }
+
+    /// The total at `height`: `part` added exactly to the running sum of the totals `stored`
+    /// holds below it.
+    #[inline]
+    pub(crate) fn add_total_at<T>(
+        &mut self,
+        height: Height,
+        stored: &impl ReadableVec<Height, T>,
+        part: T::Part,
+    ) -> T
+    where
+        T: Total<Acc = R> + VecValue,
+    {
+        let acc = self.accumulate(
+            usize::from(height),
+            || {
+                height
+                    .decremented()
+                    .and_then(|height| stored.collect_one(height))
+                    .map(T::acc)
+            },
+            |acc| T::add(acc, part),
+        );
+        T::from_acc(&acc)
     }
 }

@@ -17,6 +17,9 @@ impl FiatType for Cents {}
 
 impl FiatType for CentsSigned {}
 
+#[cfg(feature = "dogecoin")]
+impl FiatType for brk_types::CentsTotal {}
+
 /// Stored cents with their lazy USD view.
 pub type FiatPerBlock<C, M = Rw> = Fiat<PerBlock<C, M>, LazyPerBlock<Dollars, C>>;
 

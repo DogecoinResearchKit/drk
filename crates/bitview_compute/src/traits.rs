@@ -64,6 +64,12 @@ quantities! {
     Float64 => (Float64, Float64),
 }
 
+#[cfg(feature = "dogecoin")]
+quantities! {
+    brk_types::SatsTotal => (SatsFract, brk_types::SatsTotal),
+    brk_types::CentsTotal => (CentsFract, brk_types::CentsTotal),
+}
+
 /// A stored fixed-point ratio and its public representations.
 pub trait FixedRatio: NumericValue + JsonSchema + Into<f32> {
     /// The stored series' name suffix: every fixed ratio is in parts per million.

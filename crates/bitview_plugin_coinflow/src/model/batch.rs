@@ -2,7 +2,7 @@ use bitview_cohort::AgeRange;
 use bitview_compute::{CohortAccounting, collect_age_range, weighted_age_aggregates};
 use bitview_plugin_age::AccountingSources;
 use bitview_primitives::{BoundedRatio, CoinDays, Float64, PerDay};
-use brk_types::{Bitcoin, Height, Sats, Timestamp};
+use brk_types::{Bitcoin, Height, SatsTotal, Timestamp};
 use rayon::prelude::{IntoParallelIterator, ParallelIterator};
 use vecdb::ReadableVec;
 
@@ -15,7 +15,7 @@ use super::{
 #[derive(Default)]
 pub(crate) struct PrimaryBatch {
     timestamps: Vec<Timestamp>,
-    transfer_volumes: AgeRange<Vec<Sats>>,
+    transfer_volumes: AgeRange<Vec<SatsTotal>>,
     coindays_created: AgeRange<Vec<CoinDays>>,
     accounting: CohortAccounting,
 }
@@ -24,7 +24,7 @@ impl PrimaryBatch {
     pub(crate) fn collect_into(
         &mut self,
         timestamps: &impl ReadableVec<Height, Timestamp>,
-        transfer_volumes: &AgeRange<&impl ReadableVec<Height, Sats>>,
+        transfer_volumes: &AgeRange<&impl ReadableVec<Height, SatsTotal>>,
         coindays_created: &AgeRange<&impl ReadableVec<Height, CoinDays>>,
         accounting: &AccountingSources<'_>,
         start: usize,
@@ -80,7 +80,7 @@ impl PrimaryBatch {
 
     /// Undefined (NaN) while the range has no coin days created.
     #[inline]
-    fn spending_rate(transfer_volume: Sats, coindays_created: CoinDays) -> f64 {
+    fn spending_rate(transfer_volume: SatsTotal, coindays_created: CoinDays) -> f64 {
         let exposure = f64::from(coindays_created);
         if exposure > 0.0 {
             f64::from(Bitcoin::from(transfer_volume)) / exposure

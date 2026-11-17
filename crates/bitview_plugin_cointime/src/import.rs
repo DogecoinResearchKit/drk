@@ -5,7 +5,7 @@ use bitview_plugin_mappings::Vecs as MappingsVecs;
 use bitview_plugin_price::Vecs as PriceVecs;
 use bitview_vecs::{LazyWindowStartVec, PerBlock, shapes::Windows};
 use brk_error::Result;
-use brk_types::{Cents, Version};
+use brk_types::{CentsTotal, Version};
 use vecdb::ReadableCloneableVec;
 
 use super::{
@@ -19,7 +19,7 @@ impl Vecs {
         mappings: &MappingsVecs,
         window_starts: &Windows<&LazyWindowStartVec>,
         prices: &PriceVecs,
-        subsidy_cents: &PerBlock<Cents>,
+        subsidy_cents: &PerBlock<CentsTotal>,
         all_chain: &AllChainSources,
         age: &AgeVecs,
     ) -> Result<Self> {

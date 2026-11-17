@@ -5,7 +5,7 @@ use bitview_plugin_mappings::LookbackVecs;
 use bitview_primitives::{HashPrice, HashValue, Hashrate, PartsPerMillionSigned32};
 use brk_error::Result;
 use brk_exit::Exit;
-use brk_types::{Dollars, Height, Sats, TARGET_BLOCKS_PER_DAY_F64};
+use brk_types::{Dollars, Height, SatsTotal, TARGET_BLOCKS_PER_DAY_F64};
 use vecdb::{AnyVec, ComputeVec, LazyVec, ReadableCloneableVec, ReadableVec};
 
 use super::Vecs;
@@ -24,7 +24,7 @@ impl Vecs {
         indexer: &Indexer,
         lookback: &LookbackVecs,
         difficulty_vecs: &DifficultyVecs,
-        coinbase_sats_24h_sum: &impl ReadableVec<Height, Sats>,
+        coinbase_sats_24h_sum: &impl ReadableVec<Height, SatsTotal>,
         coinbase_usd_24h_sum: &impl ReadableVec<Height, Dollars>,
         exit: &Exit,
     ) -> Result<()> {

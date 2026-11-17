@@ -1,14 +1,15 @@
-use std::ops::Deref;
+use std::ops::{Deref, Sub};
 
 use bitview_cohort::AgeAggregateId;
 use bitview_primitives::Multiple;
 use bitview_traversable::Traversable;
 use bitview_vecs::{
-    LazyFiatPerBlockCumulativeWithSums, LazyIndexedVec, RollingWindows, ops::Quotient,
+    CachedSeries, FiatType, IndexSources, LazyFiatPerBlockCumulativeWithSums, LazyIndexedVec,
+    LazyWindowStartVec, RollingWindows, ops::Quotient, shapes::Windows,
 };
 use brk_error::Result;
 use brk_exit::Exit;
-use brk_types::{Cents, Height};
+use brk_types::{Cents, CentsTotal, Height, Version};
 use vecdb::{ComputeVec, Rw, StorageMode};
 
 use crate::{
@@ -56,7 +57,7 @@ pub struct AdjustedSopr<M: StorageMode = Rw> {
     #[traversable(flatten)]
     pub ratio: RollingWindows<Multiple, M>,
     /// Spend-time value of the outputs it keeps (spent an hour or more after creation).
-    pub value_created: LazyFiatPerBlockCumulativeWithSums<Cents>,
+    pub value_created: LazyFiatPerBlockCumulativeWithSums<CentsTotal>,
     /// Creation-time value of the outputs it keeps (spent an hour or more after creation).
     pub value_destroyed: LazyFiatPerBlockCumulativeWithSums<Cents>,
 }
@@ -70,33 +71,22 @@ impl AdjustedSopr {
             ..
         } = *cx;
         let c = id.select(cx.columns);
-        // Every group with aSOPR holds the under-an-hour band, and both sum the bands' cumulative
-        // cents: the outputs it keeps are exactly the group's less that band's.
-        let kept = |metric: &str, total, under_1h| {
-            let name = id.metric_name(metric);
-            let cumulative = LazyIndexedVec::new(
-                &format!("{name}_cumulative_cents_source"),
-                v,
-                total,
-                under_1h,
-                |_, total: Cents, under_1h: Cents| total - under_1h,
-            );
-            LazyFiatPerBlockCumulativeWithSums::from_cumulative_cents_source(
-                &name,
-                v,
-                &cumulative,
-                mappings,
-                windows,
-            )
-        };
         Ok(Self {
             ratio: RollingWindows::import(db, &id.metric_name("adjusted_sopr"), v, mappings)?,
             value_created: kept(
+                id,
+                v,
+                mappings,
+                windows,
                 "adjusted_value_created",
                 &c.volume_cents,
                 cx.under_1h_volume,
             ),
             value_destroyed: kept(
+                id,
+                v,
+                mappings,
+                windows,
                 "adjusted_value_destroyed",
                 &c.value_destroyed,
                 cx.under_1h_value_destroyed,
@@ -120,4 +110,32 @@ impl AdjustedSopr {
         }
         Ok(())
     }
+}
+
+/// Every group with aSOPR holds the under-an-hour band, and both sum the bands' cumulative cents:
+/// the outputs it keeps are exactly the group's less that band's.
+fn kept<C: FiatType + Sub<Output = C>>(
+    id: AgeAggregateId,
+    v: Version,
+    indexes: &IndexSources,
+    windows: &Windows<&LazyWindowStartVec>,
+    metric: &str,
+    total: &CachedSeries<Height, C>,
+    under_1h: &CachedSeries<Height, C>,
+) -> LazyFiatPerBlockCumulativeWithSums<C> {
+    let name = id.metric_name(metric);
+    let cumulative = LazyIndexedVec::new(
+        &format!("{name}_cumulative_cents_source"),
+        v,
+        total,
+        under_1h,
+        |_, total: C, under_1h: C| total - under_1h,
+    );
+    LazyFiatPerBlockCumulativeWithSums::from_cumulative_cents_source(
+        &name,
+        v,
+        &cumulative,
+        indexes,
+        windows,
+    )
 }

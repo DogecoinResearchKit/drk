@@ -1,12 +1,12 @@
-use brk_types::{Bitcoin, Cents, Dollars, Height, Sats, Version};
+use brk_types::{Bitcoin, Cents, CentsTotal, Dollars, Height, Sats, SatsTotal, Version};
 use vecdb::{Convert, LazyVec, ReadableCloneableVec};
 
 use crate::{LazyPreviousDeltaVec, Value};
 
 /// Per-block values derived from cumulative sats and cents.
 pub type LazyValueBlock = Value<
-    LazyPreviousDeltaVec<Height, Sats>,
-    LazyPreviousDeltaVec<Height, Cents>,
+    LazyPreviousDeltaVec<Height, SatsTotal, Sats>,
+    LazyPreviousDeltaVec<Height, CentsTotal, Cents>,
     LazyVec<Height, Bitcoin, Sats>,
     LazyVec<Height, Dollars, Cents>,
 >;
@@ -15,8 +15,8 @@ impl LazyValueBlock {
     pub(crate) fn from_cumulative_sources(
         name: &str,
         version: Version,
-        cumulative_sats: &impl ReadableCloneableVec<Height, Sats>,
-        cumulative_cents: &impl ReadableCloneableVec<Height, Cents>,
+        cumulative_sats: &impl ReadableCloneableVec<Height, SatsTotal>,
+        cumulative_cents: &impl ReadableCloneableVec<Height, CentsTotal>,
     ) -> Self {
         let sats = LazyPreviousDeltaVec::new(&format!("{name}_sats"), version, cumulative_sats);
         let btc = LazyVec::transformed::<Convert>(name, version, sats.read_only_boxed_clone());

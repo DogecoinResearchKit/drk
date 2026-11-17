@@ -1,5 +1,5 @@
 use bitview_traversable::Traversable;
-use brk_types::{Cents, Height, Sats, Version};
+use brk_types::{CentsTotal, Height, SatsTotal, Version};
 use derive_more::{Deref, DerefMut};
 use vecdb::{Convert, ReadableCloneableVec};
 
@@ -21,8 +21,8 @@ impl LazyRollingAvgsAmountFromHeight {
     pub(crate) fn new(
         name: &str,
         version: Version,
-        cumulative_sats: &impl ReadableCloneableVec<Height, Sats>,
-        cumulative_cents: &impl ReadableCloneableVec<Height, Cents>,
+        cumulative_sats: &impl ReadableCloneableVec<Height, SatsTotal>,
+        cumulative_cents: &impl ReadableCloneableVec<Height, CentsTotal>,
         window_starts: &Windows<&impl ReadableCloneableVec<Height, Height>>,
         indexes: &IndexSources,
     ) -> Self {

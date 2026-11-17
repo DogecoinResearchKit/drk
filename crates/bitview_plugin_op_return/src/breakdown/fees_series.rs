@@ -6,7 +6,7 @@ use bitview_vecs::{
     ops::Quotient, shapes::Windows,
 };
 use brk_error::Result;
-use brk_types::{Height, Sats, Version};
+use brk_types::{Height, Sats, SatsTotal, Version};
 use vecdb::{Database, ReadableCloneableVec, Rw, StorageMode};
 
 #[derive(Traversable)]
@@ -36,7 +36,7 @@ impl FeesSeries {
             window_starts,
         )?;
         let chain_share = LazyPercentCumulativeRolling::from_cumulative_ratio::<
-            Sats,
+            SatsTotal,
             Sats,
             Quotient<PartsPerMillion32>,
         >(

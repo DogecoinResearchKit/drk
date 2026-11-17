@@ -187,7 +187,9 @@ impl PoolSnapshot {
             );
             let mut running = record.totals.last().copied().unwrap_or_default();
             for (total, value) in running.iter_mut().zip(block) {
-                *total += value;
+                *total = total
+                    .checked_add(value)
+                    .expect("a pool's reward total passed u64: widen pool totals");
             }
             record.totals.push(running);
             height += 1;

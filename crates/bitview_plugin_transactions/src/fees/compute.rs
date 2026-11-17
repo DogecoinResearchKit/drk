@@ -11,7 +11,7 @@ use bitview_traversable::Traversable;
 use bitview_vecs::CachedSeries;
 use brk_error::Result;
 use brk_exit::Exit;
-use brk_types::{Height, Sats, VSize};
+use brk_types::{Height, SatsTotal, Total, VSize};
 use rayon::prelude::*;
 use tracing::info;
 use vecdb::{AnyStoredVec, AnyVec, ComputeVec, ReadableVec, VecIndex, WritableVec};
@@ -33,7 +33,7 @@ impl Vecs {
         indexer: &Indexer,
         mappings: &MappingsVecs,
         vsize: &mut TxDistribution<VSize>,
-        transfer_volume: &mut CachedSeries<Height, Sats>,
+        transfer_volume: &mut CachedSeries<Height, SatsTotal>,
         exit: &Exit,
     ) -> Result<()> {
         let starting_lengths = indexer.compute_start();
@@ -54,7 +54,7 @@ impl Vecs {
     fn outputs_mut<'a>(
         &'a mut self,
         vsize: &'a mut TxDistribution<VSize>,
-        transfer_volume: &'a mut CachedSeries<Height, Sats>,
+        transfer_volume: &'a mut CachedSeries<Height, SatsTotal>,
     ) -> ([&'a mut dyn AnyStoredVec; 5], Vec<&'a mut dyn AnyStoredVec>) {
         let (parent_flag, parent_count) = self.cpfp_parent.stored_mut();
         let (child_flag, child_count) = self.cpfp_child.stored_mut();
@@ -86,7 +86,7 @@ impl Vecs {
         starting_lengths: Lengths,
         mappings: &MappingsVecs,
         vsize: &mut TxDistribution<VSize>,
-        transfer_volume: &mut CachedSeries<Height, Sats>,
+        transfer_volume: &mut CachedSeries<Height, SatsTotal>,
         exit: &Exit,
     ) -> Result<()> {
         let vecs = indexer.vecs();
@@ -125,7 +125,10 @@ impl Vecs {
             return Ok(());
         }
 
-        let mut cumulative_volume = transfer_volume.collect_last().unwrap_or_default();
+        let mut cumulative_volume = transfer_volume
+            .collect_last()
+            .map(Total::acc)
+            .unwrap_or_default();
 
         // Bounded: an update of a few blocks reads only their counts and boundaries.
         let mut tx_count = tx_counts.bounded_cursor_at(start_height, max_height);
@@ -228,8 +231,8 @@ impl Vecs {
                 vsize.push(block.vsize_stats);
                 self.coinbase_value.push(block.output_values[0]);
                 self.total.push(block.total_fee);
-                cumulative_volume += block.transfer_volume;
-                transfer_volume.push(cumulative_volume);
+                SatsTotal::add(&mut cumulative_volume, block.transfer_volume);
+                transfer_volume.push(SatsTotal::from_acc(&cumulative_volume));
 
                 if (height + offset + 1).is_multiple_of(FLUSH_BLOCKS) {
                     self.write_fees(vsize, transfer_volume, exit)?;
@@ -255,7 +258,7 @@ impl Vecs {
     fn write_fees(
         &mut self,
         vsize: &mut TxDistribution<VSize>,
-        transfer_volume: &mut CachedSeries<Height, Sats>,
+        transfer_volume: &mut CachedSeries<Height, SatsTotal>,
         exit: &Exit,
     ) -> Result<()> {
         let (txs, blocks) = self.outputs_mut(vsize, transfer_volume);

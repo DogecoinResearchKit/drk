@@ -1,4 +1,4 @@
-use std::{mem, sync::Arc};
+use std::{marker::PhantomData, mem, sync::Arc};
 
 use schemars::JsonSchema;
 use serde::Serialize;
@@ -7,9 +7,10 @@ use vecdb::{
     ReadableCloneableVec, ReadableVec, SparseRead, TypedVec, VecIndex, VecValue, Version,
 };
 
-/// Lazy `source[index] - source[index - 1]`, with zero before the first value.
+/// Lazy `source[index] - source[index - 1]`, with zero before the first value, as a `T` (the
+/// per-block part of a running total `S`).
 #[derive(Clone)]
-pub struct LazyPreviousDeltaVec<I, S>
+pub struct LazyPreviousDeltaVec<I, S, T = S>
 where
     I: VecIndex,
     S: VecValue,
@@ -17,9 +18,10 @@ where
     name: Arc<str>,
     base_version: Version,
     source: ReadableBoxedVec<I, S>,
+    _output: PhantomData<fn() -> T>,
 }
 
-impl<I, S> LazyPreviousDeltaVec<I, S>
+impl<I, S, T> LazyPreviousDeltaVec<I, S, T>
 where
     I: VecIndex,
     S: VecValue,
@@ -33,14 +35,16 @@ where
             name: Arc::from(name),
             base_version: version,
             source: source.read_only_boxed_clone(),
+            _output: PhantomData,
         }
     }
 }
 
-impl<I, S> AnyVec for LazyPreviousDeltaVec<I, S>
+impl<I, S, T> AnyVec for LazyPreviousDeltaVec<I, S, T>
 where
     I: VecIndex,
     S: VecValue,
+    T: VecValue,
 {
     fn version(&self) -> Version {
         self.base_version + self.source.version()
@@ -58,23 +62,30 @@ where
         self.source.is_mutable()
     }
 
-    vecdb::any_vec_type_methods!(I, S);
+    vecdb::any_vec_type_methods!(I, T);
 }
 
-impl<I, S> TypedVec for LazyPreviousDeltaVec<I, S>
+impl<I, S, T> TypedVec for LazyPreviousDeltaVec<I, S, T>
 where
     I: VecIndex,
     S: VecValue,
+    T: VecValue,
 {
     type I = I;
-    type T = S;
+    type T = T;
 }
 
-impl<I, S> LazyPreviousDeltaVec<I, S>
+impl<I, S, T> LazyPreviousDeltaVec<I, S, T>
 where
     I: VecIndex,
     S: VecValue + CheckedSub + Default,
+    T: VecValue + From<S>,
 {
+    #[inline]
+    fn delta(current: S, previous: S) -> T {
+        T::from(current.checked_sub(previous).unwrap_or_default())
+    }
+
     fn for_each_input(&self, from: usize, to: usize, mut each: impl FnMut(usize, &[S], &mut S)) {
         let to = to.min(self.len());
         if from >= to {
@@ -95,41 +106,37 @@ where
             });
     }
 
-    fn append_delta(values: &[S], previous: &mut S, out: &mut Vec<S>) {
+    fn append_delta(values: &[S], previous: &mut S, out: &mut Vec<T>) {
         let (first, rest) = values.split_first().expect("input chunks are nonempty");
-        out.push(
-            first
-                .clone()
-                .checked_sub(previous.clone())
-                .unwrap_or_default(),
-        );
+        out.push(Self::delta(first.clone(), previous.clone()));
         out.extend(
             rest.iter()
                 .cloned()
                 .zip(values.iter().cloned())
-                .map(|(current, previous)| current.checked_sub(previous).unwrap_or_default()),
+                .map(|(current, previous)| Self::delta(current, previous)),
         );
         *previous = values.last().unwrap().clone();
     }
 }
 
-impl<I, S> ReadableVec<I, S> for LazyPreviousDeltaVec<I, S>
+impl<I, S, T> ReadableVec<I, T> for LazyPreviousDeltaVec<I, S, T>
 where
     I: VecIndex,
     S: VecValue + CheckedSub + Default,
+    T: VecValue + From<S>,
 {
     fn cursor_chunk_size(&self) -> usize {
         self.source.cursor_chunk_size()
     }
 
-    fn read_into_at(&self, from: usize, to: usize, buf: &mut Vec<S>) {
+    fn read_into_at(&self, from: usize, to: usize, buf: &mut Vec<T>) {
         buf.reserve(to.min(self.len()).saturating_sub(from));
         self.for_each_input(from, to, |_, values, previous| {
             Self::append_delta(values, previous, buf);
         });
     }
 
-    fn for_each_chunk_at(&self, from: usize, to: usize, f: &mut dyn FnMut(usize, &[S])) {
+    fn for_each_chunk_at(&self, from: usize, to: usize, f: &mut dyn FnMut(usize, &[T])) {
         let chunk_size = self.cursor_chunk_size().clamp(1, READ_CHUNK_SIZE);
         let mut output = Vec::new();
         self.for_each_input(from, to, |at, values, previous| {
@@ -141,13 +148,13 @@ where
         });
     }
 
-    fn for_each_range_dyn_at(&self, from: usize, to: usize, f: &mut dyn FnMut(S)) {
+    fn for_each_range_dyn_at(&self, from: usize, to: usize, f: &mut dyn FnMut(T)) {
         self.for_each_chunk_at(from, to, &mut |_, values| {
             values.iter().cloned().for_each(&mut *f);
         });
     }
 
-    fn try_fold_range_at<B, E, G: FnMut(B, S) -> Result<B, E>>(
+    fn try_fold_range_at<B, E, G: FnMut(B, T) -> Result<B, E>>(
         &self,
         from: usize,
         to: usize,
@@ -162,26 +169,23 @@ where
                     .cloned()
                     .try_fold(accumulator, |accumulator, current| {
                         let previous = mem::replace(previous, current.clone());
-                        fold(
-                            accumulator,
-                            current.checked_sub(previous).unwrap_or_default(),
-                        )
+                        fold(accumulator, Self::delta(current, previous))
                     })
             }));
         });
         accumulator.unwrap()
     }
 
-    fn collect_one_at(&self, index: usize) -> Option<S> {
+    fn collect_one_at(&self, index: usize) -> Option<T> {
         let current = self.source.collect_one_at(index)?;
         let previous = index
             .checked_sub(1)
             .and_then(|index| self.source.collect_one_at(index))
             .unwrap_or_default();
-        Some(current.checked_sub(previous).unwrap_or_default())
+        Some(Self::delta(current, previous))
     }
 
-    fn read_sorted_into_at(&self, indices: &[usize], out: &mut Vec<S>) {
+    fn read_sorted_into_at(&self, indices: &[usize], out: &mut Vec<T>) {
         let len = self.len();
         let indices = &indices[..indices.partition_point(|&i| i < len)];
         if indices.len() > 1
@@ -197,15 +201,15 @@ where
             && let Some(values) = SparseRead::try_new(&*self.source, indices, |i| i.checked_sub(1))
         {
             out.extend((0..indices.len()).map(|slot| {
-                values
-                    .current(slot)
-                    .checked_sub(values.previous(slot).unwrap_or_default())
-                    .unwrap_or_default()
+                Self::delta(
+                    values.current(slot),
+                    values.previous(slot).unwrap_or_default(),
+                )
             }));
             return;
         }
         let mut source = Cursor::new(&*self.source);
-        let mut cached: Option<(usize, S)> = None;
+        let mut cached: Option<(usize, T)> = None;
 
         out.reserve(indices.len());
         for &index in indices {
@@ -223,14 +227,15 @@ where
             let Some(current) = source.get(index) else {
                 continue;
             };
-            let value = current.checked_sub(previous).unwrap_or_default();
+            let value = Self::delta(current, previous);
             cached = Some((index, value.clone()));
             out.push(value);
         }
     }
 }
 
-bitview_traversable::leaf!([I, S] LazyPreviousDeltaVec<I, S> where
+bitview_traversable::leaf!([I, S, T] LazyPreviousDeltaVec<I, S, T> where
     I: VecIndex,
-    S: VecValue + CheckedSub + Default + Formattable + Serialize + JsonSchema,
+    S: VecValue + CheckedSub + Default,
+    T: VecValue + From<S> + Formattable + Serialize + JsonSchema,
 );

@@ -27,8 +27,8 @@ impl Query {
             return Err(Error::Internal("Incomplete published reward data"));
         }
 
-        let total_reward = cumulative_delta(coinbase_vec, start_block, end_block)?;
-        let total_fee = cumulative_delta(fee_vec, start_block, end_block)?;
+        let total_reward = cumulative_delta(coinbase_vec, start_block, end_block)?.into();
+        let total_fee = cumulative_delta(fee_vec, start_block, end_block)?.into();
         let total_tx = cumulative_delta(tx_count_vec, start_block, end_block)?.into();
 
         Ok(RewardStats {
