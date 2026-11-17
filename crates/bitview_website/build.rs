@@ -333,6 +333,26 @@ const FACTS: &[(&str, &str, &str)] = &[
         "return `$${Math.round(value)}`;",
         "return `$${Number(value.toPrecision(3))}`;",
     ),
+    (
+        "trail/index.html",
+        r#"        const currencyFormatter = new Intl.NumberFormat("en", {
+          style: "currency",
+          currency: "USD",
+          maximumFractionDigits: 0,
+        });"#,
+        r#"        const currencyFormatter = (() => {
+          const whole = new Intl.NumberFormat("en", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
+          const small = new Intl.NumberFormat("en", { style: "currency", currency: "USD", maximumSignificantDigits: 3 });
+          return { format: (value) => (Math.abs(value) < 100 ? small : whole).format(value) };
+        })();"#,
+    ),
+    (
+        "_wallets/index.html",
+        r#"        new Intl.NumberFormat("en-US", { currency: "USD", maximumFractionDigits: 0, style: "currency" }).format(dollars);"#,
+        r#"        new Intl.NumberFormat("en-US", Math.abs(dollars) < 100
+          ? { currency: "USD", minimumSignificantDigits: 2, maximumSignificantDigits: 3, style: "currency" }
+          : { currency: "USD", maximumFractionDigits: 0, style: "currency" }).format(dollars);"#,
+    ),
     // The live price is the latest exchange close, not read from the chain.
     (
         "index.html",
