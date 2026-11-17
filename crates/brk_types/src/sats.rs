@@ -1,7 +1,9 @@
 use std::ops::{Mul, SubAssign};
 
 use bitcoin::Amount;
-use derive_more::{Add, AddAssign, Deref, From, Into, Sub, Sum};
+#[cfg(not(feature = "dogecoin"))]
+use derive_more::{Add, AddAssign, Sum};
+use derive_more::{Deref, From, Into, Sub};
 #[cfg(feature = "schemars")]
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
@@ -26,13 +28,11 @@ use vecdb::{OverflowVecValue, Pco, SaturatingAdd, Version};
     Serialize,
     Deserialize,
     Hash,
-    Add,
-    AddAssign,
     Sub,
-    Sum,
     From,
     Into,
 )]
+#[cfg_attr(not(feature = "dogecoin"), derive(Add, AddAssign, Sum))]
 #[cfg_attr(feature = "schemars", derive(JsonSchema))]
 #[cfg_attr(feature = "storage", derive(Pco))]
 #[cfg_attr(feature = "schemars", schemars(
@@ -148,6 +148,43 @@ impl SaturatingAdd for Sats {
     }
 }
 
+/// Dogecoin's supply passes `u64::MAX` koinu (about 184.5B DOGE) around 2031: stock series then
+/// need a wider type, and wrapping silently would corrupt every series derived from them.
+#[cfg(feature = "dogecoin")]
+mod checked_add {
+    use std::{
+        iter::Sum,
+        ops::{Add, AddAssign},
+    };
+
+    use super::Sats;
+
+    impl Add for Sats {
+        type Output = Self;
+        #[inline]
+        fn add(self, rhs: Self) -> Self {
+            Self(
+                self.0
+                    .checked_add(rhs.0)
+                    .expect("Dogecoin supply exceeded u64 koinu; widen stock series"),
+            )
+        }
+    }
+
+    impl AddAssign for Sats {
+        #[inline]
+        fn add_assign(&mut self, rhs: Self) {
+            *self = *self + rhs;
+        }
+    }
+
+    impl Sum for Sats {
+        fn sum<I: Iterator<Item = Self>>(iter: I) -> Self {
+            iter.fold(Self::ZERO, Add::add)
+        }
+    }
+}
+
 impl SubAssign for Sats {
     fn sub_assign(&mut self, rhs: Self) {
         debug_assert!(self.0 >= rhs.0, "Sats underflow: {self} - {rhs}");
@@ -240,3 +277,21 @@ impl From<Sats> for u128 {
 }
 
 crate::impl_int_format!(Sats);
+
+#[cfg(all(test, feature = "dogecoin"))]
+mod tests {
+    use super::Sats;
+
+    #[test]
+    #[should_panic(expected = "widen stock series")]
+    fn addition_past_u64_panics() {
+        let _ = Sats::MAX + Sats::_1;
+    }
+
+    #[test]
+    #[should_panic(expected = "widen stock series")]
+    fn add_assign_past_u64_panics() {
+        let mut total = Sats::MAX;
+        total += Sats::_1;
+    }
+}
