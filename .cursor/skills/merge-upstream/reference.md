@@ -84,7 +84,7 @@ re-ported onto Bitview on `rebuild/bitview`.
   seeds (`seed.multidoge.org` and the rest answer nothing), so a fresh node finds no peers:
   resolve the seeds through public DNS (`dig @1.1.1.1 seed.multidoge.org +short`) and
   `dogecoin-cli addnode <ip>:22556 onetry` each address. Once connected it learns peers itself.
-- Public site name `dogeview.space`; repository `IndigoNakamoto/drk`.
+- Public site name `dogeview.space`; repository `DogecoinResearchKit/drk`.
 
 ## Dogecoin Core 1.14 RPC
 

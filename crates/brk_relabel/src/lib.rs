@@ -131,7 +131,7 @@ const FACTS: &[(&str, &str)] = &[
     ),
     (
         "https://github.com/bitcoinresearchkit/mono",
-        "https://github.com/IndigoNakamoto/drk",
+        "https://github.com/DogecoinResearchKit/drk",
     ),
     // Dogecoin's prices: every block at its day's exchange close, the earliest carried back to
     // genesis; there is no on-chain oracle.
@@ -475,7 +475,7 @@ mod tests {
             ),
             (
                 "[GitHub](https://github.com/bitcoinresearchkit/mono/issues)",
-                "[GitHub](https://github.com/IndigoNakamoto/drk/issues)",
+                "[GitHub](https://github.com/DogecoinResearchKit/drk/issues)",
             ),
         ] {
             assert_eq!(relabel(from), to, "{from}");

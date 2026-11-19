@@ -5,8 +5,8 @@ package.description = "The Dogecoin Research Kit is a suite of tools designed to
 package.license = "MIT"
 package.edition = "2024"
 package.version = "0.13.0"
-package.homepage = "https://github.com/IndigoNakamoto/drk"
-package.repository = "https://github.com/IndigoNakamoto/drk"
+package.homepage = "https://github.com/DogecoinResearchKit/drk"
+package.repository = "https://github.com/DogecoinResearchKit/drk"
 package.readme = "README.md"
 
 [profile.dev]

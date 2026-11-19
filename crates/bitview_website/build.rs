@@ -343,8 +343,8 @@ const FACTS: &[(&str, &str, &str)] = &[
         "dev/index.html",
         r#"<span class="label">Install, or update</span><button type="button" data-copy='rustup update &amp;&amp; RUSTFLAGS="-C target-cpu=native" cargo install --locked bitviewd'>Copy</button></div>
           <pre class="terminal"><span class="line"><span class="prompt">$</span> rustup update &amp;&amp; RUSTFLAGS="-C <span class="w">target-cpu=native</span>" cargo install <span class="w">--locked</span> bitviewd</span>"#,
-        r#"<span class="label">Install</span><button type="button" data-copy='git clone https://github.com/IndigoNakamoto/drk &amp;&amp; cd drk &amp;&amp; RUSTFLAGS="-C target-cpu=native" cargo install --locked --path crates/bitviewd --features dogecoin'>Copy</button></div>
-          <pre class="terminal"><span class="line"><span class="prompt">$</span> git clone https://github.com/IndigoNakamoto/drk &amp;&amp; cd drk</span><span class="line"><span class="prompt">$</span> RUSTFLAGS="-C <span class="w">target-cpu=native</span>" cargo install <span class="w">--locked</span> --path crates/bitviewd <span class="w">--features dogecoin</span></span>"#,
+        r#"<span class="label">Install</span><button type="button" data-copy='git clone https://github.com/DogecoinResearchKit/drk &amp;&amp; cd drk &amp;&amp; RUSTFLAGS="-C target-cpu=native" cargo install --locked --path crates/bitviewd --features dogecoin'>Copy</button></div>
+          <pre class="terminal"><span class="line"><span class="prompt">$</span> git clone https://github.com/DogecoinResearchKit/drk &amp;&amp; cd drk</span><span class="line"><span class="prompt">$</span> RUSTFLAGS="-C <span class="w">target-cpu=native</span>" cargo install <span class="w">--locked</span> --path crates/bitviewd <span class="w">--features dogecoin</span></span>"#,
     ),
     (
         "dev/index.html",
@@ -359,7 +359,7 @@ const FACTS: &[(&str, &str, &str)] = &[
     (
         "index.html",
         r#"copy: "cargo install --locked bitviewd" }"#,
-        r#"copy: "git clone https://github.com/IndigoNakamoto/drk && cd drk && cargo install --locked --path crates/bitviewd --features dogecoin" }"#,
+        r#"copy: "git clone https://github.com/DogecoinResearchKit/drk && cd drk && cargo install --locked --path crates/bitviewd --features dogecoin" }"#,
     ),
     (
         "index.html",
